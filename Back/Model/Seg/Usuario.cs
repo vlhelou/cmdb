@@ -10,28 +10,37 @@ public record Usuario
 
     [Key]
     [Column("id")]
-    public int Id { get; private set; }
+    public int Id { get; set; }
         
     [Column("nome")]
-    public string Nome { get; private set; }=string.Empty;
+    public string Nome { get; set; }=string.Empty;
         
     [Column("email")]
-    public string Email { get; private set; }=string.Empty;
+    public string Email { get; set; }=string.Empty;
         
     [Column("administrador")]
-    public bool Administrador { get; private set; }
+    public bool Administrador { get; set; }
 
     [Column("ativo")]
-    public bool Ativo { get; private set; }
+    public bool Ativo { get; set; }
 
     [Column("gd")]
     [JsonIgnore]
-    public Guid? Gd { get; private set; }
+    public Guid? Gd { get; set; }
     
     [Column("senha")]
     [JsonIgnore]
-    public string Senha { get; private set; }=string.Empty;
+    public string Senha { get; set; }=string.Empty;
 
+    public void NovoGD()
+    {
+        Gd = Guid.NewGuid();
+    }
+
+    public void AjustaSenha(string senha)
+    {
+        Senha = (this.Id.ToString()+senha).ToSha512();
+    }
     
 
     // [JsonIgnore]

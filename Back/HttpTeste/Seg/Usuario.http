@@ -1,0 +1,26 @@
+@host = http://localhost:5000
+
+###
+POST {{host}}/Api/Seg/Usuario/Novo
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": 0,
+  "nome": "admin",
+  "email": "adm@cmdb.com.br",
+  "administrador": true,
+  "ativo": true,
+  "senha": "123456"
+}
+
+###
+POST {{host}}/Api/Seg/Usuario/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "adm@cmdb.com.br",
+  "senha": "123456"
+}
+

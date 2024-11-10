@@ -18,3 +18,5 @@ public static class Util
         return retorno.ToString();
     }
 }
+
+public record MensagemErro(string mensagem);

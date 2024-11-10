@@ -1,21 +1,40 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+
+var strcn = Environment.GetEnvironmentVariable("CMDB_DB") ?? "";
+builder.Services.AddDbContext<Cmdb.Model.Db>(opt =>
+{
+    opt.UseNpgsql(strcn, options =>
+    {
+        options.EnableRetryOnFailure();
+    });
+    opt.LogTo(Console.WriteLine);
+});
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Geral",
+        corsPolicyBuilder =>
+        {
+            corsPolicyBuilder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers().RequireAuthorization();
