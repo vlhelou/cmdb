@@ -20,3 +20,4 @@ public static class Util
 }
 
 public record MensagemErro(string mensagem);
+

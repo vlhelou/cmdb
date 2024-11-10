@@ -1,11 +1,8 @@
-using Cmdb.Model.Seg;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text.Json.Serialization;
 
 namespace Cmdb.Api.Seg;
 
@@ -44,11 +41,21 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
             return Unauthorized(new MensagemErro("usuário ou senha incorretos"));
 
         string token = GeraToken(localizado, 24);
-        return Ok(new {
+        return Ok(new
+        {
             token,
             localizado.Nome,
             localizado.Email
         });
+    }
+
+
+    [HttpGet("[action]")]
+    [Authorize(Roles ="user")]
+    public IActionResult Lista()
+    {
+        var teste = this.User.IsInRole("admin");
+        return Ok(_db.SegUsuario.ToList());
     }
 
     public record UsrForm

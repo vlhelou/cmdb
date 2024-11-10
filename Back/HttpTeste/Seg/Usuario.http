@@ -1,4 +1,5 @@
 @host = http://localhost:5000
+@token =Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJub21lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbUBjbWRiLmNvbS5iciIsInJvbGUiOiJhZG1pbiIsIm5iZiI6MTczMTI2Mjg2MiwiZXhwIjoxNzMxMzQ5MjYyLCJpYXQiOjE3MzEyNjI4NjJ9.gK63BVQTK2yr2ZJ3c3TddSJuL2F_J6DkDSu87W3lQTM
 
 ###
 POST {{host}}/Api/Seg/Usuario/Novo
@@ -8,8 +9,8 @@ Content-Type: application/json
 {
   "id": 0,
   "nome": "admin",
-  "email": "adm@cmdb.com.br",
-  "administrador": true,
+  "email": "user@cmdb.com.br",
+  "administrador": false,
   "ativo": true,
   "senha": "123456"
 }
@@ -24,3 +25,7 @@ Content-Type: application/json
   "senha": "123456"
 }
 
+###
+GET {{host}}/Api/Seg/Usuario/Lista
+Authorization: {{token}}
+Accept: application/json
