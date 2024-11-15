@@ -1,16 +1,17 @@
 import { inject } from '@angular/core';
 import { CanActivateFn } from '@angular/router';
 import { Router } from '@angular/router';
-// import { SegurancaService } from 'src/model/seguranca.service';
+import { SegUsuarioService } from 'src/model/seg/usuario.service';
 
 export const autenticadoGuard: CanActivateFn = (route, state) => {
-    // let srv: SegurancaService;
-    // srv = inject(SegurancaService);
+    let srv: SegUsuarioService;
+    srv = inject(SegUsuarioService);
 
-    // const strcurrentUser = srv.currentUserValue;
-    const strcurrentUser = {};
-    if (!strcurrentUser) {
-        inject(Router).navigate(['/login'],{
+    const currentUser = srv.currentUserValue;
+    console.log(currentUser);
+
+    if (!currentUser) {
+        inject(Router).navigate(['/publico'], {
             queryParams: { returnUrl: state.url },
         });
         return false;
