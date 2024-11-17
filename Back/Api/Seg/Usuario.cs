@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Cmdb.Api.Seg;
 
@@ -34,10 +35,10 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
     [HttpPost("[action]")]
     public IActionResult Login([FromBody] UsrLogin item)
     {
-        var localizado = _db.SegUsuario.FirstOrDefault(x => x.Email.ToLower() == item.Email.ToLower());
+        var localizado = _db.SegUsuario.FirstOrDefault(x => x.Email.ToLower() == item.email.ToLower());
         if (localizado == null)
             return Unauthorized(new MensagemErro("usuario não localizado"));
-        if (localizado.Senha != (localizado.Id.ToString() + item.Senha).ToSha512())
+        if (localizado.Senha != (localizado.Id.ToString() + item.senha).ToSha512())
             return Unauthorized(new MensagemErro("usuário ou senha incorretos"));
 
         string token = GeraToken(localizado, 24);
@@ -45,16 +46,17 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
         {
             token,
             localizado.Nome,
-            localizado.Email
+            localizado.Email,
+            localizado.Administrador
         });
+        //return Ok();
     }
 
 
     [HttpGet("[action]")]
-    [Authorize(Roles ="user")]
+    [Authorize(Roles = "admin")]
     public IActionResult Lista()
     {
-        var teste = this.User.IsInRole("admin");
         return Ok(_db.SegUsuario.ToList());
     }
 
@@ -87,9 +89,9 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
 
     public record UsrLogin
     {
-        public string Email { get; set; } = string.Empty;
+        public string email { get; set; } = string.Empty;
 
-        public string Senha { get; set; } = string.Empty;
+        public string senha { get; set; } = string.Empty;
     }
 
     private string GeraToken(Model.Seg.Usuario usuario, int validadeHoras)

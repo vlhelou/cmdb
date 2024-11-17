@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as util from '../app/util';
+import * as util from 'src/app/util';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable, finalize } from 'rxjs';
 

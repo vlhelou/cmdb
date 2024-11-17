@@ -12,7 +12,7 @@ const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
-const pathUrl = environment.root + 'api/seg/login/';
+const pathUrl = environment.root + '/api/seg/usuario/';
 
 @Injectable({
     providedIn: 'root'
@@ -27,7 +27,6 @@ export class SegUsuarioService {
     }
 
     public get currentUserValue(): segUsuario|Nullable {
-        console.log('servide currente value')
         return this.currentUserSubject.value;
     }
 
