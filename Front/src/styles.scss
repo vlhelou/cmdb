@@ -1,6 +1,6 @@
 @import "../node_modules/bootstrap/scss/bootstrap";
 @import "@fortawesome/fontawesome-free/css/all.css";
-// @import "node_modules/primeicons/primeicons.css";
+@import "node_modules/primeicons/primeicons.css";
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 // @import "node_modules/quill/dist/quill.core.css";
@@ -95,4 +95,29 @@ body {
   margin-top: 20%;
   // padding: 20px;
   width: 80%; /* Could be more or less, depending on screen size */
+}
+
+#dvErro {
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba($color: #000000, $alpha: 0.4);
+
+  p {
+    text-align: center;
+    margin: 15% auto;
+    background-color: #ffffff;
+    width: 25%;
+    height: auto;
+    border-radius: 0.3rem;
+    padding: 1rem;
+    color: red;
+  }
+
+  i {
+    margin: 2%;
+  }
 }

@@ -37,9 +37,9 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
     {
         var localizado = _db.SegUsuario.FirstOrDefault(x => x.Email.ToLower() == item.email.ToLower());
         if (localizado == null)
-            return Unauthorized(new MensagemErro("usuario não localizado"));
+            return BadRequest(new MensagemErro("usuario não localizado"));
         if (localizado.Senha != (localizado.Id.ToString() + item.senha).ToSha512())
-            return Unauthorized(new MensagemErro("usuário ou senha incorretos"));
+            return BadRequest(new MensagemErro("usuário ou senha incorretos"));
 
         string token = GeraToken(localizado, 24);
         return Ok(new

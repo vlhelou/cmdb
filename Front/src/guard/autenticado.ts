@@ -8,14 +8,15 @@ export const autenticadoGuard: CanActivateFn = (route, state) => {
     srv = inject(SegUsuarioService);
 
     const currentUser = srv.currentUserValue;
-    console.log(currentUser);
+    const teste = srv.usuarioAtual();
 
-    if (!currentUser) {
-        inject(Router).navigate(['/publico'], {
-            queryParams: { returnUrl: state.url },
-        });
-        return false;
-    } else {
+    if (currentUser) {
         return true;
     }
+
+    inject(Router).navigate(['/publico'], {
+        queryParams: { returnUrl: state.url },
+    });
+    return false;
+
 };

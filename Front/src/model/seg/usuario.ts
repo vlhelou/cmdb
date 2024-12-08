@@ -3,12 +3,12 @@
 
 
 export interface segUsuario {
-    Id: number;
-    Nome: string;
-    Email: string;
-    Senha: string;
-    Administrador: string;
-    Ativo: string;
+    id: number;
+    nome: string;
+    email: string;
+    senha: string;
+    administrador: boolean;
+    ativo: string;
     token: string;
 
     // Locacoes: SegEquipe[];

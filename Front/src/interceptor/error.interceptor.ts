@@ -15,7 +15,6 @@ export class ErrorInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
         return next.handle(request).pipe(catchError(err => {
-            console.log(err);
             if (err.status === 401 || err.status === 403) {
                 this.router.navigate(['/home', { queryParams: { acesso: 'negado' } }]);
                 // auto logout if 401 response returned from api
@@ -23,14 +22,10 @@ export class ErrorInterceptor implements HttpInterceptor {
                 // location.reload();
             }
             else if ((err.status >= 500 && err.status <= 599) || err.status === 400) {
-                // console.log(err.error.mensagem);
-
-
                 const eleErro = document.getElementById('dvErro')
                 if (eleErro){
 
                     if (eleErro.style && eleErro.style.display ){
-
                         eleErro.style.display = '';
                     }
                     eleErro.innerHTML = `<p><i class="pi pi-exclamation-triangle"></i>${err.error.mensagem}</p>`
