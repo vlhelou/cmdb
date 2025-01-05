@@ -21,7 +21,7 @@
     "@fortawesome/fontawesome-free": "^6.6.0",
     "bootstrap": "^5.3.3",
     "primeicons": "^7.0.0",
-    "primeng": "^17.18.11",
+    "primeng": "^19.0.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
