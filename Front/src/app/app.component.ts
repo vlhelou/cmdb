@@ -15,10 +15,10 @@ export class AppComponent {
 
 
     constructor(private srv: SegUsuarioService) {
-        this.srv.currentUser.subscribe({
-            next: (data) => {
-                console.log(data);
-            }
-        });
+    //     this.srv.currentUser.subscribe({
+    //         next: (data) => {
+    //             console.log(data);
+    //         }
+    //     });
     }
 }
