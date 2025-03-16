@@ -121,3 +121,13 @@ body {
     margin: 2%;
   }
 }
+
+::ng-deep :root .p-menubar .p-component .p-menubar-mobile{
+  background-color: white!important;
+  color: yellow!important;
+  .p-menubar-button{
+      background-color: yellowgreen!important;
+  }
+}
+
+// --p-menubar-background-color  #f8f9fa;
