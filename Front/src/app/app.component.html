@@ -1,7 +1,14 @@
 <header style="height: 45px;">
     <nav class="navbar-expand-md navbar-dark fixed-top bg-ligh">
-        <p-menubar [model]="items"  >
-
+        <p-menubar [model]="items">
+            <ng-template #start>
+                <a routerLink="/home" class="navbar-brand">
+                    <img src="assets/cmdb-fundo-transparente_branco.png" height="40" />
+                </a>
+            </ng-template>
+            <ng-template #end>
+                <a href="">sair</a>
+            </ng-template>
         </p-menubar>
         <!-- <p-toolbar [style]="{'background-color':'white', 'color':'black'}">
             <ng-template pTemplate="start">
