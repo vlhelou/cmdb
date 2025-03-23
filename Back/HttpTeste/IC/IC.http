@@ -1,0 +1,18 @@
+@host = http://localhost:5000
+@token =Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJub21lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbUBjbWRiLmNvbS5iciIsInJvbGUiOiJhZG1pbiIsIm5iZiI6MTc0Mjc2NjM5OSwiZXhwIjoxNzQyODUyNzk5LCJpYXQiOjE3NDI3NjYzOTl9.kvi94VkLNbKp83uExgW0oknoZeI-coacPvC8TFwJXlE
+
+
+###
+POST {{host}}/Api/IC/IC/Pesquisa
+Accept: application/json
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "Chave": "teste",
+  "Ativo": true,
+  "FilhoDe": "filho",
+  "Tipo": 15
+}
+
+

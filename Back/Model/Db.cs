@@ -18,7 +18,9 @@ public class Db(DbContextOptions<Db> options) : DbContext(options)
     public DbSet<Model.Corp.Tipo> CorpTipo { get; set; }
 
     //ic
-    public DbSet<Model.IC.IC> Ic { get; set; }
+    public DbSet<Model.IC.IC> IcIc { get; set; }
+    public DbSet<Model.IC.ICPropriedade> IcPropriedade { get; set; }
+    public DbSet<Model.IC.VwIc> IcVwIc { get; set; }
 
 
 }
