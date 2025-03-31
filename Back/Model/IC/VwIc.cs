@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NpgsqlTypes;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Cmdb.Model.IC;
 
@@ -33,6 +35,10 @@ public record VwIc
 
     [Column("nivel")]
     public int Nivel { get; set; }
+
+    [Column("pesquisats")]
+    [JsonIgnore]
+    public NpgsqlTsVector? PesquisaTS { get; set; } 
 
     public ICollection<int> LstAncestrais
     {

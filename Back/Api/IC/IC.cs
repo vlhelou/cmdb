@@ -1,10 +1,5 @@
-﻿using Cmdb.Model;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Text.Json;
 
 namespace Cmdb.Api.IC;
 
@@ -66,10 +61,30 @@ public class IC : ControllerBase
     [HttpPost("[action]")]
     public IActionResult Pesquisa([FromBody] PesquisaIC prm)
     {
-        var consulta = _db.IcVwIc.AsNoTracking().AsQueryable();
+        var nomes = string.Join(" or ", prm.Chave.Split(' '));
 
-
-        consulta = consulta.Where(p => p.Nome.ToLower().StartsWith(prm.Chave.ToLower()));
+        var consulta = _db.IcVwIc.FromSql($"""
+            select 
+            	id
+            	, idpai
+            	, nome
+            	, ativo
+            	, ativofinal
+            	, propriedades
+            	, idtipo
+            	, idorganograma
+            	, nomecompleto
+            	, listaancestrais
+            	, pesquisats
+            	, nivel
+            	, ts_rank(pesquisats , websearch_to_tsquery({nomes})) rank
+            from ic.vw_ic
+            where pesquisats @@ websearch_to_tsquery({nomes})
+            order by rank desc
+                                    
+            """)
+            .AsNoTracking()
+            .AsQueryable();
 
         if (prm.Ativo != null)
             consulta = consulta.Where(p => p.AtivoFinal == prm.Ativo);

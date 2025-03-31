@@ -1,5 +1,5 @@
 @host = http://localhost:5000
-@token =Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJub21lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbUBjbWRiLmNvbS5iciIsInJvbGUiOiJhZG1pbiIsIm5iZiI6MTc0Mjc2NjM5OSwiZXhwIjoxNzQyODUyNzk5LCJpYXQiOjE3NDI3NjYzOTl9.kvi94VkLNbKp83uExgW0oknoZeI-coacPvC8TFwJXlE
+@token =Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJub21lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbUBjbWRiLmNvbS5iciIsInJvbGUiOiJhZG1pbiIsIm5iZiI6MTc0MzQ1Njk1MCwiZXhwIjoxNzQzNTQzMzUwLCJpYXQiOjE3NDM0NTY5NTB9.Ei6sm06XwII2MO3SreKbjFb2x0kSHwTLt2B06gFEoBA
 
 
 ###
@@ -9,10 +9,10 @@ Authorization: {{token}}
 Content-Type: application/json
 
 {
-  "Chave": "teste",
+  "Chave": "nome teste",
   "Ativo": true,
-  "FilhoDe": "filho",
-  "Tipo": 15
+  "FilhoDe": null,
+  "Tipo": 1
 }
 
 
