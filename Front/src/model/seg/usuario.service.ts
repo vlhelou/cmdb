@@ -22,7 +22,6 @@ export class segUsuarioService {
 
     constructor(private http: HttpClient) {
         const strLocal = localStorage.getItem('currentUser');
-        console.log(strLocal);
         if (strLocal) {
             this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(strLocal));
         } else {
@@ -32,13 +31,9 @@ export class segUsuarioService {
     }
 
     public get currentUserValue(): segUsuario | Nullable {
-        console.log('entrei no currentUserValue', this.currentUserSubject.value);
         return this.currentUserSubject.value;
     }
 
-    public teste(): string {
-        return 'alguma coisa';
-    }
     public usuarioAtual() {
         return this.currentUserSubject.value;
     }

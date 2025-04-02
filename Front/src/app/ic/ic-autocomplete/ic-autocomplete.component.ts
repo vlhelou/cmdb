@@ -27,7 +27,7 @@ export class IcAutocompleteComponent implements ControlValueAccessor {
   ativo = input<boolean | undefined>();
   filhoDe = input<string | undefined>();
   idTipo = input<number | undefined>();
-
+  alterado = output<any | undefined>();
 
   private onChange: any = () => {}
   private onTouched: any = () => {}
@@ -35,11 +35,20 @@ export class IcAutocompleteComponent implements ControlValueAccessor {
   constructor(private srv: IcService) { }
 
   onSelect(event: any) {
+    this.value = event.value;
+    this.onChange(event.value);
+    this.onTouched();
+    this.alterado.emit(event.value);
     
   }
 
   onUnselect(event: any) {
-    this.writeValue(null);
+    if (this.value==null){
+      this.value = null;
+      this.onChange(null);
+    }
+    this.alterado.emit(this.value);
+    this.onTouched();
   }
 
   writeValue(value: any): void {
@@ -62,8 +71,6 @@ export class IcAutocompleteComponent implements ControlValueAccessor {
       ativo: this.ativo() ? this.ativo() : null,
       filhoDe: this.filhoDe() ? this.filhoDe() : null
     };
-    console.log(event.query);
-    console.log(prm);
     this.srv.Pesquisa(prm).subscribe({
       next: (data) => {
         this.lista.set(data);

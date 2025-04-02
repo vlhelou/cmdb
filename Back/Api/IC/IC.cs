@@ -137,6 +137,44 @@ public class IC : ControllerBase
         //    .ToList();
     }
 
+
+    [HttpGet("[action]")]
+    public IActionResult ListaCompleta()
+    {
+        List<Model.IC.VwIc> final = new();
+        var lista = _db.IcVwIc.AsNoTracking().OrderBy(p => p.Nivel).ThenBy(p => p.Nome).ToList();
+        var retorno = lista.Where(p => p.IdPai == null).FirstOrDefault();
+        if (retorno == null)
+        {
+            return BadRequest(new MensagemErro("Não há elemento root"));
+        }
+        PopulaFilhosMenu(ref retorno, ref lista);
+        return Ok(retorno);
+    }
+
+    private void PopulaFilhosMenu(ref Model.IC.VwIc item, ref List<Model.IC.VwIc> lista)
+    {
+        int idPai = item.Id;
+        var filho = lista
+            .Where(p => p.IdPai == idPai)
+            .OrderBy(p => p.Nivel).ThenBy(p => p.Nome)
+            .FirstOrDefault();
+        if (filho != null)
+        {
+            item.Filhos = new List<Model.IC.VwIc>();
+            while (filho != null)
+            {
+                item.Filhos.Add(filho);
+                lista.Remove(filho);
+                PopulaFilhosMenu(ref filho, ref lista);
+                filho = lista
+                    .Where(p => p.IdPai == idPai)
+                    .OrderBy(p => p.Nivel).ThenBy(p => p.Nome)
+                    .FirstOrDefault();
+            }
+        }
+    }
+
     public record PesquisaIC(string Chave, bool? Ativo, string? FilhoDe, int? Tipo);
 
 }

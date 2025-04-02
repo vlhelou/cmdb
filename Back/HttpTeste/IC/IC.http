@@ -1,5 +1,5 @@
 @host = http://localhost:5000
-@token =Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJub21lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbUBjbWRiLmNvbS5iciIsInJvbGUiOiJhZG1pbiIsIm5iZiI6MTc0MzQ1Njk1MCwiZXhwIjoxNzQzNTQzMzUwLCJpYXQiOjE3NDM0NTY5NTB9.Ei6sm06XwII2MO3SreKbjFb2x0kSHwTLt2B06gFEoBA
+@token =Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJub21lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbUBjbWRiLmNvbS5iciIsInJvbGUiOiJhZG1pbiIsIm5iZiI6MTc0MzYzNDg1NywiZXhwIjoxNzQzNzIxMjU3LCJpYXQiOjE3NDM2MzQ4NTd9.qrWw2woONLudtK2j7MZihJe4G3JoO6Pf0Hf5Fg9HSvs
 
 
 ###
@@ -7,7 +7,6 @@ POST {{host}}/Api/IC/IC/Pesquisa
 Accept: application/json
 Authorization: {{token}}
 Content-Type: application/json
-
 {
   "Chave": "nome teste",
   "Ativo": true,
@@ -15,4 +14,9 @@ Content-Type: application/json
   "Tipo": 1
 }
 
+
+###
+GET {{host}}/Api/IC/IC/ListaCompleta
+Accept: application/json
+Authorization: {{token}}
 

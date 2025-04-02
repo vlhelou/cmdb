@@ -40,7 +40,6 @@ export class IcService {
 
   Pesquisa(prm: any): Observable<icIc[]> {
     const url = pathUrl + `Pesquisa`;
-    console.log(url)
     return this.http.post<icIc[]>(url, prm, httpOptions);
   }
 
