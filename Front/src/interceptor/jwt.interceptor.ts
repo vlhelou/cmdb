@@ -1,45 +1,41 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-} from '@angular/common/http';
+import { HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
+import { Inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SegurancaService } from 'src/model/seguranca.service';
+import { segUsuarioService } from 'src/model/seg/usuario.service';
 
-// import { UsuarioService } from 'src/app/model/usuario/usuario.service';
+
+export function jwtInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
+  const usuarioService = Inject(segUsuarioService);
+  const usuario = usuarioService.usuarioAtual();
+  console.log('usuario', usuario);
+  console.log(req.url);
+  return next(req);
+}
+
+// export function jwtInterceptor(req: any, next: any) {
+//   const usuarioService = Inject(segUsuarioService);
+//   const usuario = usuarioService.usuarioAtual();
+//   console.log('usuario', usuario);
+//   if (usuario && usuario.token) {
+//     req = req.clone({
+//       setHeaders: {
+//         Authorization: `Bearer ${usuario.token}`
+//       }
+//     });
+//   }
+//   return next(req);
+// }
 
 // export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
-//     const usuarioService = inject(UsuarioService);
-//     const usuario = usuarioService.autenticadoValue;
-//     if (usuario && usuario.token) {
-//         req = req.clone({
-//             setHeaders: {
-//                 Authorization: `Bearer ${usuario.token}`
-//             }
-//         });
-//     }
-//     return next(req);
+//   const usuarioService = Inject(segUsuarioService);
+//   const usuario = usuarioService.usuarioAtual();
+//   console.log('usuario', usuario);
+//   if (usuario && usuario.token) {
+//     req = req.clone({
+//       setHeaders: {
+//         Authorization: `Bearer ${usuario.token}`
+//       }
+//     });
+//   }
+//   return next(req);
 // };
-
-@Injectable()
-export class jwtInterceptor implements HttpInterceptor {
-  constructor(private srv: SegurancaService) {}
-
-  intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    // add authorization header with jwt token if available
-    const currentUser = this.srv.currentUserValue;
-    if (currentUser && currentUser.token) {
-        request = request.clone({
-            setHeaders: {
-                Authorization: `Bearer ${currentUser.token}`
-            }
-        });
-    }
-    return next.handle(request);
-  }
-}

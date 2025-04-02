@@ -16,12 +16,13 @@ const pathUrl = environment.root + '/api/seg/usuario/';
 @Injectable({
     providedIn: 'root'
 })
-export class SegUsuarioService {
-    private currentUserSubject: BehaviorSubject<any> ;
+export class segUsuarioService {
+    private currentUserSubject: BehaviorSubject<any>;
     public currentUser: Observable<any>;
 
     constructor(private http: HttpClient) {
         const strLocal = localStorage.getItem('currentUser');
+        console.log(strLocal);
         if (strLocal) {
             this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(strLocal));
         } else {
@@ -30,11 +31,15 @@ export class SegUsuarioService {
         this.currentUser = this.currentUserSubject.asObservable();
     }
 
-    public get currentUserValue(): segUsuario|Nullable {
+    public get currentUserValue(): segUsuario | Nullable {
+        console.log('entrei no currentUserValue', this.currentUserSubject.value);
         return this.currentUserSubject.value;
     }
 
-    public usuarioAtual(){
+    public teste(): string {
+        return 'alguma coisa';
+    }
+    public usuarioAtual() {
         return this.currentUserSubject.value;
     }
 

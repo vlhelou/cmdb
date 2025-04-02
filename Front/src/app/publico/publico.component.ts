@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
-import { SegUsuarioService } from 'src/model/seg/usuario.service'
+import { segUsuarioService } from 'src/model/seg/usuario.service'
 
 
 @Component({
@@ -22,7 +22,7 @@ export class PublicoComponent {
 
 
     constructor(
-        private srv: SegUsuarioService,
+        private srv: segUsuarioService,
         private router: Router,
         private route: ActivatedRoute,
     ) { }

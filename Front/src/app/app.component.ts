@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ToolbarModule } from 'primeng/toolbar';
-import { SegUsuarioService } from 'src/model/seg/usuario.service';
+import { segUsuarioService } from 'src/model/seg/usuario.service';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
 
@@ -16,10 +16,9 @@ export class AppComponent implements OnInit {
 
     items: MenuItem[] | undefined;
 
-    constructor(private srv: SegUsuarioService) {
+    constructor(private srv: segUsuarioService) {
             this.srv.currentUser.subscribe({
                 next: (data) => {
-                    console.log(data);
                 }
             });
     }

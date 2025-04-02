@@ -34,7 +34,6 @@ export class ErrorInterceptor implements HttpInterceptor {
                     }, 4000)
                 }
             }
-
             const error = err.error.message || err.statusText;
             throw error;
         }));
