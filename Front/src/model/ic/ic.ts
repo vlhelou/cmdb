@@ -8,7 +8,7 @@ export interface icIc{
     nome: string;
     ativo: boolean;
     ativoFinal: boolean;
-    Propriedades: icPropriedades[];
+    propriedades: icPropriedades[];
     idTipo: number;
     idOrganograma: number;
     momeCompleto: string;
@@ -16,11 +16,11 @@ export interface icIc{
     nivel: number;
     lstAncestrais: number[];
  
-    Pai: icIc;
-    Filhos: icIc[];
-    Ancestrais: icIc[];
-    Tipo: corpTipo;
-    Responsavel: segOrganograma;
+    pai: icIc;
+    filhos: icIc[];
+    ancestrais: icIc[];
+    tipo: corpTipo;
+    responsavel: segOrganograma;
     // Conhecimentos: ICConhecimento[];
     // Segredos: ICSegredo[];
     // Dependentes: ICDependencia[];

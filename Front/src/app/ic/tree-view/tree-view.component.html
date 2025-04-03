@@ -1,1 +1,5 @@
-<p>tree-view works!</p>
+<p-tree [value]="nodes()" styleClass="w-full md:w-[30rem]" selectionMode="single" [(selection)]="icSelecionado" 
+(onNodeSelect)="itemSelecionado($event)" (onNodeUnselect)="itemSelecionado(null)"/>
+<!-- <pre *ngIf="icSelecionado">
+    {{icSelecionado|json}}
+</pre> -->

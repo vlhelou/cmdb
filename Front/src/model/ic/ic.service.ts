@@ -49,4 +49,9 @@ export class IcService {
   }
 
 
+  ListaCompleta(): Observable<icIc> {
+    const url = pathUrl + `ListaCompleta`;
+    return this.http.get<icIc>(url);
+  }
+
 }
