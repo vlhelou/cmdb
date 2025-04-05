@@ -1,41 +1,28 @@
-import { ElementRef, Injectable } from '@angular/core';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-import {
-    Observable,
-    throwError
-} from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError } from 'rxjs';
+import { segUsuarioService } from 'src/model/seg/usuario.service';
 
 
-@Injectable()
-export class ErrorInterceptor implements HttpInterceptor {
-    constructor( private router: Router) { }
 
-    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-        return next.handle(request).pipe(catchError(err => {
-            if (err.status === 401 || err.status === 403) {
-                this.router.navigate(['/home', { queryParams: { acesso: 'negado' } }]);
-                // auto logout if 401 response returned from api
-                // this.authService.Logout();
-                // location.reload();
-            }
-            else if ((err.status >= 500 && err.status <= 599) || err.status === 400) {
-                const eleErro = document.getElementById('dvErro')
-                if (eleErro){
 
-                    if (eleErro.style && eleErro.style.display ){
-                        eleErro.style.display = '';
-                    }
-                    eleErro.innerHTML = `<p><i class="pi pi-exclamation-triangle"></i>${err.error.mensagem}</p>`
-                    setTimeout(() => {
-                        eleErro.style.display = 'none';
-                    }, 4000)
-                }
-            }
-            const error = err.error.message || err.statusText;
-            throw error;
-        }));
-    }
-}
+export const errorInterceptor: HttpInterceptorFn = (req, next) => {
+  const srv=inject(segUsuarioService);
+  const router = inject(Router);
+  return next(req).pipe(
+    catchError(error => {
+      if (error.status === 401) {
+        console.log('401 - Unauthorized');
+        srv.Logout();
+        router.navigate(['/publico']);
+      } else if (error.status === 500) {
+        // Exibir uma mensagem de erro ao usuário
+      }
+      throw error;
+    })
+  );
+};
+
+

@@ -8,7 +8,7 @@ import { providePrimeNG } from 'primeng/config';
 import lara from '@primeng/themes/lara'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { spinnerInterceptor } from 'src/interceptor/spinner.interceptor';
-import { ErrorInterceptor } from 'src/interceptor/error.interceptor';
+import { errorInterceptor } from 'src/interceptor/error.interceptor';
 import { jwtInterceptor } from 'src/interceptor/jwt.interceptor';
 
 registerLocaleData(localePt);
@@ -17,7 +17,7 @@ export const appConfig: ApplicationConfig = {
     providers: [
         provideZoneChangeDetection({ eventCoalescing: true }),
         provideRouter(routes),
-        provideHttpClient(withInterceptors([jwtInterceptor, spinnerInterceptor])),
+        provideHttpClient(withInterceptors([jwtInterceptor, spinnerInterceptor, errorInterceptor])),
         importProvidersFrom([BrowserAnimationsModule]),
         { provide: LOCALE_ID, useValue: 'pt-BR' },
         providePrimeNG({

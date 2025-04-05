@@ -50,4 +50,9 @@ export class segUsuarioService {
             }));
     }
 
+    Logout() {
+        localStorage.removeItem('currentUser');
+        this.currentUserSubject.next(null);
+    }
+
 }
