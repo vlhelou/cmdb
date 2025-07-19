@@ -1,21 +1,21 @@
 @host = http://localhost:5000
-@token =Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJub21lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbUBjbWRiLmNvbS5iciIsInJvbGUiOiJhZG1pbiIsIm5iZiI6MTczMTg3NDQxOCwiZXhwIjoxNzMxOTYwODE4LCJpYXQiOjE3MzE4NzQ0MTh9.UwX_Abfo1G_n54P_dv8Joaa1ktJ0g_xtx6z2fFAvw7Y
+@token =Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJub21lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbUBjbWRiLmNvbS5iciIsInJvbGUiOiJhZG1pbiIsIm5iZiI6MTc1Mjk2NzYxNSwiZXhwIjoxNzUzMDU0MDE1LCJpYXQiOjE3NTI5Njc2MTV9.4CpDEyhcxanmP7KofuXzGXAg1EBmscAtjJ3Sxz0re-c
 
-###
+### novo
 POST {{host}}/Api/Seg/Usuario/Novo
 Accept: application/json
 Content-Type: application/json
 
 {
   "id": 0,
-  "nome": "admin",
-  "email": "user@cmdb.com.br",
+  "nome": "usr",
+  "email": "user1@cmdb.com.br",
   "administrador": false,
   "ativo": true,
   "senha": "123456"
 }
 
-###
+### login
 
 POST {{host}}/Api/Seg/Usuario/login
 Accept: application/json
@@ -26,7 +26,7 @@ Content-Type: application/json
   "senha": "123456"
 }
 
-###
+### lista
 GET {{host}}/Api/Seg/Usuario/Lista
 Authorization: {{token}}
 Accept: application/json

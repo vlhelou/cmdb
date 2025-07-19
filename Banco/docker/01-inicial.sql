@@ -1,3 +1,8 @@
+CREATE database cmdb;
+
+create user usrapp with password 'usrapp';
+
+\connect cmdb;
 --
 -- PostgreSQL database dump
 --
