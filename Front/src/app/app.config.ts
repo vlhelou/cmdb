@@ -5,7 +5,7 @@ import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
 import { routes } from './app.routes';
 import { providePrimeNG } from 'primeng/config';
-import lara from '@primeng/themes/lara'
+import Aura from '@primeuix/themes/aura'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { spinnerInterceptor } from 'src/interceptor/spinner.interceptor';
 import { errorInterceptor } from 'src/interceptor/error.interceptor';
@@ -22,7 +22,7 @@ export const appConfig: ApplicationConfig = {
         { provide: LOCALE_ID, useValue: 'pt-BR' },
         providePrimeNG({
             theme: {
-                preset: lara
+                preset: Aura
             }
         })
     ],

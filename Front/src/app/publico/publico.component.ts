@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { OverlayPanelModule } from 'primeng/overlaypanel';
+// import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { DialogModule } from 'primeng/dialog';
 import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { segUsuarioService } from 'src/model/seg/usuario.service'
 
@@ -8,7 +9,7 @@ import { segUsuarioService } from 'src/model/seg/usuario.service'
 @Component({
     selector: 'app-publico',
     standalone: true,
-    imports: [OverlayPanelModule, FormsModule, ReactiveFormsModule],
+    imports: [DialogModule , FormsModule, ReactiveFormsModule],
     templateUrl: './publico.component.html',
     styleUrl: './publico.component.scss'
 })

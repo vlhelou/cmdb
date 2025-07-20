@@ -1,6 +1,6 @@
 <div class="presentation-container">
     <h1>Bem-vindo ao CMDB
-        <button class="btn btn-primary float-end" (click)="op.toggle($event)">Login</button>
+        <button class="btn btn-primary float-end" >Login</button>
     </h1>
     <p>O CMDB (Configuration Management Database) é uma ferramenta poderosa para gerenciar e monitorar a infraestrutura
         de
@@ -13,7 +13,7 @@
     </ul>
 </div>
 
-<p-overlayPanel #op>
+<p-dialog>
     <form [formGroup]="formLogin" (ngSubmit)="login()">
         <div class="mb-3">
             <label for="exampleInputEmail1" class="form-label">Email</label>
@@ -25,4 +25,7 @@
         </div>
         <button type="submit" class="btn btn-primary">Acesso</button>
     </form>
-</p-overlayPanel>
+
+</p-dialog>
+<!-- <p-overlayPanel #op>
+</p-overlayPanel> -->
