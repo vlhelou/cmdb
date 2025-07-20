@@ -3,17 +3,62 @@
         <div class="card">
             <div class="card-header">
                 <label class="form-label">Nomde do IC</label>
-                <app-ic-autocomplete [(ngModel)]="teste" />
+                <app-ic-autocomplete [(ngModel)]="icAutocomplete" />
             </div>
             <div class="card-body">
-                <app-ic-tree-view></app-ic-tree-view>
+                <app-ic-tree-view [(ngModel)]="icTreeView"></app-ic-tree-view>
             </div>
-            <div class="card-footer">
+        </div>
+    </div>
+    <div class="col-8">
+        <div class="card">
+            <div class="card-header">
+                Formulário
+            </div>
+            <div class="card-body">
+
+                <p-tabs value="0" [scrollable]="true">
+                    <p-tablist>
+                        <p-tab value="0">Cadastro</p-tab>
+                        <p-tab value="1">Segredos</p-tab>
+                        <p-tab value="2">Dependências</p-tab>
+                        <p-tab value="3">Dependentes</p-tab>
+                        <p-tab value="4">Mudança de paternidade</p-tab>
+                        <p-tab value="5">Conhecimento</p-tab>
+                    </p-tablist>
+                    <p-tabpanels>
+                        <p-tabpanel value="0">
+                            <p class="m-0">
+                                cadastro
+                            </p>
+                        </p-tabpanel>
+                        <p-tabpanel value="1">
+                            <p class="m-0">
+                                Segredos </p>
+                        </p-tabpanel>
+                        <p-tabpanel value="2">
+                            <p class="m-0">
+                                Dependências </p>
+                        </p-tabpanel>
+                        <p-tabpanel value="3">
+                            <p class="m-0">
+                                Dependentes
+                            </p>
+                        </p-tabpanel>
+                        <p-tabpanel value="4">
+                            <p class="m-0">
+                                Mudança de paternidade
+                            </p>
+                        </p-tabpanel>
+                        <p-tabpanel value="5">
+                            <p class="m-0">
+                                Conhecimento
+                            </p>
+                        </p-tabpanel>
+                    </p-tabpanels>
+                </p-tabs>
 
             </div>
-                
         </div>
     </div>
 </div>
-
-

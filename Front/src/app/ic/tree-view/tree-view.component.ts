@@ -1,23 +1,44 @@
-import { Component, OnInit, signal, output } from '@angular/core';
+import { Component, OnInit, signal, output, forwardRef } from '@angular/core';
 // import { JsonPipe, NgIf } from '@angular/common';
 import { IcService } from 'src/model/ic/ic.service';
 import { icIc } from 'src/model/ic/ic';
 import { Nullable } from 'primeng/ts-helpers';
 import { TreeModule } from 'primeng/tree';
 import { TreeNode } from 'primeng/api';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-ic-tree-view',
   imports: [TreeModule],
   templateUrl: './tree-view.component.html',
-  styleUrl: './tree-view.component.scss'
+  styleUrl: './tree-view.component.scss',
+  providers:[
+        {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => IcTreeViewComponent),
+      multi: true
+    }
+
+  ]
 })
-export class IcTreeViewComponent implements OnInit {
+export class IcTreeViewComponent implements OnInit, ControlValueAccessor {
 
   ic: icIc | Nullable = null;
   nodes = signal<TreeNode[]>([]);
   icSelecionado: icIc | Nullable = null;
   selecionado = output<icIc | undefined>();
+
+  writeValue(value: icIc | Nullable): void {
+    this.ic = value;
+  }
+
+  registerOnChange(fn: (value: icIc | Nullable) => void): void {
+    this.selecionado.subscribe(fn);
+  }
+
+  registerOnTouched(fn: () => void): void {
+    // Implementar se necessário
+  }
   constructor(private srv: IcService) { }
 
   ngOnInit(): void {

@@ -27,7 +27,7 @@ export class IcAutocompleteComponent implements ControlValueAccessor {
   ativo = input<boolean | undefined>();
   filhoDe = input<string | undefined>();
   idTipo = input<number | undefined>();
-  alterado = output<any | undefined>();
+  selecionado = output<any | undefined>();
 
   private onChange: any = () => {}
   private onTouched: any = () => {}
@@ -38,7 +38,7 @@ export class IcAutocompleteComponent implements ControlValueAccessor {
     this.value = event.value;
     this.onChange(event.value);
     this.onTouched();
-    this.alterado.emit(event.value);
+    this.selecionado.emit(event.value);
     
   }
 
@@ -47,7 +47,7 @@ export class IcAutocompleteComponent implements ControlValueAccessor {
       this.value = null;
       this.onChange(null);
     }
-    this.alterado.emit(this.value);
+    this.selecionado.emit(this.value);
     this.onTouched();
   }
 
