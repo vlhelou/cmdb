@@ -1,6 +1,15 @@
 <form [formGroup]="frmIC" (ngSubmit)="grava()" novalidate>
 
-
+<div class="row">
+    <div class="col-6">
+        <label for="nome">Nome</label>
+        <input  pInputText  id="nome" formControlName="nome" placeholder="Nome do IC">
+    </div>
+    <div class="col-6">
+        <label for="sigla">Tipo</label>
+        <p-select [options]="tipos()" formControlName="idTipo" optionLabel="nome" optionValue="id" placeholder="Selecione um Tipo"  />
+    </div>
+</div>
 
 
 

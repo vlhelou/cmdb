@@ -9,12 +9,12 @@ import { segUsuarioService } from 'src/model/seg/usuario.service'
 @Component({
     selector: 'app-publico',
     standalone: true,
-    imports: [DialogModule , FormsModule, ReactiveFormsModule],
+    imports: [DialogModule, FormsModule, ReactiveFormsModule],
     templateUrl: './publico.component.html',
     styleUrl: './publico.component.scss'
 })
 export class PublicoComponent {
-
+    showLogin = false;
     formLogin = new FormGroup({
         email: new FormControl<string>('adm@cmdb.com.br', [Validators.required]),
         senha: new FormControl<string>('123456', [Validators.required]),
