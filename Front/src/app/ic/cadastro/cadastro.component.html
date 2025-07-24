@@ -1,17 +1,32 @@
 <form [formGroup]="frmIC" (ngSubmit)="grava()" novalidate>
 
-<div class="row">
-    <div class="col-6">
-        <label for="nome">Nome</label>
-        <input  pInputText  id="nome" formControlName="nome" placeholder="Nome do IC">
+    <div class="row">
+        <div class="col-6">
+            <label for="nome">Nome</label>
+            <input pInputText id="nome" formControlName="nome" placeholder="Nome do IC">
+        </div>
+        <div class="col-6">
+            <label for="sigla">Tipo</label>
+            <p-select [options]="tipos()" formControlName="idTipo" optionLabel="nome" optionValue="id"
+                placeholder="Selecione um Tipo" />
+        </div>
+        <div class="col">
+            <div class="mt-2">
+                <p-checkbox inputId="chativo" name="chativo"  formControlName="ativo" [binary]="true"/>
+                <label for="chativo" class="ml-2">Ativo</label>
+            </div>
+            <div class="mt-2">
+                <p-checkbox inputId="chativoFinal" name="chativoFinal"  formControlName="ativoFinal" [binary]="true"/>
+                <label for="chativoFinal" class="ml-2">Ativo Final</label>
+            </div>
+            <div class="mt-2">
+                <p-checkbox inputId="chativoPai" name="chativoPai"  formControlName="ativoPai" [binary]="true"/>
+                <label for="chativoPai" class="ml-2">Ativo Pai</label>
+            </div>
+        </div>
     </div>
-    <div class="col-6">
-        <label for="sigla">Tipo</label>
-        <p-select [options]="tipos()" formControlName="idTipo" optionLabel="nome" optionValue="id" placeholder="Selecione um Tipo"  />
-    </div>
-</div>
 
 
 
-    
+
 </form>

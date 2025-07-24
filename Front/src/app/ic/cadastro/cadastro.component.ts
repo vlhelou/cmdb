@@ -8,10 +8,11 @@ import { IcService } from 'src/model/ic/ic.service'
 import { icIc } from 'src/model/ic/ic';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-ic-cadastro',
-  imports: [FormsModule, ReactiveFormsModule, SelectModule,InputTextModule],
+  imports: [FormsModule, ReactiveFormsModule, SelectModule,InputTextModule, CheckboxModule],
   templateUrl: './cadastro.component.html',
   styleUrl: './cadastro.component.scss',
   providers: [ConfirmationService, MessageService]
@@ -26,6 +27,7 @@ export class CadastroComponent implements OnInit {
     nome: new FormControl<string>('', [Validators.required, Validators.minLength(2)]),
     ativo: new FormControl<boolean>(true),
     ativoFinal: new FormControl<boolean>({ value: true, disabled: true }),
+    ativoPai: new FormControl<boolean>({ value: true, disabled: true }),
     idTipo: new FormControl<number|null>(null, [Validators.required]),
     responsavel: new FormControl<string | null>(null),
     propriedades: new FormArray([])
