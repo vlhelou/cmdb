@@ -38,13 +38,13 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody >
+                <tbody formArrayName="propriedades">
                     @for(propiedadeIC of icPropriedades.controls; track $index; let i = $index){
                     <tr [formGroupName]="i">
-                        <td><input formControlName="nome" /></td>
-                        <td><input formControlName="valor" /></td>
+                        <td><input class="form-control" formControlName="nome" /> </td>
+                        <td><input class="form-control" formControlName="valor" /></td>
                         <td>
-                            <button type="button" >Remover</button>
+                            <a href="javascript:void(0)" (click)="propriedadeRemove(i)"><i class="pi pi-trash"></i></a>
                         </td>
                     </tr>
                     }

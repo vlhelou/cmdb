@@ -61,9 +61,12 @@ export class CadastroComponent implements OnInit {
       nome: new FormControl<string>('', [Validators.required]),
       valor: new FormControl<string>('', [Validators.required])
     });
-
     this.icPropriedades.push(propriedade);
+    return propriedade;
+  }
 
+  propriedadeRemove(index: number) {
+    this.icPropriedades.removeAt(index);
   }
 
   grava() { }
