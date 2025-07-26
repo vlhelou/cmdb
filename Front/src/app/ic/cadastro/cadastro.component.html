@@ -10,23 +10,52 @@
             <p-select [options]="tipos()" formControlName="idTipo" optionLabel="nome" optionValue="id"
                 placeholder="Selecione um Tipo" />
         </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-4">
+            <p-checkbox inputId="chativo" name="chativo" formControlName="ativo" [binary]="true" />
+            <label for="chativo" class="ml-2">Ativo</label>
+        </div>
+        <div class="col-4">
+            <p-checkbox inputId="chativoFinal" name="chativoFinal" formControlName="ativoFinal" [binary]="true" />
+            <label for="chativoFinal" class="ml-2">Ativo Final</label>
+
+        </div>
+        <div class="col-4">
+            <p-checkbox inputId="chativoPai" name="chativoPai" formControlName="ativoPai" [binary]="true" />
+            <label for="chativoPai" class="ml-2">Ativo Pai</label>
+        </div>
+    </div>
+    <div class="row mt-2 ">
         <div class="col">
-            <div class="mt-2">
-                <p-checkbox inputId="chativo" name="chativo"  formControlName="ativo" [binary]="true"/>
-                <label for="chativo" class="ml-2">Ativo</label>
-            </div>
-            <div class="mt-2">
-                <p-checkbox inputId="chativoFinal" name="chativoFinal"  formControlName="ativoFinal" [binary]="true"/>
-                <label for="chativoFinal" class="ml-2">Ativo Final</label>
-            </div>
-            <div class="mt-2">
-                <p-checkbox inputId="chativoPai" name="chativoPai"  formControlName="ativoPai" [binary]="true"/>
-                <label for="chativoPai" class="ml-2">Ativo Pai</label>
-            </div>
+            <table class="table table-striped table-bordered caption-top">
+                <caption><button type="button" class="btn btn-primary" (click)="propriedadeNova()">Novo</button>
+                </caption>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Valor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody >
+                    @for(propiedadeIC of icPropriedades.controls; track $index; let i = $index){
+                    <tr [formGroupName]="i">
+                        <td><input formControlName="nome" /></td>
+                        <td><input formControlName="valor" /></td>
+                        <td>
+                            <button type="button" >Remover</button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+
+            </table>
         </div>
     </div>
 
-
-
-
 </form>
+
+@if(frmIC.value){
+<pre>{{ frmIC.value | json }}</pre>
+}

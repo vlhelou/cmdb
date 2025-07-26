@@ -7,4 +7,9 @@ namespace Cmdb.Api.Seg;
 [ApiController]
 public class Organograma : ControllerBase
 {
+    private readonly Model.Db _db;
+    public Organograma(Model.Db db)
+    {
+        _db = db;
+    }
 }
