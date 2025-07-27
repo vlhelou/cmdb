@@ -28,34 +28,45 @@
     </div>
     <div class="row mt-2 ">
         <div class="col">
-            <table class="table table-striped table-bordered caption-top">
-                <caption><button type="button" class="btn btn-primary" (click)="propriedadeNova()">Novo</button>
-                </caption>
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Valor</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody formArrayName="propriedades">
-                    @for(propiedadeIC of icPropriedades.controls; track $index; let i = $index){
-                    <tr [formGroupName]="i">
-                        <td><input class="form-control" formControlName="nome" /> </td>
-                        <td><input class="form-control" formControlName="valor" /></td>
-                        <td>
-                            <a href="javascript:void(0)" (click)="propriedadeRemove(i)"><i class="pi pi-trash"></i></a>
-                        </td>
-                    </tr>
-                    }
-                </tbody>
+            <div class="card">
+                <div class="card-header">
+                    Propriedades
+                    <a href="javascript:void(0)" (click)="propriedadeNova()" class="float-end"><i class="pi pi-plus"></i></a>
+                </div>
+                <div class="card-body">
 
-            </table>
+                    <table class="table table-striped table-bordered caption-top">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Valor</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="propriedades">
+                            @for(propiedadeIC of icPropriedades.controls; track $index; let i = $index){
+                            <tr [formGroupName]="i">
+                                <td><input class="form-control" formControlName="nome" /> </td>
+                                <td><input class="form-control" formControlName="valor" /></td>
+                                <td>
+                                    <a href="javascript:void(0)" (click)="propriedadeRemove(i)"><i
+                                            class="pi pi-trash text-danger"></i></a>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-
+    <div class="row mt-2">
+        <div class="col-12 text-end">
+            <button type="submit" class="btn btn-primary" [disabled]="frmIC.invalid"><i class="pi pi-save"></i></button>
+        </div>
+    </div>
 </form>
 
-@if(frmIC.value){
+<!-- @if(frmIC.value){
 <pre>{{ frmIC.value | json }}</pre>
-}
+} -->

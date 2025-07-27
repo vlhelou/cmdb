@@ -102,8 +102,8 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
         ClaimsIdentity claim = new ClaimsIdentity(new Claim[]
         {
             new Claim("id",usuario.Id.ToString()),
-            new Claim("nome",usuario.Nome),
-            new Claim("email",usuario.Email),
+            new Claim(ClaimTypes.Name,usuario.Nome),
+            new Claim(ClaimTypes.Email,usuario.Email),
             new Claim(ClaimTypes.Role,role)
         });
         var tokenDescriptor = new SecurityTokenDescriptor

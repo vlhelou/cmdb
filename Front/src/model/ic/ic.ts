@@ -8,6 +8,7 @@ export interface icIc{
     nome: string;
     ativo: boolean;
     ativoFinal: boolean;
+    ativoPai: boolean;
     propriedades: icPropriedades[];
     idTipo: number;
     idOrganograma: number;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Cmdb.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cmdb.Api.IC;
@@ -151,6 +152,54 @@ public class IC : ControllerBase
         PopulaFilhosMenu(ref retorno, ref lista);
         return Ok(retorno);
     }
+
+    [HttpPost("[action]")]
+    public IActionResult Grava([FromBody] Model.IC.IC item)
+    {
+        if (item == null)
+            return BadRequest(new MensagemErro("Parâmetro não informado"));
+
+        int IdLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
+
+
+        if (item.IdPai is null)
+            return BadRequest(new MensagemErro("O Item Raiz não pode ser alterado"));
+
+        var Logado = _db.SegUsuario.Where(p => p.Id == IdLogado).AsNoTracking().FirstOrDefault();
+
+        if (Logado == null)
+            return BadRequest(new MensagemErro("Usuário inexistente"));
+
+        if (!Logado.Ativo)
+            return BadRequest(new MensagemErro("Usuário inativo"));
+
+        if (!Logado.Administrador)
+            return BadRequest(new MensagemErro("Usuário não tem permissão para alterar ICs"));
+
+
+        //List<int> MinhasLocacoes = Logado.Locacoes.Select(p => p.IdOrganograma).ToList();
+        //caso seja novo
+
+        if (item.Id == 0)
+        {
+            if (item.IdPai == null)
+                return BadRequest(new MensagemErro("Sem referencia de Pai"));
+
+            _db.Entry(item).State = EntityState.Added;
+            _db.SaveChanges();
+            return Ok(item);
+        } else
+        {
+            var localizado = _db.IcIc.Where(p => p.Id == item.Id).FirstOrDefault();
+            if (localizado == null)
+                return BadRequest(new MensagemErro("IC não localizado"));
+            localizado.Altera(item);
+            _db.SaveChanges();
+            return Ok(localizado);
+        }
+    }
+
+
 
     private void PopulaFilhosMenu(ref Model.IC.VwIc item, ref List<Model.IC.VwIc> lista)
     {

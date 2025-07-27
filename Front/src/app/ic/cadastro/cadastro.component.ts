@@ -1,6 +1,6 @@
-import { Component, OnInit, input, signal } from '@angular/core';
+import { Component, OnInit, effect, input, signal } from '@angular/core';
 import { FormGroup, Validators, FormArray, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { JsonPipe } from '@angular/common';
+// import { JsonPipe } from '@angular/common';
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
 import { TipoService } from 'src/model/corp/tipo.service'
@@ -10,10 +10,12 @@ import { icIc } from 'src/model/ic/ic';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ToastModule } from 'primeng/toast';
+
 
 @Component({
   selector: 'app-ic-cadastro',
-  imports: [FormsModule, ReactiveFormsModule, SelectModule, InputTextModule, CheckboxModule, JsonPipe],
+  imports: [FormsModule, ReactiveFormsModule, SelectModule, InputTextModule, CheckboxModule, ToastModule],
   templateUrl: './cadastro.component.html',
   styleUrl: './cadastro.component.scss',
   providers: [ConfirmationService, MessageService]
@@ -39,11 +41,38 @@ export class CadastroComponent implements OnInit {
     ]),
   });
 
-
-  constructor(private srv: IcService, private tipo: TipoService) { }
+  constructor(private srv: IcService, private tipo: TipoService, private messageService: MessageService) {
+    effect(() => {
+      if (this.ic()) {
+        this.frmIC.patchValue({
+          id: this.ic()?.id,
+          idPai: this.ic()?.idPai,
+          nome: this.ic()?.nome,
+          ativo: this.ic()?.ativo,
+          ativoFinal: this.ic()?.ativoFinal,
+          ativoPai: this.ic()?.ativoPai,
+          idTipo: this.ic()?.idTipo,
+          // responsavel: this.ic()?.responsavel,
+          propriedades: this.ic()?.propriedades ?? []
+        });
+      } else {
+        this.frmIC.reset({
+          id: 0,
+          idPai: null,
+          nome: '',
+          ativo: true,
+          ativoFinal: true,
+          ativoPai: true,
+          idTipo: null,
+          responsavel: null,
+          propriedades: []
+        });
+      }
+    });
+  }
 
   ngOnInit(): void {
-    this.icPropriedades.controls=[];
+    this.icPropriedades.controls = [];
     this.tipo.ListaAtivos('tipo').subscribe({
       next: (data) => {
         this.tipos.set(data);
@@ -69,6 +98,15 @@ export class CadastroComponent implements OnInit {
     this.icPropriedades.removeAt(index);
   }
 
-  grava() { }
+  grava() {
+    if (this.frmIC.valid) {
+      const icData = this.frmIC.value;
+      this.srv.Grava(icData).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'IC salvo com sucesso!' });
+        }
+      });
+    }
+  }
 
 }

@@ -33,7 +33,7 @@ export class IcService {
     return this.http.get<void>(url);
   }
 
-  Grava(item: icIc): Observable<icIc> {
+  Grava(item: any): Observable<icIc> {
     const url = pathUrl + `Grava`;
     return this.http.post<icIc>(url, item, httpOptions);
   }

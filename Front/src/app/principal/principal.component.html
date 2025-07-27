@@ -3,10 +3,10 @@
         <div class="card">
             <div class="card-header">
                 <label class="form-label">Nomde do IC</label>
-                <app-ic-autocomplete [(ngModel)]="icAutocomplete" />
+                <app-ic-autocomplete [(ngModel)]="icAutocomplete" (selecionado)="autoCompleteSelecionado($event)" />
             </div>
             <div class="card-body">
-                <app-ic-tree-view [(ngModel)]="icTreeView"></app-ic-tree-view>
+                <app-ic-tree-view [(ngModel)]="icTreeView" (selecionado)="autoCompleteSelecionado($event)" />
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@
                     <p-tabpanels>
                         <p-tabpanel value="0">
                             <p class="m-0">
-                                <app-ic-cadastro />
+                                <app-ic-cadastro [ic]="icSelecionado()" />
                             </p>
                         </p-tabpanel>
                         <p-tabpanel value="1">
