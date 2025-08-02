@@ -25,7 +25,7 @@ public record VwIc
     public bool AtivoFinal { get; set; }
 
     [Column("propriedades", TypeName = "jsonb")]
-    public IList<ICPropriedade>? Propriedades { get; set; }
+    public List<ICPropriedade>? Propriedades { get; set; }
 
     [Column("nomecompleto")]
     public string NomeCompleto { get; set; } = string.Empty;

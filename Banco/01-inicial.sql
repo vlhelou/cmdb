@@ -805,12 +805,13 @@ CREATE MATERIALIZED VIEW ic.vw_ic AS
             ic.nome,
             ic.ativo,
             ic.ativo AS ativofinal,
+            true AS ativopai,
             ic.propriedades,
             ic.idtipo,
             ic.idorganograma,
             concat('.', ic.nome) AS nomecompleto,
             ''::text AS listaancestrais,
-            to_tsvector('portuguese'::regconfig, concat('.', ic.nome)) AS pesquisats,
+            to_tsvector('portuguese'::regconfig, concat(' ', ic.nome, ' ', ic.propriedades)) AS pesquisats,
             0 AS nivel
            FROM ic.ic
           WHERE (ic.idpai IS NULL)
@@ -820,12 +821,13 @@ CREATE MATERIALIZED VIEW ic.vw_ic AS
             filho.nome,
             filho.ativo,
             (filho.ativo AND a.ativo) AS ativofinal,
+            a.ativo AS ativopai,
             filho.propriedades,
             filho.idtipo,
             COALESCE(filho.idorganograma, a.idorganograma) AS idorganograma,
             concat(a.nomecompleto, '.', filho.nome) AS nomecompleto,
             concat(a.listaancestrais, ',', a.id) AS listaancestrais,
-            to_tsvector('portuguese'::regconfig, concat(a.nomecompleto, '.', filho.nome)) AS pesquisats,
+            to_tsvector('portuguese'::regconfig, concat(a.nomecompleto, ' ', filho.nome, ' ', filho.propriedades)) AS pesquisats,
             (a.nivel + 1)
            FROM ic.ic filho,
             herdeiros a
@@ -836,6 +838,7 @@ CREATE MATERIALIZED VIEW ic.vw_ic AS
     nome,
     ativo,
     ativofinal,
+    ativopai,
     propriedades,
     idtipo,
     idorganograma,
@@ -1292,6 +1295,7 @@ COPY corp.parametro (id, nome, valor) FROM stdin;
 
 COPY corp.tipo (id, nome, grupo, ativo) FROM stdin;
 1	Outros	Tipo	t
+2	Servidor	Tipo	t
 \.
 
 
@@ -1481,7 +1485,7 @@ SELECT pg_catalog.setval('corp.parametro_id_seq', 1, false);
 -- Name: sqtipo; Type: SEQUENCE SET; Schema: corp; Owner: postgres
 --
 
-SELECT pg_catalog.setval('corp.sqtipo', 1, true);
+SELECT pg_catalog.setval('corp.sqtipo', 2, true);
 
 
 --
@@ -1842,7 +1846,7 @@ CREATE UNIQUE INDEX ix_corpparametro_nome ON corp.parametro USING btree (nome);
 -- Name: ix_corptiponomegrupo; Type: INDEX; Schema: corp; Owner: postgres
 --
 
-CREATE UNIQUE INDEX ix_corptiponomegrupo ON corp.tipo USING btree (grupo, nome);
+CREATE UNIQUE INDEX ix_corptiponomegrupo ON corp.tipo USING btree (lower((grupo)::text), lower((nome)::text));
 
 
 --

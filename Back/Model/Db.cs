@@ -6,9 +6,16 @@ public class Db(DbContextOptions<Db> options) : DbContext(options)
 {
  
     public static readonly ILoggerFactory MyLoggerFactory
-        = LoggerFactory.Create(builder => { builder.AddConsole(); });
+        = LoggerFactory.Create(builder => { 
+            builder.AddConsole(); 
+        });
     
     
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        
+    }
     //seg
     public DbSet<Model.Seg.Usuario> SegUsuario { get; set; }
     public DbSet<Model.Seg.Organograma> SegOrganograma { get; set; }

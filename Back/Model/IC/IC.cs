@@ -21,7 +21,7 @@ public record IC
     public bool Ativo { get; set; }
 
     [Column("propriedades", TypeName = "jsonb")]
-    public string? Propriedades { get; set; }
+    public List<ICPropriedade>? Propriedades { get; set; }
 
     [Column("idtipo")]
     public int IdTipo { get; set; }
@@ -50,35 +50,35 @@ public record IC
 
     }
 
-    [NotMapped]
-    public IList<ICPropriedade>? ListaPropriedades
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(this.Propriedades))
-                return null;
-            IList<ICPropriedade>? retorno = null;
-            try
-            {
-                retorno = JsonSerializer.Deserialize<IList<ICPropriedade>>(Propriedades);
-            }
-            catch (JsonException)
-            {
-                retorno = null;
-            }
-            return retorno;
-        }
-        set {
-            if (value == null || value.Count == 0)
-            {
-                this.Propriedades = null;
-            }
-            else
-            {
-                this.Propriedades = JsonSerializer.Serialize(value);
-            }
-        }
+    //[NotMapped]
+    //public IList<ICPropriedade>? ListaPropriedades
+    //{
+    //    get
+    //    {
+    //        if (string.IsNullOrEmpty(this.Propriedades))
+    //            return null;
+    //        IList<ICPropriedade>? retorno = null;
+    //        try
+    //        {
+    //            retorno = JsonSerializer.Deserialize<IList<ICPropriedade>>(Propriedades);
+    //        }
+    //        catch (JsonException)
+    //        {
+    //            retorno = null;
+    //        }
+    //        return retorno;
+    //    }
+    //    set {
+    //        if (value == null || value.Count == 0)
+    //        {
+    //            this.Propriedades = null;
+    //        }
+    //        else
+    //        {
+    //            this.Propriedades = JsonSerializer.Serialize(value);
+    //        }
+    //    }
 
-    }
+    //}
 
 }

@@ -53,8 +53,17 @@ export class CadastroComponent implements OnInit {
           ativoPai: this.ic()?.ativoPai,
           idTipo: this.ic()?.idTipo,
           // responsavel: this.ic()?.responsavel,
-          propriedades: this.ic()?.propriedades ?? []
         });
+        this.icPropriedades.clear();
+        this.ic()?.propriedades.forEach((prop) => {
+          this.icPropriedades.push(new FormGroup({
+            nome: new FormControl<string>(prop.nome, [Validators.required]),
+            valor: new FormControl<string>(prop.valor, [Validators.required])
+          }));
+        });
+
+
+        // console.log( this.frmIC.value);  
       } else {
         this.frmIC.reset({
           id: 0,

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +11,14 @@ builder.Services.AddControllers();
 
 
 var strcn = Environment.GetEnvironmentVariable("CMDB_DB") ?? "";
+
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(strcn);
+dataSourceBuilder.EnableDynamicJson();
+var dataSource = dataSourceBuilder.Build();
 builder.Services.AddDbContext<Cmdb.Model.Db>(opt =>
 {
-    opt.UseNpgsql(strcn, options =>
+
+    opt.UseNpgsql(dataSource, options =>
     {
         options.EnableRetryOnFailure();
     });
