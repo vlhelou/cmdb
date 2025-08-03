@@ -12,7 +12,7 @@ export interface icIc{
     propriedades: icPropriedades[];
     idTipo: number;
     idOrganograma: number;
-    momeCompleto: string;
+    nomeCompleto: string;
     listaAncestrais: string;
     nivel: number;
     lstAncestrais: number[];

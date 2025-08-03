@@ -12,19 +12,23 @@
     </div>
     <div class="col-8">
         <div class="card">
-            <div class="card-header">
-                Formulário
+            <div class="card-header text-success " style="font-weight: bold;">
+                {{ icSelecionado()?.nomeCompleto }}
             </div>
             <div class="card-body">
 
                 <p-tabs value="0" [scrollable]="true">
                     <p-tablist>
                         <p-tab value="0">Cadastro</p-tab>
-                        <p-tab value="1">Segredos</p-tab>
-                        <p-tab value="2">Dependências</p-tab>
-                        <p-tab value="3">Dependentes</p-tab>
-                        <p-tab value="4">Mudança de paternidade</p-tab>
-                        <p-tab value="5">Conhecimento</p-tab>
+                        @if (icSelecionado()){
+
+                        <p-tab value="1">Cria filho</p-tab>
+                        }
+                        <p-tab value="2">Segredos</p-tab>
+                        <p-tab value="3">Dependências</p-tab>
+                        <p-tab value="4">Dependentes</p-tab>
+                        <p-tab value="5">Mudança de paternidade</p-tab>
+                        <p-tab value="6">Conhecimento</p-tab>
                     </p-tablist>
                     <p-tabpanels>
                         <p-tabpanel value="0">
@@ -34,23 +38,28 @@
                         </p-tabpanel>
                         <p-tabpanel value="1">
                             <p class="m-0">
-                                Segredos </p>
+                                <app-ic-cadastro [novo]="true" [icPai]="icSelecionado()" />
+                            </p>
                         </p-tabpanel>
                         <p-tabpanel value="2">
                             <p class="m-0">
-                                Dependências </p>
+                                Segredos </p>
                         </p-tabpanel>
                         <p-tabpanel value="3">
+                            <p class="m-0">
+                                Dependências </p>
+                        </p-tabpanel>
+                        <p-tabpanel value="4">
                             <p class="m-0">
                                 Dependentes
                             </p>
                         </p-tabpanel>
-                        <p-tabpanel value="4">
+                        <p-tabpanel value="5">
                             <p class="m-0">
                                 Mudança de paternidade
                             </p>
                         </p-tabpanel>
-                        <p-tabpanel value="5">
+                        <p-tabpanel value="6">
                             <p class="m-0">
                                 Conhecimento
                             </p>

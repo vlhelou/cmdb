@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Cmdb.Api.Seg;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cmdb.Model.Seg;
@@ -24,5 +25,9 @@ public record Organograma
 
     [ForeignKey("IdPai")]
     public Organograma? Pai { get; set; }
+
+    [InverseProperty("Organograma")]
+    public ICollection<Equipe>? Equipe { get; set; }
+
 
 }

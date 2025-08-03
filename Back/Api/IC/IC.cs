@@ -1,6 +1,7 @@
 ﻿using Cmdb.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Cmdb.Api.IC;
 
@@ -188,7 +189,8 @@ public class IC : ControllerBase
             _db.Entry(item).State = EntityState.Added;
             _db.SaveChanges();
             return Ok(item);
-        } else
+        }
+        else
         {
             var localizado = _db.IcIc.Where(p => p.Id == item.Id).FirstOrDefault();
             if (localizado == null)
@@ -200,6 +202,20 @@ public class IC : ControllerBase
     }
 
 
+    [HttpGet("[action]/{id}")]
+    public IActionResult IcEditavel(int id)
+    {
+        bool retorno=false;
+        try
+        {
+            retorno = this.DetectaIcEditavel(id, this.User);
+        } catch(Exception ex)
+        {
+            return BadRequest(new MensagemErro(ex.Message));
+        }
+
+        return Ok(retorno);
+    }
 
     private void PopulaFilhosMenu(ref Model.IC.VwIc item, ref List<Model.IC.VwIc> lista)
     {
@@ -222,6 +238,27 @@ public class IC : ControllerBase
                     .FirstOrDefault();
             }
         }
+    }
+
+    private bool DetectaIcEditavel(int idIc, ClaimsPrincipal usuario)
+    {
+        if (usuario.IsInRole("admin"))
+            return true;
+
+        int IdLogado = Util.Claim2Usuario(usuario.Claims).Id;
+
+        var localizado = _db.IcVwIc.AsNoTracking().Include(p => p.Organograma).ThenInclude(p => p!.Equipe).FirstOrDefault(p => p.Id == idIc);
+        if (localizado is null)
+            throw new Exception("Ic não localizado");
+
+        if (localizado.Organograma is not null && localizado.Organograma.Equipe is not null)
+        {
+            if (localizado.Organograma.Equipe.Any(p => p.IdUsuario == IdLogado))
+                return true;
+        }
+
+
+        return false;
     }
 
     public record PesquisaIC(string Chave, bool? Ativo, string? FilhoDe, int? Tipo);

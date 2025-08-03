@@ -23,6 +23,8 @@ import { ToastModule } from 'primeng/toast';
 export class CadastroComponent implements OnInit {
 
   ic = input<icIc | undefined>();
+  icPai = input<icIc | undefined>();
+  novo = input<boolean | undefined>();
   tipos = signal<corpTipo[]>([]);
   frmIC = new FormGroup({
     id: new FormControl<number>(0),
@@ -110,11 +112,33 @@ export class CadastroComponent implements OnInit {
   grava() {
     if (this.frmIC.valid) {
       const icData = this.frmIC.value;
+      if (this.novo()) {
+        icData.idPai = this.icPai() ? this.icPai()?.id : null;
+      }
       this.srv.Grava(icData).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'IC salvo com sucesso!' });
+          if (this.novo()) {
+            this.frmIC.reset({
+              id: 0,
+              idPai: null,
+              nome: '',
+              ativo: true,
+              ativoFinal: true,
+              ativoPai: true,
+              idTipo: null,
+              responsavel: null,
+              propriedades: []
+            });
+          }
+
         }
       });
+
+
+
+
+
     }
   }
 
