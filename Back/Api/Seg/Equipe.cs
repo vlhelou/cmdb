@@ -30,5 +30,5 @@ public class Equipe
     public Organograma? Organograma { get; set; }
 
     [ForeignKey("IdAutor")]
-    public Usuario? Autor { get; set; }
+    public Model.Seg.Usuario? Autor { get; set; }
 }
