@@ -21,9 +21,16 @@ export class PrincipalComponent {
   icAutoSelecionado: icIc | undefined = undefined;
   icTreeSelecionado: icIc | undefined = undefined;
   icSelecionado=signal<icIc | undefined>(undefined);
+  icAtualiza=signal<icIc | undefined>(undefined);
   constructor() { }
+
   autoCompleteSelecionado(event: icIc | undefined) {
     this.icAutoSelecionado = event;
     this.icSelecionado.set(event);
   }
+
+  icCadastroGravado(event: any ) {
+    this.icAtualiza.set(event);
+  }
+
 }

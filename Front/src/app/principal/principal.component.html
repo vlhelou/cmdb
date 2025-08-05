@@ -6,7 +6,7 @@
                 <app-ic-autocomplete [(ngModel)]="icAutocomplete" (selecionado)="autoCompleteSelecionado($event)" />
             </div>
             <div class="card-body">
-                <app-ic-tree-view [(ngModel)]="icTreeView" (selecionado)="autoCompleteSelecionado($event)" />
+                <app-ic-tree-view [(ngModel)]="icTreeView" (selecionado)="autoCompleteSelecionado($event)" [icNovo]="icAtualiza()" />
             </div>
         </div>
     </div>
@@ -33,12 +33,12 @@
                     <p-tabpanels>
                         <p-tabpanel value="0">
                             <p class="m-0">
-                                <app-ic-cadastro [ic]="icSelecionado()" />
+                                <app-ic-cadastro [ic]="icSelecionado()" (gravado)="icCadastroGravado($event)" />
                             </p>
                         </p-tabpanel>
                         <p-tabpanel value="1">
                             <p class="m-0">
-                                <app-ic-cadastro [novo]="true" [icPai]="icSelecionado()" />
+                                <app-ic-cadastro [novo]="true" [icPai]="icSelecionado()" (gravado)="icCadastroGravado($event)" />
                             </p>
                         </p-tabpanel>
                         <p-tabpanel value="2">

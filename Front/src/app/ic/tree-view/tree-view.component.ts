@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, output, forwardRef } from '@angular/core';
+import { Component, OnInit, signal, output, forwardRef, input, effect } from '@angular/core';
 // import { JsonPipe, NgIf } from '@angular/common';
 import { IcService } from 'src/model/ic/ic.service';
 import { icIc } from 'src/model/ic/ic';
@@ -12,8 +12,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   imports: [TreeModule],
   templateUrl: './tree-view.component.html',
   styleUrl: './tree-view.component.scss',
-  providers:[
-        {
+  providers: [
+    {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => IcTreeViewComponent),
       multi: true
@@ -25,8 +25,10 @@ export class IcTreeViewComponent implements OnInit, ControlValueAccessor {
 
   ic: icIc | Nullable = null;
   nodes = signal<TreeNode[]>([]);
-  icSelecionado: icIc | Nullable = null;
+  icSelecionado: any | Nullable = null;
   selecionado = output<icIc | undefined>();
+  icNovo = input<icIc | undefined>();
+
 
   writeValue(value: icIc | Nullable): void {
     this.ic = value;
@@ -39,13 +41,26 @@ export class IcTreeViewComponent implements OnInit, ControlValueAccessor {
   registerOnTouched(fn: () => void): void {
     // Implementar se necessário
   }
-  constructor(private srv: IcService) { }
+  constructor(private srv: IcService) {
+    effect(() => {
+      if (this.icNovo()) {
+        // console.log('Atualiza Tree com o novo IC:', this.icNovo()?.id);
+        this.atualizaTree();
+
+        if (this.icNovo()?.id) {
+          const id = this.icNovo()?.id;
+          console.log('Atualiza Tree com o novo IC:', id);
+        }
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.atualizaTree();
+
   }
-  
-  atualizaTree(){
+
+  atualizaTree(): void {
     this.srv.ListaCompleta().subscribe((data: any) => {
       this.ic = data;
       if (this.ic) {
@@ -60,7 +75,7 @@ export class IcTreeViewComponent implements OnInit, ControlValueAccessor {
         this.PopulaFilhos(this.ic, tItem);
         menuTemp.push(tItem);
         this.nodes.set(menuTemp);
-  
+
       }
     });
 

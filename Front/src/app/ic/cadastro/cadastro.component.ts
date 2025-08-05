@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, input, signal } from '@angular/core';
+import { Component, OnInit, effect, input, output, signal } from '@angular/core';
 import { FormGroup, Validators, FormArray, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import { JsonPipe } from '@angular/common';
 import { ConfirmationService } from 'primeng/api';
@@ -26,6 +26,7 @@ export class CadastroComponent implements OnInit {
   icPai = input<icIc | undefined>();
   novo = input<boolean | undefined>();
   tipos = signal<corpTipo[]>([]);
+  gravado = output<any | undefined>();
   frmIC = new FormGroup({
     id: new FormControl<number>(0),
     idPai: new FormControl<number | null>(null),
@@ -116,8 +117,9 @@ export class CadastroComponent implements OnInit {
         icData.idPai = this.icPai() ? this.icPai()?.id : null;
       }
       this.srv.Grava(icData).subscribe({
-        next: () => {
+        next: (p) => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'IC salvo com sucesso!' });
+          this.gravado.emit(p);
           if (this.novo()) {
             this.frmIC.reset({
               id: 0,
