@@ -73,8 +73,6 @@ public record VwIc
     [ForeignKey("IdTipo")]
     public Corp.Tipo? Tipo { get; set; }
 
-    [ForeignKey("IdOrganograma")]
-    public Seg.Organograma? Organograma { get; set; }
 
 
     [NotMapped]

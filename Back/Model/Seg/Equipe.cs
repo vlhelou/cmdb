@@ -1,8 +1,7 @@
-﻿using Cmdb.Model.Seg;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Cmdb.Api.Seg;
+namespace Cmdb.Model.Seg;
 
 [Table("equipe", Schema = "seg")]
 public class Equipe
@@ -30,5 +29,5 @@ public class Equipe
     public Organograma? Organograma { get; set; }
 
     [ForeignKey("IdAutor")]
-    public Model.Seg.Usuario? Autor { get; set; }
+    public Usuario? Autor { get; set; }
 }

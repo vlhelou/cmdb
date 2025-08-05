@@ -247,13 +247,13 @@ public class IC : ControllerBase
 
         int IdLogado = Util.Claim2Usuario(usuario.Claims).Id;
 
-        var localizado = _db.IcVwIc.AsNoTracking().Include(p => p.Organograma).ThenInclude(p => p!.Equipe).FirstOrDefault(p => p.Id == idIc);
+        var localizado = _db.IcVwIc.AsNoTracking().Include(p => p.Responsavel).ThenInclude(p => p!.Equipe).FirstOrDefault(p => p.Id == idIc);
         if (localizado is null)
             throw new Exception("Ic não localizado");
 
-        if (localizado.Organograma is not null && localizado.Organograma.Equipe is not null)
+        if (localizado.Responsavel is not null && localizado.Responsavel.Equipe is not null)
         {
-            if (localizado.Organograma.Equipe.Any(p => p.IdUsuario == IdLogado))
+            if (localizado.Responsavel.Equipe.Any(p => p.IdUsuario == IdLogado))
                 return true;
         }
 

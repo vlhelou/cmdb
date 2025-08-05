@@ -1,5 +1,4 @@
-﻿using Cmdb.Api.Seg;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cmdb.Model.Seg;
