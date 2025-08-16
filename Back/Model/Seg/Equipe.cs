@@ -28,6 +28,9 @@ public class Equipe
     [ForeignKey("IdOrganograma")]
     public Organograma? Organograma { get; set; }
 
+    [ForeignKey("IdOrganograma")]
+    public VwOrganograma? VwOrganograma { get; set; }
+
     [ForeignKey("IdAutor")]
     public Usuario? Autor { get; set; }
 }

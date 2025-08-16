@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Cmdb.Model.Seg;
 
@@ -20,6 +21,7 @@ public record Organograma
     public bool Ativo { get; set; }
 
     [Column("gd")]
+    [JsonIgnore]
     public Guid GD { get; set; }
 
     [ForeignKey("IdPai")]

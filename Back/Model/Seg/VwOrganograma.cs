@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace Cmdb.Api.Seg;
+namespace Cmdb.Model.Seg;
 
 [Table("vw_organograma", Schema = "seg")]
 public class VwOrganograma
@@ -32,6 +32,9 @@ public class VwOrganograma
 
     [Column("nivel")]
     public int Nivel { get; set; }
+
+    [InverseProperty("VwOrganograma")]
+    public ICollection<Equipe>? Equipe { get; set; }
 
     public ICollection<int> LstAncestrais
     {

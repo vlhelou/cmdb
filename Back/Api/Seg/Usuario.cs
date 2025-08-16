@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -59,6 +60,20 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
     {
         return Ok(_db.SegUsuario.ToList());
     }
+
+    [HttpGet("[action]")]
+    public IActionResult MeusOrganogramas()
+    {
+        int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
+        var localizado = _db.SegUsuario.FirstOrDefault(x => x.Id == idLogado);
+        if (localizado == null)
+            return BadRequest(new MensagemErro("Usuário não localizado"));
+        var orgs = _db.SegVwOrganograma.Where(p=>p.Equipe!.Any(q=>q.IdUsuario==idLogado))
+            .AsNoTracking()
+            .ToList();
+        return Ok(orgs);
+    }
+
 
     public record UsrForm
     {

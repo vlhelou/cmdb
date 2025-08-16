@@ -19,6 +19,7 @@ public class Db(DbContextOptions<Db> options) : DbContext(options)
     //seg
     public DbSet<Model.Seg.Usuario> SegUsuario { get; set; }
     public DbSet<Model.Seg.Organograma> SegOrganograma { get; set; }
+    public DbSet<Model.Seg.VwOrganograma> SegVwOrganograma { get; set; }
 
 
     //corp
