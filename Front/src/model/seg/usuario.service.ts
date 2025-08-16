@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { segUsuario } from './usuario'
 import { map } from 'rxjs/operators';
-import { Nullable } from 'primeng/ts-helpers';
+import { icIc } from 'src/model/ic/ic'
 
 
 const httpOptions = {
@@ -30,7 +30,7 @@ export class segUsuarioService {
         this.currentUser = this.currentUserSubject.asObservable();
     }
 
-    public get currentUserValue(): segUsuario | Nullable {
+    public get currentUserValue(): segUsuario  {
         return this.currentUserSubject.value;
     }
 
@@ -54,5 +54,11 @@ export class segUsuarioService {
         localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
     }
+
+    MeusOrganogramas(): Observable<icIc> {
+        const url = pathUrl + `MeusOrganogramas`;
+        return this.http.get<icIc>(url);
+    }
+
 
 }

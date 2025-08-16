@@ -5,13 +5,14 @@ import { TabsModule } from 'primeng/tabs';
 import { IcAutocompleteComponent } from 'src/app/ic/ic-autocomplete/ic-autocomplete.component';
 import { IcTreeViewComponent } from 'src/app/ic/tree-view/tree-view.component';
 import { CadastroComponent } from 'src/app/ic/cadastro/cadastro.component'
+import {SegredoComponent} from 'src/app/ic/segredo/segredo.component'
 import { icIc } from 'src/model/ic/ic';
 
 
 @Component({
   selector: 'app-principal',
   standalone: true,
-  imports: [IcAutocompleteComponent, FormsModule, IcTreeViewComponent, TabsModule, CadastroComponent],
+  imports: [IcAutocompleteComponent, FormsModule, IcTreeViewComponent, TabsModule, CadastroComponent,SegredoComponent],
   templateUrl: './principal.component.html',
   styleUrl: './principal.component.scss'
 })
