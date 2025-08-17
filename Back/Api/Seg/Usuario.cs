@@ -65,10 +65,11 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
     public IActionResult MeusOrganogramas()
     {
         int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
-        var localizado = _db.SegUsuario.FirstOrDefault(x => x.Id == idLogado);
+        var localizado = _db.SegUsuario.AsNoTracking().FirstOrDefault(x => x.Id == idLogado);
         if (localizado == null)
             return BadRequest(new MensagemErro("Usuário não localizado"));
-        var orgs = _db.SegVwOrganograma.Where(p=>p.Equipe!.Any(q=>q.IdUsuario==idLogado))
+        var orgs = _db.SegVwOrganograma
+            .Where(p=>p.Equipe!.Any(q=>q.IdUsuario==idLogado))
             .AsNoTracking()
             .ToList();
         return Ok(orgs);

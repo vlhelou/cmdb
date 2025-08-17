@@ -29,6 +29,7 @@ public class Db(DbContextOptions<Db> options) : DbContext(options)
     public DbSet<Model.IC.IC> IcIc { get; set; }
     public DbSet<Model.IC.ICPropriedade> IcPropriedade { get; set; }
     public DbSet<Model.IC.VwIc> IcVwIc { get; set; }
+    public DbSet<Model.IC.Segredo> IcSegredo { get; set; }
 
 
 }

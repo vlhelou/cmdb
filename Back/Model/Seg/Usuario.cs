@@ -41,14 +41,13 @@ public record Usuario
     {
         Senha = (this.Id.ToString()+senha).ToSha512();
     }
-    
+
 
     // [JsonIgnore]
     // [InverseProperty("Usuario")]
     // public List<Equipe> Locacoes { get; set; }
     //
-    // [JsonIgnore]
-    // [InverseProperty("UsuarioDono")]
-    // public List<IC.Segredo> Segredos { get; set; }
+    [InverseProperty("UsuarioDono")]
+    public List<IC.Segredo>? Segredos { get; set; }
 
 }

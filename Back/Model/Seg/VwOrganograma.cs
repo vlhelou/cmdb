@@ -68,9 +68,8 @@ public class VwOrganograma
     //[InverseProperty("Organograma")]
     //public ICollection<Equipe>? Equipe { get; set; }
 
-    //[InverseProperty("OrganogramaDono")]
-    //[JsonIgnore]
-    //public ICollection<IC.Segredo> Segredos { get; set; }
+    [InverseProperty("OrganogramaDono")]
+    public ICollection<IC.Segredo>? Segredos { get; set; }
 
 
     [NotMapped]
