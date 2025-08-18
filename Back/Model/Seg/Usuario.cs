@@ -43,10 +43,9 @@ public record Usuario
     }
 
 
-    // [JsonIgnore]
-    // [InverseProperty("Usuario")]
-    // public List<Equipe> Locacoes { get; set; }
-    //
+    [InverseProperty("Usuario")]
+    public List<Equipe>? Locacoes { get; set; }
+
     [InverseProperty("UsuarioDono")]
     public List<IC.Segredo>? Segredos { get; set; }
 

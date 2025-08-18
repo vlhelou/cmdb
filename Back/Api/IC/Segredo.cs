@@ -43,8 +43,20 @@ public class Segredo : ControllerBase
     }
 
     [HttpPost("[action]")]
-    public IActionResult Novo()
+    public IActionResult Novo([FromBody] SegredoItem item)
     {
+        if (item == null)
+            return BadRequest(new MensagemErro("Dados inválidos"));
+        if (string.IsNullOrEmpty(item.conteudo))
+            return BadRequest(new MensagemErro("Conteúdo não pode ser vazio"));
+        if (item.idUsuarioDno == null && item.IdOrganogramaDono == null)
+            return BadRequest(new MensagemErro("Deve informar dono do segredo"));
+
+        int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
+        var localizado = _db.SegUsuario
+            .AsNoTracking()
+            .Include(p=>p.Locacoes)
+            .FirstOrDefault(x => x.Id == idLogado);
         return Ok();
     }
 
@@ -59,5 +71,7 @@ public class Segredo : ControllerBase
     {
         return Ok();
     }
+
+    public record SegredoItem(int? idUsuarioDno, int? IdOrganogramaDono, string conteudo);
 
 }
