@@ -41,4 +41,23 @@ public class Segredo : ControllerBase
 
         return Ok(segredos);
     }
+
+    [HttpPost("[action]")]
+    public IActionResult Novo()
+    {
+        return Ok();
+    }
+
+    [HttpGet("[action]/{id}")]
+    public IActionResult Exclui(int id)
+    {
+        return Ok();
+    }
+
+    [HttpPost("[action]")]
+    public IActionResult Altera()
+    {
+        return Ok();
+    }
+
 }

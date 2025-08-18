@@ -1,1 +1,33 @@
-<p>segredo works!</p>
+<div class="row">
+    <div class="col-12">
+        @if (lista() ){
+
+        <p-table [value]="lista()">
+            <ng-template #header>
+                <tr>
+                    <th>Proprietário</th>
+                    <th>Ação
+                        <a href="javascript:void(0)" class="float-end"> <i class="pi pi-plus"></i> </a>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-item>
+                <tr>
+                    <td>
+                        @if (item.usuarioDono){
+                        <span>{{ item.usuarioDono.nome }}</span>
+                        } @else {
+                        <span>{{ item.usuarioDono.nomeCompleto }}</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" class="me-2"> <i class="pi pi-eye"></i> </a>
+                        <a href="javascript:void(0)" class="me-2"> <i class="pi pi-pencil"></i> </a>
+                        <a href="javascript:void(0)" class="text-danger"> <i class="pi pi-trash"></i> </a>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        }
+    </div>
+</div>
