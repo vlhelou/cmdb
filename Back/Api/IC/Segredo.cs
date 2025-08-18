@@ -14,8 +14,8 @@ public class Segredo : ControllerBase
         _db = db;
     }
 
-    [HttpGet("[action]")]
-    public IActionResult MeusSegredos()
+    [HttpGet("[action]/{id}")]
+    public IActionResult MeusSegredosPorIc(int id)
     {
         int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
         var localizado = _db.SegUsuario.AsNoTracking().FirstOrDefault(x => x.Id == idLogado);
@@ -30,12 +30,15 @@ public class Segredo : ControllerBase
 
         var segredos = _db.IcSegredo
              .Where(p =>
-                 (p.IdUsuarioDono.HasValue && p.IdUsuarioDono == idLogado)
+                 (p.IdUsuarioDono.HasValue && p.IdUsuarioDono == idLogado && p.IdIC==id)
                  || (p.IdOrganogramaDono.HasValue && organograma.Contains(p.IdOrganogramaDono.Value))
                  )
              .AsNoTracking()
+             .Include(p=>p.UsuarioDono)
+             .Include(p=>p.OrganogramaDono)
+             .Include(p=>p.IC)
              .ToList();
 
-        return Ok();
+        return Ok(segredos);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Cmdb.Model.IC;
 [Table("segredo", Schema = "ic")]
@@ -13,6 +14,7 @@ public record Segredo
     public int IdIC { get; set; }
 
     [Column("conteudo")]
+    [JsonIgnore]
     public string Conteudo { get; set; }=string.Empty;
 
     [Column("idusuariodono")]
@@ -22,6 +24,7 @@ public record Segredo
     public int? IdOrganogramaDono { get; set; }
 
     [Column("algoritmo")]
+    [JsonIgnore]
     public string Algoritmo { get; set; } = "Rijndael";
 
     [ForeignKey("IdIC")]

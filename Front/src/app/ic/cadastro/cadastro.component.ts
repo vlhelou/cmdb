@@ -66,7 +66,6 @@ export class CadastroComponent implements OnInit {
         });
 
 
-        // console.log( this.frmIC.value);  
       } else {
         this.frmIC.reset({
           id: 0,
