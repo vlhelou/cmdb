@@ -22,7 +22,7 @@ public record Organograma
 
     [Column("gd")]
     [JsonIgnore]
-    public Guid GD { get; set; }
+    public Guid Gd { get; set; }
 
     [ForeignKey("IdPai")]
     public Organograma? Pai { get; set; }

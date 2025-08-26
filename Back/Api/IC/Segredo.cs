@@ -30,13 +30,15 @@ public class Segredo : ControllerBase
 
         var segredos = _db.IcSegredo
              .Where(p =>
-                 (p.IdUsuarioDono.HasValue && p.IdUsuarioDono == idLogado && p.IdIC==id)
-                 || (p.IdOrganogramaDono.HasValue && organograma.Contains(p.IdOrganogramaDono.Value))
-                 )
+                p.IdIC == id
+                && (p.IdUsuarioDono.HasValue && p.IdUsuarioDono == idLogado 
+                    || (p.IdOrganogramaDono.HasValue && organograma.Contains(p.IdOrganogramaDono.Value))
+                    )
+              )
              .AsNoTracking()
-             .Include(p=>p.UsuarioDono)
-             .Include(p=>p.OrganogramaDono)
-             .Include(p=>p.IC)
+             .Include(p => p.UsuarioDono)
+             .Include(p => p.OrganogramaDono)
+             .Include(p => p.IC)
              .ToList();
 
         return Ok(segredos);
@@ -49,14 +51,49 @@ public class Segredo : ControllerBase
             return BadRequest(new MensagemErro("Dados inválidos"));
         if (string.IsNullOrEmpty(item.conteudo))
             return BadRequest(new MensagemErro("Conteúdo não pode ser vazio"));
-        if (item.idUsuarioDno == null && item.IdOrganogramaDono == null)
-            return BadRequest(new MensagemErro("Deve informar dono do segredo"));
-
+        
         int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
+
         var localizado = _db.SegUsuario
             .AsNoTracking()
-            .Include(p=>p.Locacoes)
+            .Include(p => p.Locacoes)
             .FirstOrDefault(x => x.Id == idLogado);
+
+        if (localizado == null)
+            return BadRequest(new MensagemErro("Usuário não localizado"));
+
+        if (!item.IdOrganogramaDono.HasValue)
+        {
+            //segredo de usuário
+            var segredo = new Model.IC.Segredo
+            {
+                IdIC = item.idIc,
+                IdUsuarioDono = idLogado,
+                Conteudo = Util.Criptograva(item.conteudo, localizado.Gd),
+                Algoritmo = "AES"
+            };
+            _db.IcSegredo.Add(segredo);
+            _db.SaveChanges();
+        }
+        else
+        {
+            //segredo de organograma
+            if (localizado.Locacoes == null || !localizado.Locacoes.Any(p => p.IdOrganograma == item.IdOrganogramaDono))
+                return BadRequest(new MensagemErro("Usuário não pertence ao organograma selecionado"));
+            var organograma = _db.SegOrganograma.AsNoTracking().FirstOrDefault(p => p.Id == item.IdOrganogramaDono);
+            if (organograma == null)
+                return BadRequest(new MensagemErro("Organograma não localizado"));
+            var segredo = new Model.IC.Segredo
+            {
+                IdIC = item.idIc,
+                IdOrganogramaDono = item.IdOrganogramaDono,
+                Conteudo = Util.Criptograva(item.conteudo, organograma.Gd),
+                Algoritmo = "AES"
+            };
+            _db.IcSegredo.Add(segredo);
+            _db.SaveChanges();
+        }
+
         return Ok();
     }
 
@@ -66,12 +103,43 @@ public class Segredo : ControllerBase
         return Ok();
     }
 
-    [HttpPost("[action]")]
-    public IActionResult Altera()
+    [HttpGet("[action]/{id}")]
+    public IActionResult Visualiza(int id)
     {
-        return Ok();
-    }
+        int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
+        var segredo = _db.IcSegredo.AsNoTracking().FirstOrDefault(p => p.Id == id);
+        string conteudo;
+        if (segredo == null)
+            return BadRequest(new MensagemErro("Segredo não localizado"));
 
-    public record SegredoItem(int? idUsuarioDno, int? IdOrganogramaDono, string conteudo);
+        if (segredo.IdUsuarioDono.HasValue)
+        {
+            if (segredo.IdUsuarioDono != idLogado)
+            {
+                return BadRequest(new MensagemErro("usuário não é proprietário do segredo"));
+            }
+            else
+            {
+                var dono = _db.SegUsuario.AsNoTracking().FirstOrDefault(p => p.Id == segredo.IdUsuarioDono);
+                if (dono == null)
+                    return BadRequest(new MensagemErro("Proprietário do segredo não localizado"));
+                conteudo = Util.Descriptograva(segredo.Conteudo, dono.Gd, segredo.Algoritmo);
+                return Ok(new { conteudo});
+            }
+        }
+        else
+        {
+            var organograma = _db.SegOrganograma
+                .AsNoTracking()
+                .FirstOrDefault(p => p.Id == segredo.IdOrganogramaDono && p.Equipe!.Any(q=>q.IdUsuario==idLogado));
+            if (organograma == null)
+                return BadRequest(new MensagemErro("usuário não pertence ao organograma proprietário do segredo"));
+            conteudo = Util.Descriptograva(segredo.Conteudo, organograma.Gd, segredo.Algoritmo);
+            return Ok(new { conteudo });
+        }
+
+
+    }
+    public record SegredoItem(int idIc, int? IdOrganogramaDono, string conteudo);
 
 }

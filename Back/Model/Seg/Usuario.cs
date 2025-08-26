@@ -26,7 +26,7 @@ public record Usuario
 
     [Column("gd")]
     [JsonIgnore]
-    public Guid? Gd { get; set; }
+    public Guid Gd { get; set; }
     
     [Column("senha")]
     [JsonIgnore]

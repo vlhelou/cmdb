@@ -38,6 +38,59 @@ public static class Util
         return retorno;
     }
 
+
+    public static string Criptograva(string origem, Guid chave)
+    {
+
+        byte[] encrypted;
+        using (Aes aesAlg = Aes.Create())
+        {
+            aesAlg.Key = chave.ToByteArray();
+            aesAlg.IV = chave.ToByteArray().Reverse().ToArray();
+            ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+            using (MemoryStream msEncrypt = new MemoryStream())
+            {
+                using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                {
+                    using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                    {
+                        //Write all data to the stream.
+                        swEncrypt.Write(origem);
+                    }
+                    encrypted = msEncrypt.ToArray();
+                    return Convert.ToBase64String(encrypted);
+                }
+            }
+
+        }
+
+
+    }
+
+    public static string Descriptograva(string hash, Guid chave, string algoritmo)
+    {
+        byte[] encrypted = Convert.FromBase64String(hash);
+        switch (algoritmo)
+        {
+            case "AES":
+                using (Aes aesAlg = Aes.Create())
+                {
+                    aesAlg.Key = chave.ToByteArray();
+                    aesAlg.IV = chave.ToByteArray().Reverse().ToArray();
+                    ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+                    using MemoryStream msDecrypt = new MemoryStream(encrypted);
+                    using CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
+                    using StreamReader srDecrypt = new StreamReader(csDecrypt);
+                    return srDecrypt.ReadToEnd();
+                }
+            default:
+                throw new Exception("Algoritmo desconhecido");
+        }
+
+    }
+
+
+
 }
 
 
