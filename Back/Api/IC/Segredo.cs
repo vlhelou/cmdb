@@ -62,7 +62,7 @@ public class Segredo : ControllerBase
         if (localizado == null)
             return BadRequest(new MensagemErro("Usuário não localizado"));
 
-        if (!item.IdOrganogramaDono.HasValue)
+        if (item.IdOrganogramaDono==0)
         {
             //segredo de usuário
             var segredo = new Model.IC.Segredo
@@ -169,6 +169,6 @@ public class Segredo : ControllerBase
         return false;
     }
 
-    public record SegredoItem(int idIc, int? IdOrganogramaDono, string conteudo);
+    public record SegredoItem(int idIc, int IdOrganogramaDono, string conteudo);
 
 }

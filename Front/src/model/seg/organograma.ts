@@ -1,6 +1,6 @@
 export interface segOrganograma {
     id: number;
-    idPai: number;
+    idPai: number|null;
     nome: string;
     ativo: boolean;
     ativoFinal: boolean;
@@ -8,7 +8,7 @@ export interface segOrganograma {
     listaAncestrais: string;
     nivel: number;
     lstAncestrais: number[];
-    pai: segOrganograma;
-    filhos: segOrganograma[];
-    ancestrais: segOrganograma[];
+    pai: segOrganograma|null;
+    filhos: segOrganograma[]|null;
+    ancestrais: segOrganograma[]|null;
 }

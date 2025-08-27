@@ -1,12 +1,34 @@
 <p-popover #opConteudo>
     <ng-template pTemplate="content">
         @if(conteudo()){
-            <div>
-                {{ conteudo() }}
-            </div>
+        <div>
+            {{ conteudo() }}
+        </div>
         }
     </ng-template>
 </p-popover>
+
+<p-confirmdialog />
+
+<p-dialog header="Novo Segredo" [modal]="true" [(visible)]="mostraNovo">
+    @if (organogramas()) {
+    <form [formGroup]="formNovo">
+        <div class="mb-3">
+            <label for="idOrganogramaDono">Organograma</label>
+            <p-select [options]="organogramas()" formControlName="idOrganogramaDono" optionLabel="nomeCompleto"
+                optionValue="id" placeholder="Selecione um Proprietário"></p-select>
+        </div>
+        <div class="mb-3">
+            <label for="conteudo">Conteúdo</label>
+            <input type="text" class="form-control" formControlName="conteudo">
+        </div>
+        <div class="mb-3 text-end">
+            <button class="btn btn-primary" (click)="salvar()"><i class="pi pi-save"></i></button>
+        </div>
+    </form>
+    }
+</p-dialog>
+
 
 <div class="row">
     <div class="col-12">
@@ -17,7 +39,7 @@
                 <tr>
                     <th>Proprietário</th>
                     <th>Ação
-                        <a href="javascript:void(0)" class="float-end"> <i class="pi pi-plus"></i> </a>
+                        <a href="javascript:void(0)" class="float-end" (click)="novo()"> <i class="pi pi-plus"></i> </a>
                     </th>
                 </tr>
             </ng-template>
@@ -33,7 +55,8 @@
                     <td>
                         <a href="javascript:void(0)" class="me-2" (click)="mostraConteudo($event, opConteudo, item.id)">
                             <i class="pi pi-eye"></i> </a>
-                        <a href="javascript:void(0)" class="text-danger"> <i class="pi pi-trash"></i> </a>
+                        <a href="javascript:void(0)" class="text-danger" (click)="confirmaExclusao($event, item.id)"> <i
+                                class="pi pi-trash"></i> </a>
                     </td>
                 </tr>
             </ng-template>

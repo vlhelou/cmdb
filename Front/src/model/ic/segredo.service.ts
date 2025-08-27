@@ -20,9 +20,19 @@ export class IcSegredoService {
         const url = pathUrl + `MeusSegredosPorIc/${id}`;
         return this.http.get<icSegredo[]>(url);
     }
+
     Visualiza(id: number): Observable<any> {
         const url = pathUrl + `Visualiza/${id}`;
         return this.http.get<any>(url);
+    }
+
+    Exclui(id: number): Observable<any> {
+        const url = pathUrl + `Exclui/${id}`;
+        return this.http.get<any>(url);
+    }
+    novo(item:any): Observable<any> {
+        const url = pathUrl + `novo`;
+        return this.http.post<any>(url, item, httpOptions);
     }
 
 

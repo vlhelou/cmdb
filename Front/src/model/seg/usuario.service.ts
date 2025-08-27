@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { segUsuario } from './usuario'
 import { map } from 'rxjs/operators';
-import { icIc } from 'src/model/ic/ic'
+import { segOrganograma } from 'src/model/seg/organograma'
 
 
 const httpOptions = {
@@ -30,7 +30,7 @@ export class segUsuarioService {
         this.currentUser = this.currentUserSubject.asObservable();
     }
 
-    public get currentUserValue(): segUsuario  {
+    public get currentUserValue(): segUsuario {
         return this.currentUserSubject.value;
     }
 
@@ -55,9 +55,9 @@ export class segUsuarioService {
         this.currentUserSubject.next(null);
     }
 
-    MeusOrganogramas(): Observable<icIc> {
+    MeusOrganogramas(): Observable<segOrganograma[]> {
         const url = pathUrl + `MeusOrganogramas`;
-        return this.http.get<icIc>(url);
+        return this.http.get<segOrganograma[]>(url);
     }
 
 
