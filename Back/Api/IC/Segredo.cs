@@ -100,6 +100,14 @@ public class Segredo : ControllerBase
     [HttpGet("[action]/{id}")]
     public IActionResult Exclui(int id)
     {
+        int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
+        if (!AcessoPermitido(id, idLogado))
+            return BadRequest(new MensagemErro("Acesso negado"));
+        var segredo = _db.IcSegredo.FirstOrDefault(p => p.Id == id);
+        if (segredo == null)
+            return BadRequest(new MensagemErro("Segredo não localizado"));
+        _db.IcSegredo.Remove(segredo);
+        _db.SaveChanges();
         return Ok();
     }
 
@@ -140,6 +148,27 @@ public class Segredo : ControllerBase
 
 
     }
+
+    private bool AcessoPermitido(int id, int idUsuario)
+    {
+        var logado = _db.SegUsuario
+            .AsNoTracking()
+            .Include(p => p.Locacoes)
+            .FirstOrDefault(x => x.Id == idUsuario);
+        var segredo = _db.IcSegredo
+            .AsNoTracking()
+            .FirstOrDefault(x => x.Id == id);
+        if (logado is null || segredo is null)
+            return false;
+        if(segredo.IdUsuarioDono.HasValue && segredo.IdUsuarioDono == idUsuario)    
+            return true;
+        if(segredo.IdOrganogramaDono.HasValue && logado.Locacoes != null && logado.Locacoes.Any(p=>p.IdOrganograma == segredo.IdOrganogramaDono))   
+            return true;
+
+
+        return false;
+    }
+
     public record SegredoItem(int idIc, int? IdOrganogramaDono, string conteudo);
 
 }
