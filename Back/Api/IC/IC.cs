@@ -64,7 +64,9 @@ public class IC : ControllerBase
     [HttpPost("[action]")]
     public IActionResult Pesquisa([FromBody] PesquisaIC prm)
     {
-        var nomes = string.Join(" or ", prm.Chave.Split(' '));
+        var nomes = string.Join(" & ", prm.Chave.Split(' '));
+
+
 
         var consulta = _db.IcVwIc.FromSql($"""
             select 
@@ -80,14 +82,18 @@ public class IC : ControllerBase
             	, listaancestrais
             	, pesquisats
             	, nivel
-            	, ts_rank(pesquisats , websearch_to_tsquery({nomes})) rank
+            	, ts_rank(pesquisats , to_tsquery('portuguese',{nomes})) rank
             from ic.vw_ic
-            where pesquisats @@ websearch_to_tsquery({nomes})
+            where pesquisats @@ to_tsquery('portuguese',{nomes})
             order by rank desc
                                     
             """)
             .AsNoTracking()
             .AsQueryable();
+
+        Console.WriteLine("==================================================");
+        Console.WriteLine(nomes);
+        Console.WriteLine("==================================================");
 
         if (prm.Ativo != null)
             consulta = consulta.Where(p => p.AtivoFinal == prm.Ativo);

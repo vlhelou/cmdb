@@ -6,7 +6,6 @@ import localePt from '@angular/common/locales/pt';
 import { routes } from './app.routes';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { spinnerInterceptor } from 'src/interceptor/spinner.interceptor';
 import { errorInterceptor } from 'src/interceptor/error.interceptor';
 import { jwtInterceptor } from 'src/interceptor/jwt.interceptor';
@@ -18,7 +17,7 @@ export const appConfig: ApplicationConfig = {
         provideZoneChangeDetection({ eventCoalescing: true }),
         provideRouter(routes),
         provideHttpClient(withInterceptors([jwtInterceptor, spinnerInterceptor, errorInterceptor])),
-        importProvidersFrom([BrowserAnimationsModule]),
+        importProvidersFrom(),
         { provide: LOCALE_ID, useValue: 'pt-BR' },
         providePrimeNG({
             theme: {

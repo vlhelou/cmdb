@@ -106,11 +106,7 @@ export class CadastroComponent implements OnInit {
   }
 
   propriedadeRemove(index: number) {
-    console.log(index);
-    const value = this.icPropriedades.value;
-    value.splice(index, 1);
-    this.icPropriedades.setValue(value);
-    // this.icPropriedades.removeAt(index);
+    this.icPropriedades.removeAt(index);
   }
 
   grava() {

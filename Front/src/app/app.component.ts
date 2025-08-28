@@ -27,11 +27,13 @@ export class AppComponent implements OnInit {
         this.items = [
             {
                 label: 'Home',
-                icon: 'pi pi-home'
+                icon: 'pi pi-home',
+                routerLink: '/home'
             },
             {
                 label: 'Organograma',
-                icon: 'pi pi-sitemap'
+                icon: 'pi pi-sitemap',
+                routerLink: '/organograma'
             },
             {
                 label: 'Contato',
