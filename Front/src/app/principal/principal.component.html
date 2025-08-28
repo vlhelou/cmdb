@@ -6,7 +6,8 @@
                 <app-ic-autocomplete [(ngModel)]="icAutocomplete" (selecionado)="autoCompleteSelecionado($event)" />
             </div>
             <div class="card-body">
-                <app-ic-tree-view [(ngModel)]="icTreeView" (selecionado)="autoCompleteSelecionado($event)" [icNovo]="icAtualiza()" />
+                <app-ic-tree-view [(ngModel)]="icTreeView" (selecionado)="autoCompleteSelecionado($event)"
+                    [icNovo]="icAtualiza()" />
             </div>
         </div>
     </div>
@@ -25,9 +26,9 @@
                         <p-tab value="1">Cria filho</p-tab>
                         }
                         <p-tab value="2">Segredos</p-tab>
-                        <p-tab value="3">Dependências</p-tab>
-                        <p-tab value="4">Dependentes</p-tab>
-                        <p-tab value="5">Mudança de paternidade</p-tab>
+                        <p-tab value="3">Mudança de paternidade</p-tab>
+                        <p-tab value="4">Dependências</p-tab>
+                        <p-tab value="5">Dependentes</p-tab>
                         <p-tab value="6">Conhecimento</p-tab>
                     </p-tablist>
                     <p-tabpanels>
@@ -38,25 +39,32 @@
                         </p-tabpanel>
                         <p-tabpanel value="1">
                             <p class="m-0">
-                                <app-ic-cadastro [novo]="true" [icPai]="icSelecionado()" (gravado)="icCadastroGravado($event)" />
+                                <app-ic-cadastro [novo]="true" [icPai]="icSelecionado()"
+                                    (gravado)="icCadastroGravado($event)" />
                             </p>
                         </p-tabpanel>
                         <p-tabpanel value="2">
 
-                                <app-segredo [ic]="icSelecionado()"  />
+                            <app-segredo [ic]="icSelecionado()" />
                         </p-tabpanel>
                         <p-tabpanel value="3">
-                            <p class="m-0">
-                                Dependências </p>
+                            <div class="row">
+                                <div class="col-10">
+                                    <app-ic-autocomplete [(ngModel)]="icNovoPai" />
+                                </div>
+                                <div class="col">
+
+                                    <button class="btn btn-primary" [disabled]="!icNovoPai" (click)="mudaPaternidade()">Novo pai</button>
+                                </div>
+                            </div>
                         </p-tabpanel>
                         <p-tabpanel value="4">
                             <p class="m-0">
-                                Dependentes
-                            </p>
+                                Dependências </p>
                         </p-tabpanel>
                         <p-tabpanel value="5">
                             <p class="m-0">
-                                Mudança de paternidade
+                                Dependentes
                             </p>
                         </p-tabpanel>
                         <p-tabpanel value="6">

@@ -1,4 +1,5 @@
 ﻿using Cmdb.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -155,6 +156,7 @@ public class IC : ControllerBase
     }
 
     [HttpPost("[action]")]
+    [Authorize(Roles = "admin")]
     public IActionResult Grava([FromBody] Model.IC.IC item)
     {
         if (item == null)
@@ -215,6 +217,19 @@ public class IC : ControllerBase
         }
 
         return Ok(retorno);
+    }
+
+    [HttpGet("[action]/{idIc}/{idNovoPai}")]
+    [Authorize(Roles = "admin")]
+    public IActionResult MudaPaternidade(int idIc, int idNovoPai)
+    {
+        var ic = _db.IcIc.Where(p => p.Id == idIc).FirstOrDefault();
+        var novoPai = _db.IcIc.Where(p => p.Id == idNovoPai).AsNoTracking().FirstOrDefault();
+        if (ic is null || novoPai is null)
+            return BadRequest(new MensagemErro("IC ou Novo pai não localizado"));
+        ic.IdPai = idNovoPai;
+        _db.SaveChanges();
+        return Ok();
     }
 
     private void PopulaFilhosMenu(ref Model.IC.VwIc item, ref List<Model.IC.VwIc> lista)

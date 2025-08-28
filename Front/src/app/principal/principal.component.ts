@@ -5,14 +5,15 @@ import { TabsModule } from 'primeng/tabs';
 import { IcAutocompleteComponent } from 'src/app/ic/ic-autocomplete/ic-autocomplete.component';
 import { IcTreeViewComponent } from 'src/app/ic/tree-view/tree-view.component';
 import { CadastroComponent } from 'src/app/ic/cadastro/cadastro.component'
-import {SegredoComponent} from 'src/app/ic/segredo/segredo.component'
+import { SegredoComponent } from 'src/app/ic/segredo/segredo.component'
 import { icIc } from 'src/model/ic/ic';
+import { IcService } from 'src/model/ic/ic.service';
 
 
 @Component({
   selector: 'app-principal',
   standalone: true,
-  imports: [IcAutocompleteComponent, FormsModule, IcTreeViewComponent, TabsModule, CadastroComponent,SegredoComponent],
+  imports: [IcAutocompleteComponent, FormsModule, IcTreeViewComponent, TabsModule, CadastroComponent, SegredoComponent],
   templateUrl: './principal.component.html',
   styleUrl: './principal.component.scss'
 })
@@ -21,17 +22,24 @@ export class PrincipalComponent {
   icTreeView: icIc | undefined = undefined;
   icAutoSelecionado: icIc | undefined = undefined;
   icTreeSelecionado: icIc | undefined = undefined;
-  icSelecionado=signal<icIc | undefined>(undefined);
-  icAtualiza=signal<icIc | undefined>(undefined);
-  constructor() { }
+  icSelecionado = signal<icIc | undefined>(undefined);
+  icAtualiza = signal<icIc | undefined>(undefined);
+  icNovoPai: icIc | undefined = undefined;
+
+  constructor(private srv: IcService) { }
 
   autoCompleteSelecionado(event: icIc | undefined) {
     this.icAutoSelecionado = event;
     this.icSelecionado.set(event);
   }
 
-  icCadastroGravado(event: any ) {
+  icCadastroGravado(event: any) {
     this.icAtualiza.set(event);
+  }
+
+  mudaPaternidade() {
+    this.srv.MudaPaternidade(this.icSelecionado()?.id!, this.icNovoPai?.id!).subscribe({
+    });
   }
 
 }
