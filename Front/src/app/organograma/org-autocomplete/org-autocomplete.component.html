@@ -1,1 +1,6 @@
-<p>org-autocomplete works!</p>
+<p-autoComplete [(ngModel)]="value" [suggestions]="lista()" (completeMethod)="pesquisa($event)" [forceSelection]="true"
+    [minLength]="2" (onSelect)="onSelect($event)" (onUnselect)="onUnselect($event)" optionLabel="nomeCompleto" (onBlur)="onUnselect($event)">
+    <ng-template let-item #item>
+        <div>{{ item.nomeCompleto }}</div>
+    </ng-template>
+</p-autoComplete>

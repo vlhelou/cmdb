@@ -9,11 +9,14 @@ import Aura from '@primeuix/themes/aura'
 import { spinnerInterceptor } from 'src/interceptor/spinner.interceptor';
 import { errorInterceptor } from 'src/interceptor/error.interceptor';
 import { jwtInterceptor } from 'src/interceptor/jwt.interceptor';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+
 
 registerLocaleData(localePt);
 
 export const appConfig: ApplicationConfig = {
     providers: [
+        provideAnimationsAsync(),
         provideZoneChangeDetection({ eventCoalescing: true }),
         provideRouter(routes),
         provideHttpClient(withInterceptors([jwtInterceptor, spinnerInterceptor, errorInterceptor])),

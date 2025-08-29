@@ -91,9 +91,6 @@ public class IC : ControllerBase
             .AsNoTracking()
             .AsQueryable();
 
-        Console.WriteLine("==================================================");
-        Console.WriteLine(nomes);
-        Console.WriteLine("==================================================");
 
         if (prm.Ativo != null)
             consulta = consulta.Where(p => p.AtivoFinal == prm.Ativo);
@@ -107,43 +104,6 @@ public class IC : ControllerBase
         var retorno = consulta.Include(p => p.Tipo).ToList();
         return Ok(retorno);
 
-        //int ct = 0;
-        //System.Text.StringBuilder where = new System.Text.StringBuilder();
-        //List<object> valores = new List<object>();
-        //if (prm.TryGetProperty("Chave", out JsonElement chave) && chave.ValueKind == JsonValueKind.String)
-        //{
-        //    where.AppendFormat(" and Nome.ToLower().Contains(@{0}) ", ct);
-        //    valores.Add(chave.GetString()!.ToLower());
-        //    ct++;
-        //}
-        //if (prm.TryGetProperty("Ativo", out JsonElement ativo) && ativo.ValueKind != JsonValueKind.Null)
-        //{
-        //    where.AppendFormat(" and AtivoFinal==@{0}", ct);
-        //    valores.Add(prm.GetBoolean());
-        //    ct++;
-        //}
-        //if (prm.TryGetProperty("FilhoDe", out JsonElement FilhoDe) && FilhoDe.ValueKind == JsonValueKind.String)
-        //{
-        //    where.AppendFormat(" and NomeCompleto.ToLower().StartsWith(@{0})", ct);
-        //    valores.Add(FilhoDe.GetString()!.ToLower() + "|");
-        //    ct++;
-        //}
-
-        //if (prm.TryGetProperty("Tipo", out JsonElement tipo) && tipo.ValueKind == JsonValueKind.Number)
-        //{
-        //    where.AppendFormat(" and IdTipo=@{0}", ct);
-        //    valores.Add(tipo.GetInt32());
-        //    ct++;
-        //}
-
-
-        //if (where.ToString().StartsWith(" and"))
-        //{
-        //    where.Remove(0, 4);
-        //}
-        //var q = _db.IcVwIc
-        //    .Where(where.ToString(), valores.ToArray()).Include(p => p.Tipo)
-        //    .ToList();
     }
 
 
