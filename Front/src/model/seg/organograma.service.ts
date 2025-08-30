@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { segOrganograma } from 'src/model/seg/organograma'
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -16,11 +17,15 @@ const pathUrl = environment.root + '/api/seg/organograma/';
 export class OrganogramaService {
     constructor(private http: HttpClient) { }
 
-    Pesquisa(prm: any): Observable<any[]> {
+    Pesquisa(prm: any): Observable<segOrganograma[]> {
         const url = pathUrl + `Pesquisa`;
-        return this.http.post<any[]>(url, prm, httpOptions);
+        return this.http.post<segOrganograma[]>(url, prm, httpOptions);
     }
 
+    ListaCompleta(): Observable<segOrganograma> {
+        const url = pathUrl + `ListaCompleta`;
+        return this.http.get<segOrganograma>(url);
+    }
 
 
 }
