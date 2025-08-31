@@ -27,5 +27,16 @@ export class OrganogramaService {
         return this.http.get<segOrganograma>(url);
     }
 
+    Grava(prm: any): Observable<segOrganograma[]> {
+        const url = pathUrl + `Grava`;
+        return this.http.post<segOrganograma[]>(url, prm, httpOptions);
+    }
+
+    MudaPaternidade(id: number, idnovopai: number): Observable<segOrganograma> {
+        const url = pathUrl + `MudaPaternidade/${id}/${idnovopai}`;
+        return this.http.get<segOrganograma>(url);
+    }
+
+
 
 }

@@ -31,4 +31,12 @@ public record Organograma
     public ICollection<Equipe>? Equipe { get; set; }
 
 
+    public void Altera(Organograma item)
+    {
+        this.Nome = item.Nome;
+        this.Ativo = item.Ativo;
+    }
+
+
+
 }

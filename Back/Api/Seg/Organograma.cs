@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static Cmdb.Api.IC.IC;
@@ -18,10 +19,7 @@ public class Organograma : ControllerBase
     [HttpPost("[action]")]
     public IActionResult Pesquisa([FromBody] PesquisaOrg prm)
     {
-        var nomes = string.Join(" & ", prm.Chave.Split(' '));
-
-
-
+        var nomes = string.Join(" & ", prm.Chave.Split(' ').Where(p=> p.Trim().Length>0));
         var consulta = _db.SegVwOrganograma.FromSql($"""
             select 
             	id
@@ -86,6 +84,68 @@ public class Organograma : ControllerBase
             }
         }
     }
+
+
+    [HttpPost("[action]")]
+    [Authorize(Roles = "admin")]
+    public IActionResult Grava([FromBody] Model.Seg.Organograma item)
+    {
+        if (item == null)
+            return BadRequest(new MensagemErro("Parâmetro não informado"));
+
+        int IdLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
+
+
+        if (item.IdPai is null)
+            return BadRequest(new MensagemErro("O Item Raiz não pode ser alterado"));
+
+        var Logado = _db.SegUsuario.Where(p => p.Id == IdLogado).AsNoTracking().FirstOrDefault();
+
+        if (Logado is null)
+            return BadRequest(new MensagemErro("Usuário não localizado"));
+
+        if (!Logado.Ativo)
+            return BadRequest(new MensagemErro("Usuário inativo"));
+
+
+
+        //List<int> MinhasLocacoes = Logado.Locacoes.Select(p => p.IdOrganograma).ToList();
+        //caso seja novo
+
+        if (item.Id == 0)
+        {
+            if (item.IdPai == null)
+                return BadRequest(new MensagemErro("Sem referencia de Pai"));
+
+            _db.Entry(item).State = EntityState.Added;
+            _db.SaveChanges();
+            return Ok(item);
+        }
+        else
+        {
+            var localizado = _db.SegOrganograma.Where(p => p.Id == item.Id).FirstOrDefault();
+            if (localizado == null)
+                return BadRequest(new MensagemErro("IC não localizado"));
+            localizado.Altera(item);
+            _db.SaveChanges();
+            return Ok(localizado);
+        }
+    }
+
+
+    [HttpGet("[action]/{idIc}/{idNovoPai}")]
+    [Authorize(Roles = "admin")]
+    public IActionResult MudaPaternidade(int idIc, int idNovoPai)
+    {
+        var org = _db.SegOrganograma.Where(p => p.Id == idIc).FirstOrDefault();
+        var novoPai = _db.SegOrganograma.Where(p => p.Id == idNovoPai).AsNoTracking().FirstOrDefault();
+        if (org is null || novoPai is null)
+            return BadRequest(new MensagemErro("IC ou Novo pai não localizado"));
+        org.IdPai = idNovoPai;
+        _db.SaveChanges();
+        return Ok();
+    }
+
 
     public record PesquisaOrg(string Chave, bool? Ativo);
 

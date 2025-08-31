@@ -1,1 +1,23 @@
-<p>cadastro works!</p>
+<form [formGroup]="frmOrg" (ngSubmit)="grava()" novalidate>
+    <div class="row">
+        <div class="col-6">
+            <label for="nome">Nome</label>
+            <input pInputText id="nome" formControlName="nome" placeholder="Nome do Organograma">
+        </div>
+        <div class="col mt-4">
+            <p-checkbox id="chativo" formControlName="ativo" [binary]="true"></p-checkbox>
+            <label for="chativo">Ativo</label>
+
+        </div>
+        <div class="col mt-4">
+            <p-checkbox id="ativoFinal" formControlName="ativoFinal" [binary]="true"></p-checkbox>
+            <label for="ativoFinal" class="form-label">Ativo Final</label>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12 text-end">
+            <button class="btn btn-primary" type="submit"  icon="pi pi-check" [disabled]="frmOrg.invalid"><i class="pi pi-save"></i> </button>
+        </div>
+    </div>
+
+</form>
