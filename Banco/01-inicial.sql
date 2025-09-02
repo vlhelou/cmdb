@@ -402,6 +402,49 @@ CREATE TABLE corp.arquivo (
 ALTER TABLE corp.arquivo OWNER TO postgres;
 
 --
+-- Name: configuracao; Type: TABLE; Schema: corp; Owner: postgres
+--
+
+CREATE TABLE corp.configuracao (
+    id integer NOT NULL,
+    idpai integer,
+    nome character varying(100),
+    ativo boolean NOT NULL,
+    tipovalor character varying(10) NOT NULL,
+    valornumerico numeric(14,4),
+    valortexto character varying,
+    valordata time without time zone,
+    valorcomplexo json,
+    valorsensivel boolean,
+    ajuda character varying
+);
+
+
+ALTER TABLE corp.configuracao OWNER TO postgres;
+
+--
+-- Name: configuracao_id_seq; Type: SEQUENCE; Schema: corp; Owner: postgres
+--
+
+CREATE SEQUENCE corp.configuracao_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE corp.configuracao_id_seq OWNER TO postgres;
+
+--
+-- Name: configuracao_id_seq; Type: SEQUENCE OWNED BY; Schema: corp; Owner: postgres
+--
+
+ALTER SEQUENCE corp.configuracao_id_seq OWNED BY corp.configuracao.id;
+
+
+--
 -- Name: expediente; Type: TABLE; Schema: corp; Owner: postgres
 --
 
@@ -438,41 +481,6 @@ ALTER SEQUENCE corp.expediente_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE corp.expediente_id_seq OWNED BY corp.expediente.id;
-
-
---
--- Name: parametro; Type: TABLE; Schema: corp; Owner: postgres
---
-
-CREATE TABLE corp.parametro (
-    id integer NOT NULL,
-    nome character varying(100),
-    valor character varying(1000)
-);
-
-
-ALTER TABLE corp.parametro OWNER TO postgres;
-
---
--- Name: parametro_id_seq; Type: SEQUENCE; Schema: corp; Owner: postgres
---
-
-CREATE SEQUENCE corp.parametro_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE corp.parametro_id_seq OWNER TO postgres;
-
---
--- Name: parametro_id_seq; Type: SEQUENCE OWNED BY; Schema: corp; Owner: postgres
---
-
-ALTER SEQUENCE corp.parametro_id_seq OWNED BY corp.parametro.id;
 
 
 --
@@ -515,6 +523,65 @@ CREATE VIEW corp.vw_arquivo AS
 
 
 ALTER VIEW corp.vw_arquivo OWNER TO postgres;
+
+--
+-- Name: vw_configuracao; Type: VIEW; Schema: corp; Owner: postgres
+--
+
+CREATE VIEW corp.vw_configuracao AS
+ WITH RECURSIVE herdeiros AS (
+         SELECT configuracao.id,
+            configuracao.idpai,
+            configuracao.nome,
+            configuracao.ativo,
+            configuracao.tipovalor,
+            configuracao.valornumerico,
+            configuracao.valortexto,
+            configuracao.valordata,
+            configuracao.valorcomplexo,
+            configuracao.valorsensivel,
+            configuracao.ajuda,
+            concat('', configuracao.nome) AS nomecompleto,
+            ''::text AS listaancestrais,
+            0 AS nivel
+           FROM corp.configuracao
+          WHERE (configuracao.idpai IS NULL)
+        UNION ALL
+         SELECT filho.id,
+            filho.idpai,
+            filho.nome,
+            filho.ativo,
+            filho.tipovalor,
+            filho.valornumerico,
+            filho.valortexto,
+            filho.valordata,
+            filho.valorcomplexo,
+            filho.valorsensivel,
+            filho.ajuda,
+            concat(herd.nomecompleto, '.', filho.nome) AS nomecompleto,
+            concat(herd.listaancestrais, ',', herd.id) AS listaancestrais,
+            (herd.nivel + 1) AS nivel
+           FROM (corp.configuracao filho
+             JOIN herdeiros herd ON (((filho.idpai = herd.id) AND (filho.id IS NOT NULL))))
+        )
+ SELECT id,
+    idpai,
+    nome,
+    ativo,
+    tipovalor,
+    valornumerico,
+    valortexto,
+    valordata,
+    valorcomplexo,
+    valorsensivel,
+    ajuda,
+    nomecompleto,
+    listaancestrais,
+    nivel
+   FROM herdeiros;
+
+
+ALTER VIEW corp.vw_configuracao OWNER TO postgres;
 
 --
 -- Name: sqconhecimento; Type: SEQUENCE; Schema: ic; Owner: postgres
@@ -735,7 +802,7 @@ ALTER TABLE ic.incidenteorganograma OWNER TO postgres;
 CREATE TABLE ic.segredo (
     id integer NOT NULL,
     idic integer NOT NULL,
-    conteudo character varying(1000),
+    conteudo character varying(1000) NOT NULL,
     idusuariodono integer,
     idorganogramadono integer,
     algoritmo character varying(100) NOT NULL
@@ -973,7 +1040,7 @@ CREATE TABLE seg.organograma (
     idpai integer,
     nome character varying(100) NOT NULL,
     ativo boolean DEFAULT true NOT NULL,
-    gd uuid
+    gd uuid NOT NULL
 );
 
 
@@ -1004,7 +1071,7 @@ CREATE TABLE seg.usuario (
     email character varying(200) NOT NULL,
     administrador boolean DEFAULT false NOT NULL,
     ativo boolean DEFAULT true NOT NULL,
-    gd uuid
+    gd uuid NOT NULL
 );
 
 
@@ -1021,8 +1088,9 @@ CREATE MATERIALIZED VIEW seg.vw_organograma AS
             organograma.nome,
             organograma.ativo,
             organograma.ativo AS ativofinal,
-            concat('|', organograma.nome) AS nomecompleto,
+            concat('', organograma.nome) AS nomecompleto,
             ''::text AS listaancestrais,
+            to_tsvector('portuguese'::regconfig, concat(' ', organograma.nome)) AS pesquisats,
             0 AS nivel
            FROM seg.organograma
           WHERE (organograma.idpai IS NULL)
@@ -1032,8 +1100,9 @@ CREATE MATERIALIZED VIEW seg.vw_organograma AS
             org.nome,
             org.ativo,
             (org.ativo AND a.ativo) AS ativofinal,
-            concat(a.nomecompleto, '|', org.nome) AS nomecompleto,
+            concat(a.nomecompleto, '.', org.nome) AS nomecompleto,
             concat(a.listaancestrais, ',', a.id) AS listaancestrais,
+            to_tsvector('portuguese'::regconfig, concat(' ', org.nome, ' ', a.nomecompleto)) AS pesquisats,
             (a.nivel + 1)
            FROM seg.organograma org,
             herdeiros a
@@ -1046,6 +1115,7 @@ CREATE MATERIALIZED VIEW seg.vw_organograma AS
     ativofinal,
     nomecompleto,
     listaancestrais,
+    pesquisats,
     nivel
    FROM herdeiros
   WITH NO DATA;
@@ -1184,17 +1254,17 @@ ALTER TABLE ONLY chamado.servicoinformacao ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
+-- Name: configuracao id; Type: DEFAULT; Schema: corp; Owner: postgres
+--
+
+ALTER TABLE ONLY corp.configuracao ALTER COLUMN id SET DEFAULT nextval('corp.configuracao_id_seq'::regclass);
+
+
+--
 -- Name: expediente id; Type: DEFAULT; Schema: corp; Owner: postgres
 --
 
 ALTER TABLE ONLY corp.expediente ALTER COLUMN id SET DEFAULT nextval('corp.expediente_id_seq'::regclass);
-
-
---
--- Name: parametro id; Type: DEFAULT; Schema: corp; Owner: postgres
---
-
-ALTER TABLE ONLY corp.parametro ALTER COLUMN id SET DEFAULT nextval('corp.parametro_id_seq'::regclass);
 
 
 --
@@ -1274,18 +1344,26 @@ COPY corp.arquivo (id, nome, tipo, conteudo) FROM stdin;
 
 
 --
--- Data for Name: expediente; Type: TABLE DATA; Schema: corp; Owner: postgres
+-- Data for Name: configuracao; Type: TABLE DATA; Schema: corp; Owner: postgres
 --
 
-COPY corp.expediente (id, data, turno1hrinicio, turno1hrtermino, turno2hrinicio, turno2hrtermino) FROM stdin;
+COPY corp.configuracao (id, idpai, nome, ativo, tipovalor, valornumerico, valortexto, valordata, valorcomplexo, valorsensivel, ajuda) FROM stdin;
+1	\N	CMDB	t	grupo	\N	\N	\N	\N	f	\N
+2	1	chave	t	texto	\N	kjekjslisdiuyxckxskjdemdkm	\N	\N	f	\N
+3	1	Conexão	t	grupo	\N	\N	\N	\N	f	\N
+4	3	AD	t	grupo	\N	\N	\N	\N	f	\N
+5	4	Usuário	t	texto	\N	\N	\N	\N	f	\N
+6	4	Servidor	t	texto	\N	\N	\N	\N	f	\N
+8	4	Senha	t	texto	\N	\N	\N	\N	t	\N
+7	4	Porta	t	numerico	\N	\N	\N	\N	f	\N
 \.
 
 
 --
--- Data for Name: parametro; Type: TABLE DATA; Schema: corp; Owner: postgres
+-- Data for Name: expediente; Type: TABLE DATA; Schema: corp; Owner: postgres
 --
 
-COPY corp.parametro (id, nome, valor) FROM stdin;
+COPY corp.expediente (id, data, turno1hrinicio, turno1hrtermino, turno2hrinicio, turno2hrtermino) FROM stdin;
 \.
 
 
@@ -1320,8 +1398,13 @@ COPY ic.dependencia (id, idicprincipal, idicdependente, idautor, dataalteracao) 
 --
 
 COPY ic.ic (id, idpai, nome, ativo, propriedades, idtipo, idorganograma) FROM stdin;
-1	\N	Root	t	\N	1	1
-2	1	nome teste	t	\N	1	1
+1	\N	Root	t	[{"Nome": "yuy", "Valor": "uyuy"}]	1	1
+4	2	outro filho	t	[]	1	\N
+5	2	mais um filho	t	[]	1	\N
+6	1	outro filho	t	[]	1	\N
+3	2	filho teste 	t	[{"Nome": "kjkj", "Valor": "kjkj"}]	1	\N
+2	1	nome teste 	t	[{"Nome": "yuy", "Valor": "uyuy"}, {"Nome": "4554", "Valor": "5454"}]	1	1
+7	6	neto 4	t	[]	1	\N
 \.
 
 
@@ -1362,6 +1445,9 @@ COPY ic.incidenteorganograma (id, idincidente, idorganograma) FROM stdin;
 --
 
 COPY ic.segredo (id, idic, conteudo, idusuariodono, idorganogramadono, algoritmo) FROM stdin;
+3	3	VfPcchPxa4SREhsGMxvlaqZETNvKV52NJECZhijFIaM=	\N	2	AES
+6	1	RM7vP5UWY3+GF2DLxDj9YA==	\N	2	AES
+7	1	/EXMq4jr3aINxpkZAwPolg==	1	\N	AES
 \.
 
 
@@ -1386,6 +1472,8 @@ COPY mudanca.mudanca (id, datacriacao, inicioprevisto, idsituacao) FROM stdin;
 --
 
 COPY seg.equipe (id, idusuario, idorganograma, idautor, data) FROM stdin;
+1	1	2	1	2025-08-16 20:19:45.051908
+2	1	5	1	2025-08-16 20:19:56.821085
 \.
 
 
@@ -1395,6 +1483,13 @@ COPY seg.equipe (id, idusuario, idorganograma, idautor, data) FROM stdin;
 
 COPY seg.organograma (id, idpai, nome, ativo, gd) FROM stdin;
 1	\N	Corp	t	fe12a60b-fb0d-4967-bd0b-b736d0edbc3e
+3	2	Estagiario	t	6b5d816d-10ec-4ec2-bd82-25f6317fd263
+4	1	Infra	t	dd21caf2-bc40-4c40-8516-68cd08cee5d6
+5	4	Segurança	t	5ba312df-2d25-4408-acdf-395b159febc4
+2	1	Desenvolvimento	t	88b0ae78-df9b-4999-b1b5-5d118e6876d1
+6	4	estag 2	t	00000000-0000-0000-0000-000000000000
+7	2	front end	t	00000000-0000-0000-0000-000000000000
+8	4	rede	t	00000000-0000-0000-0000-000000000000
 \.
 
 
@@ -1468,17 +1563,17 @@ SELECT pg_catalog.setval('chamado.sqchamado', 1, false);
 
 
 --
+-- Name: configuracao_id_seq; Type: SEQUENCE SET; Schema: corp; Owner: postgres
+--
+
+SELECT pg_catalog.setval('corp.configuracao_id_seq', 8, true);
+
+
+--
 -- Name: expediente_id_seq; Type: SEQUENCE SET; Schema: corp; Owner: postgres
 --
 
 SELECT pg_catalog.setval('corp.expediente_id_seq', 1, false);
-
-
---
--- Name: parametro_id_seq; Type: SEQUENCE SET; Schema: corp; Owner: postgres
---
-
-SELECT pg_catalog.setval('corp.parametro_id_seq', 1, false);
 
 
 --
@@ -1506,7 +1601,7 @@ SELECT pg_catalog.setval('ic.incidenteorganograma_id_seq', 1, false);
 -- Name: segredo_id_seq; Type: SEQUENCE SET; Schema: ic; Owner: postgres
 --
 
-SELECT pg_catalog.setval('ic.segredo_id_seq', 1, false);
+SELECT pg_catalog.setval('ic.segredo_id_seq', 7, true);
 
 
 --
@@ -1527,7 +1622,7 @@ SELECT pg_catalog.setval('ic.sqdependencia', 1, false);
 -- Name: sqic; Type: SEQUENCE SET; Schema: ic; Owner: postgres
 --
 
-SELECT pg_catalog.setval('ic.sqic', 2, true);
+SELECT pg_catalog.setval('ic.sqic', 7, true);
 
 
 --
@@ -1576,14 +1671,14 @@ SELECT pg_catalog.setval('mudanca.mudanca_id_seq', 1, false);
 -- Name: sqequipe; Type: SEQUENCE SET; Schema: seg; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seg.sqequipe', 1, false);
+SELECT pg_catalog.setval('seg.sqequipe', 2, true);
 
 
 --
 -- Name: sqorganograma; Type: SEQUENCE SET; Schema: seg; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seg.sqorganograma', 1, true);
+SELECT pg_catalog.setval('seg.sqorganograma', 8, true);
 
 
 --
@@ -1670,19 +1765,19 @@ ALTER TABLE ONLY corp.arquivo
 
 
 --
+-- Name: configuracao configuracao_pk; Type: CONSTRAINT; Schema: corp; Owner: postgres
+--
+
+ALTER TABLE ONLY corp.configuracao
+    ADD CONSTRAINT configuracao_pk PRIMARY KEY (id);
+
+
+--
 -- Name: expediente expediente_pkey; Type: CONSTRAINT; Schema: corp; Owner: postgres
 --
 
 ALTER TABLE ONLY corp.expediente
     ADD CONSTRAINT expediente_pkey PRIMARY KEY (id);
-
-
---
--- Name: parametro parametro_pkey; Type: CONSTRAINT; Schema: corp; Owner: postgres
---
-
-ALTER TABLE ONLY corp.parametro
-    ADD CONSTRAINT parametro_pkey PRIMARY KEY (id);
 
 
 --
@@ -1833,13 +1928,6 @@ CREATE INDEX ix_chamadoservicoic_servico ON chamado.servicoic USING btree (idser
 --
 
 CREATE INDEX ix_servicoic_ic ON chamado.servicoic USING btree (idic);
-
-
---
--- Name: ix_corpparametro_nome; Type: INDEX; Schema: corp; Owner: postgres
---
-
-CREATE UNIQUE INDEX ix_corpparametro_nome ON corp.parametro USING btree (nome);
 
 
 --
@@ -2130,6 +2218,14 @@ ALTER TABLE ONLY chamado.servicoinformacao
 
 ALTER TABLE ONLY chamado.servicoinformacao
     ADD CONSTRAINT fk_servicoinformacao_servico FOREIGN KEY (idservico) REFERENCES chamado.servico(id);
+
+
+--
+-- Name: configuracao fk_configuracao_pai_filho; Type: FK CONSTRAINT; Schema: corp; Owner: postgres
+--
+
+ALTER TABLE ONLY corp.configuracao
+    ADD CONSTRAINT fk_configuracao_pai_filho FOREIGN KEY (idpai) REFERENCES corp.configuracao(id);
 
 
 --
@@ -2441,20 +2537,6 @@ GRANT SELECT,USAGE ON SEQUENCE corp.expediente_id_seq TO usrapp;
 
 
 --
--- Name: TABLE parametro; Type: ACL; Schema: corp; Owner: postgres
---
-
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE corp.parametro TO usrapp;
-
-
---
--- Name: SEQUENCE parametro_id_seq; Type: ACL; Schema: corp; Owner: postgres
---
-
-GRANT SELECT,USAGE ON SEQUENCE corp.parametro_id_seq TO usrapp;
-
-
---
 -- Name: SEQUENCE sqtipo; Type: ACL; Schema: corp; Owner: postgres
 --
 
@@ -2654,7 +2736,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE seg.usuario TO usrapp;
 -- Name: TABLE vw_organograma; Type: ACL; Schema: seg; Owner: postgres
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE seg.vw_organograma TO usrapp;
+GRANT SELECT,MAINTAIN ON TABLE seg.vw_organograma TO usrapp;
 
 
 --

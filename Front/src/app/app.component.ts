@@ -36,6 +36,16 @@ export class AppComponent implements OnInit {
                 routerLink: '/organograma'
             },
             {
+                label: 'Usuário',
+                icon: 'pi pi-user',
+                routerLink: '/usuario'
+            },
+            {
+                label: 'Configuração',
+                icon: 'pi pi-cog',
+                routerLink: '/configuracao'
+            },
+            {
                 label: 'Contato',
                 icon: 'pi pi-envelope'
             }
