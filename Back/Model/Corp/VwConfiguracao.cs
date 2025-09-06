@@ -26,8 +26,6 @@ public record VwConfiguracao
     [Column("valortexto")]
     public string? ValorTexto { get; set; }
 
-    [Column("valorboleano")]
-    public bool? ValorBoleano { get; set; }
 
     [Column("valordata")]
     public DateTimeOffset? ValorData { get; set; }
@@ -45,6 +43,10 @@ public record VwConfiguracao
     public string ListaAncestrais { get; set; } = string.Empty;
 
     [Column("nivel")]
-    public int Nivel { get; set; } 
+    public int Nivel { get; set; }
+
+    [NotMapped]
+    public List<VwConfiguracao>? Filhos { get; set; }
+
 
 }

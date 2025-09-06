@@ -2,25 +2,24 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { corpTipo } from 'src/model/corp/tipo'
+import { corpConfiguracao } from 'src/model/corp/configuracao'
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
-const pathUrl = '/api/corp/tipo/';
+const pathUrl = '/api/corp/configuracao/';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TipoService {
+export class ConfiguracaoService {
+
   constructor(private http: HttpClient) { }
 
-  ListaAtivos(grupo: string): Observable<corpTipo[]> {
-    const url = new URL(pathUrl + 'ListaAtivos', environment.root);
-    url.searchParams.append('grupo', grupo);
-    return this.http.get<corpTipo[]>(url.toString());
+  ArvoreCompleta(): Observable<corpConfiguracao[]> {
+    const url = new URL(pathUrl + 'ArvoreCompleta', environment.root);
+    return this.http.get<corpConfiguracao[]>(url.toString());
   }
-
 
 }

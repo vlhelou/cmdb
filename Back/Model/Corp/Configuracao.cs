@@ -25,8 +25,6 @@ public record Configuracao
     [Column("valortexto")]
     public string? ValorTexto { get; set; }
 
-    [Column("valorboleano")]
-    public bool? ValorBoleano { get; set; }
 
     [Column("valordata")]
     public DateTimeOffset? ValorData { get; set; }
