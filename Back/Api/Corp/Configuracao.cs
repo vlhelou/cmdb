@@ -13,4 +13,5 @@ public class Configuracao : ControllerBase
     {
         _db = db;
     }
+
 }

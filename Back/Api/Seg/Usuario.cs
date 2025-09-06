@@ -1,7 +1,9 @@
+using Cmdb.Model.Seg;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Novell.Directory.Ldap;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Json;
@@ -62,6 +64,7 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
     }
 
     [HttpGet("[action]")]
+    
     public IActionResult MeusOrganogramas()
     {
         int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
@@ -73,6 +76,53 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
             .AsNoTracking()
             .ToList();
         return Ok(orgs);
+    }
+
+
+    [HttpGet("[action]")]
+    [AllowAnonymous]
+    public IActionResult Teste()
+    {
+        using LdapConnection cn = new();
+        //string SearchBase = "dc=example,dc=com";
+        string SearchBase = "dc=cmdb,dc=com";
+        string[] PropsUser = { "sn", "cn", "uid", "telephoneNumber", "mail" };
+        //cn.ConnectAsync("ldap.forumsys.com", 389).Wait();
+        cn.ConnectAsync("192.168.0.100", 389).Wait();
+        //cn.BindAsync(null, null).Wait();
+        cn.BindAsync("uid=john,ou=People,dc=cmdb,dc=com", "oculos").Wait();
+        //string searchFilter = $"(&(objectClass=person)(cn=Isaac Newton))";
+        string searchFilter = $"(&(objectClass=person)(uid=john))";
+        var Pesquisa = cn.SearchAsync(SearchBase, LdapConnection.ScopeSub, searchFilter, PropsUser, false).Result;
+        UsuarioReply? retorno = null;
+        if (Pesquisa.HasMoreAsync().Result)
+        {
+            try
+            {
+                var item = Pesquisa.NextAsync().Result;
+                retorno = new();
+                string completo = item.ToString().ToLower();
+                retorno.Dn = item.Dn;
+                if (completo.IndexOf("mail") >= 0)
+                    retorno.Email = item.Get("mail")?.StringValue;
+                if (completo.IndexOf("description") >= 0)
+                    retorno.Descricao = item.Get("Description").StringValue;
+                if (completo.IndexOf("name") >= 0)
+                    retorno.Nome = item.Get("Name").StringValue;
+                if (completo.IndexOf("displayname") >= 0)
+                    retorno.NomeExibicao = item.Get("displayName").StringValue;
+                if (completo.IndexOf("samaccountname") >= 0)
+                    retorno.SammAccount = item.Get("SamAccountName").StringValue;
+                return Ok( retorno);
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { erro = ex.Message });
+            }
+        }
+
+        return Ok(new { msg = "não acho nada" });
     }
 
 
@@ -110,6 +160,16 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
         public string senha { get; set; } = string.Empty;
     }
 
+    private record UsuarioReply
+    {
+        public string? Dn { get; set; }
+        public string? Email { get; set; }
+        public string? Descricao { get; set; }
+        public string? Nome { get; set; }
+        public string?  NomeExibicao { get; set; }
+        public string? SammAccount { get; set; }
+
+    }
     private string GeraToken(Model.Seg.Usuario usuario, int validadeHoras)
     {
         var jwtKey = Convert.FromBase64String(_configuration.GetValue<string>("jwt") ?? string.Empty);
