@@ -11,9 +11,13 @@ namespace Cmdb.Api.Corp;
 public class Configuracao : ControllerBase
 {
     private readonly Model.Db _db;
+    private readonly Guid _chave ;
     public Configuracao(Model.Db db)
     {
         _db = db;
+        var strChave= _db.CorpVwConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 2)?.ValorTexto;
+        if (string.IsNullOrWhiteSpace(strChave) || !Guid.TryParse(strChave.Trim(), out _chave))
+            throw new Exception("Chave de criptografia não configurada");
 
     }
 
@@ -44,5 +48,53 @@ public class Configuracao : ControllerBase
             AdicionarFilhosArvore(item, listaOriginal);
         }
     }
+
+    [HttpPost("[action]")]
+    public IActionResult GravaValor([FromBody] Model.Corp.VwConfiguracao item)
+    {
+        if (item is null)
+            return BadRequest(new { Mensagem = "Item não informado" });
+
+
+
+        var localizado = _db.CorpConfiguracao.FirstOrDefault(x => x.Id == item.Id);
+        if (localizado is null)
+            return BadRequest(new { Mensagem = "Item não localizado" });
+
+        if (localizado.ValorSensivel && item.ValorTexto == "*****")
+            return BadRequest(new { Mensagem = "valor sensível não alterado" });
+
+        switch (localizado.TipoValor)
+        {
+            case "numerico":
+                localizado.ValorNumerico = item.ValorNumerico;
+                break;
+            case "texto":
+                if (localizado.ValorSensivel)
+                    localizado.ValorTexto = Util.Criptografa(item.ValorTexto ?? string.Empty, _chave);
+                else
+                    localizado.ValorTexto = item.ValorTexto;
+                break;
+            case "data":
+                localizado.ValorData = item.ValorData;
+                break;
+            case "complexo":
+                localizado.ValorComplexo = item.ValorComplexo;
+                break;
+
+            default:
+                return BadRequest(new { Mensagem = "Tipo de valor não suportado" });
+        }
+
+        _db.SaveChanges();
+        if (localizado.ValorSensivel)
+        {
+            _db.Entry(localizado).State = EntityState.Detached;
+            localizado.ValorTexto = "*****";
+        }
+
+        return Ok(localizado);
+    }
+
 
 }

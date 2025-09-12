@@ -17,10 +17,10 @@ export class ConfiguracaoComponent implements OnInit {
     arvore: TreeNode[] = [];
     selecionado: TreeNode | null = null;
 
-    constructor(private configuracaoService: ConfiguracaoService) { }
+    constructor(private srv: ConfiguracaoService) { }
 
     ngOnInit() {
-        this.configuracaoService.ArvoreCompleta().subscribe({
+        this.srv.ArvoreCompleta().subscribe({
             next: data => {
                 this.origemArvore = data;
                 this.origemArvore.forEach((item) => {
@@ -50,11 +50,21 @@ export class ConfiguracaoComponent implements OnInit {
     }
     
     itemSelecionado(event:any) {
-        this.configuracaoSelecionada = event.data;
+        this.configuracaoSelecionada = event.node.data;
     }
     itemDesselecionado() {
         this.selecionado = null;
         this.configuracaoSelecionada = null;
+    }
+
+
+    salvar() {
+        this.srv.GravaValor(this.configuracaoSelecionada!).subscribe({
+            next: data => {
+                this.selecionado!.data = data;
+                this.configuracaoSelecionada = data;
+            },
+        });        
     }
 
 }

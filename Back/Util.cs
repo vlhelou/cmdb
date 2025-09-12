@@ -39,7 +39,7 @@ public static class Util
     }
 
 
-    public static string Criptograva(string origem, Guid chave)
+    public static string Criptografa(string origem, Guid chave)
     {
 
         byte[] encrypted;
@@ -67,7 +67,7 @@ public static class Util
 
     }
 
-    public static string Descriptograva(string hash, Guid chave, string algoritmo)
+    public static string Descriptografa(string hash, Guid chave, string algoritmo)
     {
         byte[] encrypted = Convert.FromBase64String(hash);
         switch (algoritmo)

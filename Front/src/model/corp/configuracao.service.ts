@@ -22,4 +22,9 @@ export class ConfiguracaoService {
     return this.http.get<corpConfiguracao[]>(url.toString());
   }
 
+  GravaValor(item: corpConfiguracao): Observable<corpConfiguracao> {
+    const url = new URL(pathUrl + 'GravaValor', environment.root); 
+    return this.http.post<corpConfiguracao>(url.toString(), item, httpOptions);
+  }
+
 }

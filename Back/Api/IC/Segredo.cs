@@ -69,7 +69,7 @@ public class Segredo : ControllerBase
             {
                 IdIC = item.idIc,
                 IdUsuarioDono = idLogado,
-                Conteudo = Util.Criptograva(item.conteudo, localizado.Gd),
+                Conteudo = Util.Criptografa(item.conteudo, localizado.Gd),
                 Algoritmo = "AES"
             };
             _db.IcSegredo.Add(segredo);
@@ -87,7 +87,7 @@ public class Segredo : ControllerBase
             {
                 IdIC = item.idIc,
                 IdOrganogramaDono = item.IdOrganogramaDono,
-                Conteudo = Util.Criptograva(item.conteudo, organograma.Gd),
+                Conteudo = Util.Criptografa(item.conteudo, organograma.Gd),
                 Algoritmo = "AES"
             };
             _db.IcSegredo.Add(segredo);
@@ -131,7 +131,7 @@ public class Segredo : ControllerBase
                 var dono = _db.SegUsuario.AsNoTracking().FirstOrDefault(p => p.Id == segredo.IdUsuarioDono);
                 if (dono == null)
                     return BadRequest(new MensagemErro("Proprietário do segredo não localizado"));
-                conteudo = Util.Descriptograva(segredo.Conteudo, dono.Gd, segredo.Algoritmo);
+                conteudo = Util.Descriptografa(segredo.Conteudo, dono.Gd, segredo.Algoritmo);
                 return Ok(new { conteudo});
             }
         }
@@ -142,7 +142,7 @@ public class Segredo : ControllerBase
                 .FirstOrDefault(p => p.Id == segredo.IdOrganogramaDono && p.Equipe!.Any(q=>q.IdUsuario==idLogado));
             if (organograma == null)
                 return BadRequest(new MensagemErro("usuário não pertence ao organograma proprietário do segredo"));
-            conteudo = Util.Descriptograva(segredo.Conteudo, organograma.Gd, segredo.Algoritmo);
+            conteudo = Util.Descriptografa(segredo.Conteudo, organograma.Gd, segredo.Algoritmo);
             return Ok(new { conteudo });
         }
 

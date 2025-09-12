@@ -533,7 +533,6 @@ CREATE VIEW corp.vw_configuracao AS
          SELECT configuracao.id,
             configuracao.idpai,
             configuracao.nome,
-            configuracao.ativo,
             configuracao.tipovalor,
             configuracao.valornumerico,
             configuracao.valortexto,
@@ -550,7 +549,6 @@ CREATE VIEW corp.vw_configuracao AS
          SELECT filho.id,
             filho.idpai,
             filho.nome,
-            filho.ativo,
             filho.tipovalor,
             filho.valornumerico,
             filho.valortexto,
@@ -567,7 +565,6 @@ CREATE VIEW corp.vw_configuracao AS
  SELECT id,
     idpai,
     nome,
-    ativo,
     tipovalor,
     valornumerico,
     valortexto,
@@ -1349,13 +1346,17 @@ COPY corp.arquivo (id, nome, tipo, conteudo) FROM stdin;
 
 COPY corp.configuracao (id, idpai, nome, ativo, tipovalor, valornumerico, valortexto, valordata, valorcomplexo, valorsensivel, ajuda) FROM stdin;
 1	\N	CMDB	t	grupo	\N	\N	\N	\N	f	\N
-2	1	chave	t	texto	\N	kjekjslisdiuyxckxskjdemdkm	\N	\N	f	\N
-3	1	Conexão	t	grupo	\N	\N	\N	\N	f	\N
 4	3	AD	t	grupo	\N	\N	\N	\N	f	\N
 5	4	Usuário	t	texto	\N	\N	\N	\N	f	\N
 6	4	Servidor	t	texto	\N	\N	\N	\N	f	\N
 8	4	Senha	t	texto	\N	\N	\N	\N	t	\N
 7	4	Porta	t	numerico	\N	\N	\N	\N	f	\N
+9	4	Searchbase	t	texto	\N	dc=cmdb,dc=com	\N	\N	f	\N
+3	1	Conexão	t	grupo	\N	\N	\N	\N	f	\N
+10	4	Propriedades	t	complexo	\N	{\r\n    "Email":"mail",\r\n    "Descricao":"description",\r\n    "Nome":"Name",\r\n    "SammAccount":"SamAccountName"\r\n}	\N	\N	f	\N
+12	4	Pesquisa nome usuário	t	texto	\N	(&(objectClass=person)(uid={0}))	\N	\N	f	\N
+11	4	DN	t	texto	\N	uid={0},ou=People,dc=cmdb,dc=com	\N	\N	f	\N
+2	1	chave	t	texto	\N	df39963f-d7bb-4c44-88df-337c9e0a9f1c	\N	\N	f	\N
 \.
 
 
@@ -1566,7 +1567,7 @@ SELECT pg_catalog.setval('chamado.sqchamado', 1, false);
 -- Name: configuracao_id_seq; Type: SEQUENCE SET; Schema: corp; Owner: postgres
 --
 
-SELECT pg_catalog.setval('corp.configuracao_id_seq', 8, true);
+SELECT pg_catalog.setval('corp.configuracao_id_seq', 12, true);
 
 
 --
@@ -2523,6 +2524,13 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE corp.arquivo TO usrapp;
 
 
 --
+-- Name: TABLE configuracao; Type: ACL; Schema: corp; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE corp.configuracao TO usrapp;
+
+
+--
 -- Name: TABLE expediente; Type: ACL; Schema: corp; Owner: postgres
 --
 
@@ -2555,6 +2563,13 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE corp.tipo TO usrapp;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE corp.vw_arquivo TO usrapp;
+
+
+--
+-- Name: TABLE vw_configuracao; Type: ACL; Schema: corp; Owner: postgres
+--
+
+GRANT SELECT ON TABLE corp.vw_configuracao TO usrapp;
 
 
 --
