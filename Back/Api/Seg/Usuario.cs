@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Json;
 
+
 namespace Cmdb.Api.Seg;
 
 [Route("api/seg/[controller]")]
@@ -38,10 +39,10 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
     [HttpPost("[action]")]
     public IActionResult Login([FromBody] UsrLogin item)
     {
-        var localizado = _db.SegUsuario.FirstOrDefault(x => x.Email.ToLower() == item.email.ToLower());
+        var localizado = _db.SegUsuario.FirstOrDefault(x => x.Email.ToLower() == item.Identificacao.ToLower());
         if (localizado == null)
             return BadRequest(new MensagemErro("usuario não localizado"));
-        if (localizado.Senha != (localizado.Id.ToString() + item.senha).ToSha512())
+        if (localizado.Senha != (localizado.Id.ToString() + item.Senha).ToSha512())
             return BadRequest(new MensagemErro("usuário ou senha incorretos"));
 
         string token = GeraToken(localizado, 24);
@@ -77,6 +78,60 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
             .ToList();
         return Ok(orgs);
     }
+
+
+    [HttpPost("[action]")]
+    public Model.Seg.Usuario Grava([FromBody] Model.Seg.Usuario usuario)
+    {
+        if (usuario == null)
+            throw new Exception("Parametro não informado");
+
+        Model.Seg.Usuario retorno;
+        Model.Seg.Usuario Logado = Util.Claim2Usuario(HttpContext.User.Claims);
+        var Autor = db.SegUsuario.AsNoTracking().FirstOrDefault(p=>p.Id==Logado.Id);
+
+        if (Autor == null)
+            throw new Exception("Autor não localizado");
+
+        if (!Autor.Administrador || !Autor.Ativo)
+            throw new Exception("Autor inativo ou não é administrador");
+
+        if (usuario.Id == 0)
+        {
+            Model.Seg.Usuario novo = new Model.Seg.Usuario();
+
+            novo.Gd = Guid.NewGuid();
+            novo.Nome = usuario.Nome;
+            novo.Email = usuario.Email;
+            novo.Ativo = usuario.Ativo;
+            novo.Administrador = usuario.Administrador;
+            novo.Local = usuario.Local;
+            novo.Login = usuario.Login;
+            db.Add(novo);
+
+            db.SaveChanges();
+            novo.Senha = (novo.Id.ToString() + novo.Senha).ToSha512();
+            db.SaveChanges();
+            retorno = novo;
+        }
+        else
+        {
+
+            Model.Seg.Usuario alterado = db.SegUsuario.Find(usuario.Id);
+            if (alterado == null)
+                throw new Exception("usuário a ser alterado não existe");
+            alterado.Nome = usuario.Nome;
+            alterado.Email = usuario.Email;
+            alterado.Ativo = usuario.Ativo;
+            alterado.Administrador = usuario.Administrador;
+            db.Update(alterado);
+            db.SaveChanges();
+            retorno = alterado;
+        }
+        return retorno;
+
+    }
+
 
 
     [HttpGet("[action]")]
@@ -155,9 +210,10 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
 
     public record UsrLogin
     {
-        public string email { get; set; } = string.Empty;
+        public string Identificacao{ get; set; } = string.Empty;
 
-        public string senha { get; set; } = string.Empty;
+        public string Senha { get; set; } = string.Empty;
+        public bool Local { get; set; } 
     }
 
     private record UsuarioReply

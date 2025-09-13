@@ -1063,7 +1063,9 @@ CREATE TABLE seg.usuario (
     email character varying(200) NOT NULL,
     administrador boolean DEFAULT false NOT NULL,
     ativo boolean DEFAULT true NOT NULL,
-    gd uuid NOT NULL
+    gd uuid NOT NULL,
+    local boolean NOT NULL,
+    login character varying(100)
 );
 
 
@@ -1348,10 +1350,11 @@ COPY corp.configuracao (id, idpai, nome, ativo, tipovalor, valornumerico, valort
 7	4	Porta	t	numerico	\N	\N	\N	\N	f	\N
 9	4	Searchbase	t	texto	\N	dc=cmdb,dc=com	\N	\N	f	\N
 3	1	Conexão	t	grupo	\N	\N	\N	\N	f	\N
-10	4	Propriedades	t	complexo	\N	{\r\n    "Email":"mail",\r\n    "Descricao":"description",\r\n    "Nome":"Name",\r\n    "SammAccount":"SamAccountName"\r\n}	\N	\N	f	\N
 12	4	Pesquisa nome usuário	t	texto	\N	(&(objectClass=person)(uid={0}))	\N	\N	f	\N
 11	4	DN	t	texto	\N	uid={0},ou=People,dc=cmdb,dc=com	\N	\N	f	\N
-2	1	chave	t	texto	\N	df39963f-d7bb-4c44-88df-337c9e0a9f1c	\N	\N	f	\N
+10	4	Propriedades	t	complexo	\N	\N	\N	{\r\n    "Email":"mail",\r\n    "Descricao":"description",\r\n    "Nome":"Name",\r\n    "SammAccount":"SamAccountName"\r\n}	f	\N
+2	1	chave	t	texto	\N	bcf4a772-a7b9-4ed5-9a99-f30f96cbe452	\N	\N	f	\N
+13	3	tetse	t	texto	\N	8888	\N	\N	f	\N
 \.
 
 
@@ -1493,9 +1496,9 @@ COPY seg.organograma (id, idpai, nome, ativo, gd) FROM stdin;
 -- Data for Name: usuario; Type: TABLE DATA; Schema: seg; Owner: postgres
 --
 
-COPY seg.usuario (id, nome, senha, email, administrador, ativo, gd) FROM stdin;
-1	admin	d2160e670a6261bcd5164a5b2164a89e98a34b54ccd59944ccc68fcc725f12ce3746367919d55fa43101e0d2e1f2ff1c1c824499622e0643024f9d77bfebcbd2	adm@cmdb.com.br	t	t	96615102-1e2e-4b71-b831-391286f33637
-7	usr	9c1d9dc025d54d999fbf8d3ff28a0ddc336bebb7c3b8b4ee42510064deb36d0ccc598d3ac38d96d06cf201725c0725fd51c154ff7759812e4b23989b0eae2a38	user1@cmdb.com.br	f	t	31a29536-2b41-4eb4-aded-eb758ba01db0
+COPY seg.usuario (id, nome, senha, email, administrador, ativo, gd, local, login) FROM stdin;
+1	admin	d2160e670a6261bcd5164a5b2164a89e98a34b54ccd59944ccc68fcc725f12ce3746367919d55fa43101e0d2e1f2ff1c1c824499622e0643024f9d77bfebcbd2	adm@cmdb.com.br	t	t	96615102-1e2e-4b71-b831-391286f33637	t	\N
+7	usr	9c1d9dc025d54d999fbf8d3ff28a0ddc336bebb7c3b8b4ee42510064deb36d0ccc598d3ac38d96d06cf201725c0725fd51c154ff7759812e4b23989b0eae2a38	user1@cmdb.com.br	f	t	31a29536-2b41-4eb4-aded-eb758ba01db0	t	\N
 \.
 
 
@@ -1562,7 +1565,7 @@ SELECT pg_catalog.setval('chamado.sqchamado', 1, false);
 -- Name: configuracao_id_seq; Type: SEQUENCE SET; Schema: corp; Owner: postgres
 --
 
-SELECT pg_catalog.setval('corp.configuracao_id_seq', 12, true);
+SELECT pg_catalog.setval('corp.configuracao_id_seq', 13, true);
 
 
 --

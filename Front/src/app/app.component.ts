@@ -38,7 +38,7 @@ export class AppComponent implements OnInit {
             {
                 label: 'Usuário',
                 icon: 'pi pi-user',
-                routerLink: '/usuario'
+                routerLink: '/usuario/cadastro'
             },
             {
                 label: 'Configuração',

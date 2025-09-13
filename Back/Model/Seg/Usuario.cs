@@ -32,10 +32,12 @@ public record Usuario
     [JsonIgnore]
     public string Senha { get; set; }=string.Empty;
 
-    public void NovoGD()
-    {
-        Gd = Guid.NewGuid();
-    }
+    [Column("local")]
+    public bool Local { get; set; }
+
+    [Column("login")]
+    public string? Login { get; set; }
+
 
     public void AjustaSenha(string senha)
     {

@@ -89,7 +89,19 @@ public static class Util
 
     }
 
-
+    public static string ToSHA512(this String origem)
+    {
+        using (SHA512 sha512Hash = SHA512.Create())
+        {
+            var bytes = sha512Hash.ComputeHash(Encoding.UTF8.GetBytes(origem));
+            StringBuilder retorno = new StringBuilder();
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                retorno.Append(bytes[i].ToString("x2"));
+            }
+            return retorno.ToString();
+        }
+    }
 
 }
 
