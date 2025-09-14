@@ -16,6 +16,15 @@ public class Db(DbContextOptions<Db> options) : DbContext(options)
     {
         
     }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder
+            .UseLoggerFactory(MyLoggerFactory)  //tie-up DbContext with LoggerFactory object
+            .EnableSensitiveDataLogging()
+            .EnableDetailedErrors();
+
+    }
     //seg
     public DbSet<Model.Seg.Usuario> SegUsuario { get; set; }
     public DbSet<Model.Seg.Organograma> SegOrganograma { get; set; }

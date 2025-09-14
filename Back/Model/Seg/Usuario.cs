@@ -10,38 +10,37 @@ public record Usuario
 
     [Key]
     [Column("id")]
-    public int Id { get; set; }
-        
-    [Column("nome")]
-    public string Nome { get; set; }=string.Empty;
-        
-    [Column("email")]
-    public string Email { get; set; }=string.Empty;
-        
+    public Int32 Id { get; set; }
+
+    [Column("identificacao")]
+    public string Identificacao { get; set; } = string.Empty;
+
+    [Column("gd")]
+    [JsonIgnore]
+    public Guid Gd { get; set; }
+
+    [Column("senha")]
+    [JsonIgnore]
+    public string? Senha { get; set; }
+
+
     [Column("administrador")]
     public bool Administrador { get; set; }
 
     [Column("ativo")]
     public bool Ativo { get; set; }
 
-    [Column("gd")]
-    [JsonIgnore]
-    public Guid Gd { get; set; }
-    
-    [Column("senha")]
-    [JsonIgnore]
-    public string Senha { get; set; }=string.Empty;
 
     [Column("local")]
     public bool Local { get; set; }
 
-    [Column("login")]
-    public string? Login { get; set; }
 
+    [Column("email")]
+    public string Email { get; set; } = string.Empty;
 
     public void AjustaSenha(string senha)
     {
-        Senha = (this.Id.ToString()+senha).ToSha512();
+        Senha = (this.Id.ToString() + senha).ToSha512();
     }
 
 

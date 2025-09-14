@@ -3,19 +3,27 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Novell.Directory.Ldap;
+//using Novell.Directory.Ldap;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
 namespace Cmdb.Api.Seg;
 
 [Route("api/seg/[controller]")]
-public class Usuario(Model.Db db, IConfiguration configuration) : Controller
+public class Usuario : Controller
 {
-    private readonly Model.Db _db = db;
-    private readonly IConfiguration _configuration = configuration;
+    private readonly Model.Db _db;
+    private readonly IConfiguration _configuration;
+
+    public Usuario(Model.Db db, IConfiguration configuration)
+    {
+        this._db = db;
+        this._configuration = configuration;
+    }
 
     [AllowAnonymous]
     [HttpPost("[action]")]
@@ -24,7 +32,6 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
         if (item.Id == 0)
         {
             var novo = item.ToUsuario();
-            novo.NovoGD();
             _db.Add(novo);
             _db.SaveChanges();
             novo.AjustaSenha(item.Senha);
@@ -39,17 +46,22 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
     [HttpPost("[action]")]
     public IActionResult Login([FromBody] UsrLogin item)
     {
-        var localizado = _db.SegUsuario.FirstOrDefault(x => x.Email.ToLower() == item.Identificacao.ToLower());
+        if (item is null)
+            return BadRequest(new MensagemErro("Parâmetro não informado"));
+
+
+        var x = _db.SegUsuario.ToList();    
+        var localizado = _db.SegUsuario.FirstOrDefault(x => x.Identificacao.ToLower() == item.identificacao.ToLower());
         if (localizado == null)
             return BadRequest(new MensagemErro("usuario não localizado"));
-        if (localizado.Senha != (localizado.Id.ToString() + item.Senha).ToSha512())
+        if (localizado.Senha != (localizado.Id.ToString() + item.senha).ToSha512())
             return BadRequest(new MensagemErro("usuário ou senha incorretos"));
 
         string token = GeraToken(localizado, 24);
         return Ok(new
         {
             token,
-            localizado.Nome,
+            localizado.Identificacao,
             localizado.Email,
             localizado.Administrador
         });
@@ -65,7 +77,7 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
     }
 
     [HttpGet("[action]")]
-    
+
     public IActionResult MeusOrganogramas()
     {
         int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
@@ -73,7 +85,7 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
         if (localizado == null)
             return BadRequest(new MensagemErro("Usuário não localizado"));
         var orgs = _db.SegVwOrganograma
-            .Where(p=>p.Equipe!.Any(q=>q.IdUsuario==idLogado))
+            .Where(p => p.Equipe!.Any(q => q.IdUsuario == idLogado))
             .AsNoTracking()
             .ToList();
         return Ok(orgs);
@@ -88,7 +100,7 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
 
         Model.Seg.Usuario retorno;
         Model.Seg.Usuario Logado = Util.Claim2Usuario(HttpContext.User.Claims);
-        var Autor = db.SegUsuario.AsNoTracking().FirstOrDefault(p=>p.Id==Logado.Id);
+        var Autor = _db.SegUsuario.AsNoTracking().FirstOrDefault(p => p.Id == Logado.Id);
 
         if (Autor == null)
             throw new Exception("Autor não localizado");
@@ -101,31 +113,30 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
             Model.Seg.Usuario novo = new Model.Seg.Usuario();
 
             novo.Gd = Guid.NewGuid();
-            novo.Nome = usuario.Nome;
+            novo.Identificacao = usuario.Identificacao;
             novo.Email = usuario.Email;
             novo.Ativo = usuario.Ativo;
             novo.Administrador = usuario.Administrador;
             novo.Local = usuario.Local;
-            novo.Login = usuario.Login;
-            db.Add(novo);
+            _db.Add(novo);
 
-            db.SaveChanges();
+            _db.SaveChanges();
             novo.Senha = (novo.Id.ToString() + novo.Senha).ToSha512();
-            db.SaveChanges();
+            _db.SaveChanges();
             retorno = novo;
         }
         else
         {
 
-            Model.Seg.Usuario alterado = db.SegUsuario.Find(usuario.Id);
+            Model.Seg.Usuario? alterado = _db.SegUsuario.Find(usuario.Id);
             if (alterado == null)
                 throw new Exception("usuário a ser alterado não existe");
-            alterado.Nome = usuario.Nome;
+            alterado.Identificacao = usuario.Identificacao;
             alterado.Email = usuario.Email;
             alterado.Ativo = usuario.Ativo;
             alterado.Administrador = usuario.Administrador;
-            db.Update(alterado);
-            db.SaveChanges();
+            _db.Update(alterado);
+            _db.SaveChanges();
             retorno = alterado;
         }
         return retorno;
@@ -138,7 +149,7 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
     [AllowAnonymous]
     public IActionResult Teste()
     {
-        using LdapConnection cn = new();
+        using Novell.Directory.Ldap.LdapConnection cn = new();
         //string SearchBase = "dc=example,dc=com";
         string SearchBase = "dc=cmdb,dc=com";
         string[] PropsUser = { "sn", "cn", "uid", "telephoneNumber", "mail" };
@@ -148,7 +159,7 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
         cn.BindAsync("uid=john,ou=People,dc=cmdb,dc=com", "oculos").Wait();
         //string searchFilter = $"(&(objectClass=person)(cn=Isaac Newton))";
         string searchFilter = $"(&(objectClass=person)(uid=john))";
-        var Pesquisa = cn.SearchAsync(SearchBase, LdapConnection.ScopeSub, searchFilter, PropsUser, false).Result;
+        var Pesquisa = cn.SearchAsync(SearchBase, Novell.Directory.Ldap.LdapConnection.ScopeSub, searchFilter, PropsUser, false).Result;
         UsuarioReply? retorno = null;
         if (Pesquisa.HasMoreAsync().Result)
         {
@@ -168,7 +179,7 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
                     retorno.NomeExibicao = item.Get("displayName").StringValue;
                 if (completo.IndexOf("samaccountname") >= 0)
                     retorno.SammAccount = item.Get("SamAccountName").StringValue;
-                return Ok( retorno);
+                return Ok(retorno);
 
             }
             catch (Exception ex)
@@ -179,6 +190,24 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
 
         return Ok(new { msg = "não acho nada" });
     }
+
+
+    //[HttpGet("[action]")]
+    //[AllowAnonymous]
+    //public IActionResult teste2()
+    //{
+    //    string ldapServer = "192.168.0.100"; // e.g., "ldap.example.com"
+    //    int ldapPort = 389; // or 636 for LDAPS
+    //    string bindDn = "uid=john,ou=People,dc=cmdb,dc=com"; // Your bind DN
+    //    string bindPassword = "oculos"; // Your bind password
+    //    string searchBase = "dc=example,dc=com"; // Base DN for your search
+    //    string searchFilter = "(cn=*)"; // Example filter to find all objects with a common name
+
+    //    using System.DirectoryServices.Protocols.LdapConnection cn = new(ldapServer);
+    //    cn.Credential = new System.Net.NetworkCredential(bindDn, bindPassword);
+    //    cn.Bind();
+    //    return Ok();
+    //}
 
 
     public record UsrForm
@@ -199,7 +228,7 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
             return new Model.Seg.Usuario
             {
                 Id = this.Id,
-                Nome = this.Nome,
+                Identificacao = this.Nome,
                 Email = this.Email,
                 Administrador = this.Administrador,
                 Ativo = true
@@ -210,10 +239,10 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
 
     public record UsrLogin
     {
-        public string Identificacao{ get; set; } = string.Empty;
+        public string identificacao { get; set; } = string.Empty;
 
-        public string Senha { get; set; } = string.Empty;
-        public bool Local { get; set; } 
+        public string senha { get; set; } = string.Empty;
+        public bool local { get; set; }
     }
 
     private record UsuarioReply
@@ -222,19 +251,37 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
         public string? Email { get; set; }
         public string? Descricao { get; set; }
         public string? Nome { get; set; }
-        public string?  NomeExibicao { get; set; }
+        public string? NomeExibicao { get; set; }
         public string? SammAccount { get; set; }
 
     }
     private string GeraToken(Model.Seg.Usuario usuario, int validadeHoras)
     {
-        var jwtKey = Convert.FromBase64String(_configuration.GetValue<string>("jwt") ?? string.Empty);
+        List<long> orgs = new() {2,16,17 };
+        var valores = _db.CorpConfiguracao.AsNoTracking().Where(p=>orgs.Contains(p.Id));
+        if (valores.Count() != orgs.Count)
+            throw new Exception("Configuração de orgs não encontrada");
+        string? strChave = valores.FirstOrDefault(p => p.Id == 2)?.ValorTexto ;
+        decimal? duracao = valores.FirstOrDefault(p => p.Id == 17)?.ValorNumerico ;
+        string? token = valores.FirstOrDefault(p => p.Id == 16)?.ValorTexto;
+
+        if (string.IsNullOrEmpty(strChave) || duracao is null || string.IsNullOrEmpty(token))
+            throw new Exception("Token, chave ou duração inválidos");
+
+        Guid chave;
+        if (!Guid.TryParse(strChave, out chave))
+            throw new Exception("Chave de criptografia não configurada");
+
+        var jwtLimpo  = Util.Descriptografa(token, chave,"AES");
+
+
+        var jwtKey = Encoding.UTF8.GetBytes(jwtLimpo);
         var tokenHandler = new JwtSecurityTokenHandler();
         var role = usuario.Administrador ? "admin" : "user";
         ClaimsIdentity claim = new ClaimsIdentity(new Claim[]
         {
             new Claim("id",usuario.Id.ToString()),
-            new Claim(ClaimTypes.Name,usuario.Nome),
+            new Claim(ClaimTypes.Name,usuario.Identificacao),
             new Claim(ClaimTypes.Email,usuario.Email),
             new Claim(ClaimTypes.Role,role)
         });
@@ -245,7 +292,7 @@ public class Usuario(Model.Db db, IConfiguration configuration) : Controller
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(jwtKey), SecurityAlgorithms.HmacSha256Signature)
         };
 
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+        var retorno = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(retorno);
     }
 }

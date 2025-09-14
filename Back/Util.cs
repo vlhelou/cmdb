@@ -29,7 +29,7 @@ public static class Util
         if (int.TryParse(usrAtuntenciacao.FirstOrDefault(p => p.Type == "id")?.Value ?? string.Empty, out int _id))
             retorno.Id = _id;
 
-        retorno.Nome = usrAtuntenciacao.FirstOrDefault(p => p.Type == ClaimTypes.Name)?.Value ?? string.Empty;
+        retorno.Identificacao= usrAtuntenciacao.FirstOrDefault(p => p.Type == ClaimTypes.Name)?.Value ?? string.Empty;
         retorno.Email = usrAtuntenciacao.FirstOrDefault(p => p.Type == ClaimTypes.Email)?.Value ?? string.Empty;
 
         string role = usrAtuntenciacao.FirstOrDefault(p => p.Type == ClaimTypes.Role)?.Value ?? string.Empty;
