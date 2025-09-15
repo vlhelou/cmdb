@@ -1,4 +1,3 @@
-using Cmdb.Model.Seg;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +7,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
 namespace Cmdb.Api.Seg;
@@ -50,14 +48,25 @@ public class Usuario : Controller
             return BadRequest(new MensagemErro("Parâmetro não informado"));
 
 
-        var x = _db.SegUsuario.ToList();    
+        var x = _db.SegUsuario.ToList();
         var localizado = _db.SegUsuario.FirstOrDefault(x => x.Identificacao.ToLower() == item.identificacao.ToLower());
         if (localizado == null)
             return BadRequest(new MensagemErro("usuario não localizado"));
-        if (localizado.Senha != (localizado.Id.ToString() + item.senha).ToSha512())
-            return BadRequest(new MensagemErro("usuário ou senha incorretos"));
+        if (!localizado.Ativo)
+            return BadRequest(new MensagemErro("usuário inativo"));
 
-        string token = GeraToken(localizado, 24);
+        if (item.local)
+        {
+            if (localizado.Senha != (localizado.Id.ToString() + item.senha).ToSha512())
+                return BadRequest(new MensagemErro("usuário ou senha incorretos"));
+        } else
+        {
+            var cnLdap = DadosConexaoLdap();
+            if (!ValidaLoginLdap(item.identificacao, item.senha, cnLdap))
+                return BadRequest(new MensagemErro("usuário ou senha incorretos"));
+        }
+
+            string token = GeraToken(localizado, 24);
         return Ok(new
         {
             token,
@@ -192,6 +201,88 @@ public class Usuario : Controller
     }
 
 
+    private ConexaoLdap DadosConexaoLdap()
+    {
+        List<long> orgs = new() { 12, 7, 10, 9, 8, 6, 5, 2 ,11};
+        var valores = _db.CorpConfiguracao.AsNoTracking().Where(p => orgs.Contains(p.Id));
+        if (valores.Count() != orgs.Count)
+            throw new Exception("Configuração de ldap não encontrada");
+        string srtChave = valores.FirstOrDefault(p => p.Id == 2)?.ValorTexto ?? string.Empty;
+        if (string.IsNullOrEmpty(srtChave))
+            throw new Exception("Chave de criptografia não encontrada");
+        Guid chave;
+        if (!Guid.TryParse(srtChave, out chave))
+            throw new Exception("Chave de criptografia inválida");
+
+        string propriedades = valores.FirstOrDefault(p => p.Id == 10)?.ValorComplexo ?? string.Empty;
+        if (string.IsNullOrEmpty(propriedades))
+            throw new Exception("Propriedade de usuário não informada");
+
+
+        ConexaoLdap cnLadap = new()
+        {
+            PesquisaNomeusuario = valores.FirstOrDefault(p => p.Id == 12)?.ValorTexto ?? string.Empty,
+            Porta = (int)(valores.FirstOrDefault(p => p.Id == 7)?.ValorNumerico ?? 0),
+            SearchBase = valores.FirstOrDefault(p => p.Id == 9)?.ValorTexto ?? string.Empty,
+            Senha = valores.FirstOrDefault(p => p.Id == 8)?.ValorTexto ?? string.Empty,
+            Servidor = valores.FirstOrDefault(p => p.Id == 6)?.ValorTexto ?? string.Empty,
+            Usuario = valores.FirstOrDefault(p => p.Id == 5)?.ValorTexto ?? string.Empty,
+            DN= valores.FirstOrDefault(p => p.Id == 11)?.ValorTexto ?? string.Empty,
+        };
+        cnLadap.Senha = Util.Descriptografa(cnLadap.Senha, chave, "AES");
+        try
+        {
+            var props = JsonSerializer.Deserialize<PropriedadeLdap>(propriedades);
+            if (props == null)
+                throw new Exception("Propriedade de usuário inválida");
+            cnLadap.Propriedades = props;
+        }
+        catch (Exception)
+        {
+            throw new Exception("falha ao obter as propriedades");
+        }
+
+        return cnLadap;
+    }
+    private bool ValidaLoginLdap(string usuario, string senha, ConexaoLdap cnLdap)
+    {
+        using Novell.Directory.Ldap.LdapConnection cn = new();
+        cn.ConnectAsync(cnLdap.Servidor, cnLdap.Porta).Wait();
+        try
+        {
+            string strBind = string.Format(cnLdap.DN, usuario) ;
+            cn.BindAsync(strBind, senha).Wait();
+        } catch (Exception)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private record PropriedadeLdap
+    {
+        public string? Email { get; set; }
+        public string? Descricao { get; set; }
+        public string? Nome { get; set; }
+        public string? SammAccount { get; set; }
+    }
+
+    private record ConexaoLdap
+    {
+        public string PesquisaNomeusuario { get; set; } = string.Empty;
+        public int Porta { get; set; }
+        public string SearchBase { get; set; } = string.Empty;
+        public string Senha { get; set; } = string.Empty;
+        public string Servidor { get; set; } = string.Empty;
+        public string Usuario { get; set; } = string.Empty;
+        public string DN { get; set; } = string.Empty;
+        public PropriedadeLdap Propriedades { get; set; } = new();
+
+    }
+
+
     //[HttpGet("[action]")]
     //[AllowAnonymous]
     //public IActionResult teste2()
@@ -257,12 +348,12 @@ public class Usuario : Controller
     }
     private string GeraToken(Model.Seg.Usuario usuario, int validadeHoras)
     {
-        List<long> orgs = new() {2,16,17 };
-        var valores = _db.CorpConfiguracao.AsNoTracking().Where(p=>orgs.Contains(p.Id));
+        List<long> orgs = new() { 2, 16, 17 };
+        var valores = _db.CorpConfiguracao.AsNoTracking().Where(p => orgs.Contains(p.Id));
         if (valores.Count() != orgs.Count)
             throw new Exception("Configuração de orgs não encontrada");
-        string? strChave = valores.FirstOrDefault(p => p.Id == 2)?.ValorTexto ;
-        decimal? duracao = valores.FirstOrDefault(p => p.Id == 17)?.ValorNumerico ;
+        string? strChave = valores.FirstOrDefault(p => p.Id == 2)?.ValorTexto;
+        decimal? duracao = valores.FirstOrDefault(p => p.Id == 17)?.ValorNumerico;
         string? token = valores.FirstOrDefault(p => p.Id == 16)?.ValorTexto;
 
         if (string.IsNullOrEmpty(strChave) || duracao is null || string.IsNullOrEmpty(token))
@@ -272,7 +363,7 @@ public class Usuario : Controller
         if (!Guid.TryParse(strChave, out chave))
             throw new Exception("Chave de criptografia não configurada");
 
-        var jwtLimpo  = Util.Descriptografa(token, chave,"AES");
+        var jwtLimpo = Util.Descriptografa(token, chave, "AES");
 
 
         var jwtKey = Encoding.UTF8.GetBytes(jwtLimpo);
