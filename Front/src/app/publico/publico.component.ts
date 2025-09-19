@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-// import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { DialogModule } from 'primeng/dialog';
+import { PopoverModule } from 'primeng/popover';
+import { CheckboxModule } from 'primeng/checkbox';
 import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { segUsuarioService } from 'src/model/seg/usuario.service'
 
@@ -9,15 +9,16 @@ import { segUsuarioService } from 'src/model/seg/usuario.service'
 @Component({
     selector: 'app-publico',
     standalone: true,
-    imports: [DialogModule, FormsModule, ReactiveFormsModule],
+    imports: [FormsModule, ReactiveFormsModule, PopoverModule, CheckboxModule],
     templateUrl: './publico.component.html',
     styleUrl: './publico.component.scss'
 })
 export class PublicoComponent {
     showLogin = false;
     formLogin = new FormGroup({
-        email: new FormControl<string>('adm@cmdb.com.br', [Validators.required]),
+        identificacao: new FormControl<string>('admin', [Validators.required]),
         senha: new FormControl<string>('123456', [Validators.required]),
+        local: new FormControl<boolean>(true)
     });
     returnUrl: string | undefined;
 
@@ -44,5 +45,9 @@ export class PublicoComponent {
     ligaSpinner() {
         const blocker = document.getElementById("blocker");
         if (blocker) blocker.style.display = "";
+    }
+
+    iniciaLogin(event: any, op: any) {
+        op.toggle(event);
     }
 }

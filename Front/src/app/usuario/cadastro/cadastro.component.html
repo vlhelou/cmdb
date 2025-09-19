@@ -1,1 +1,38 @@
-<p>cadastro works!</p>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                Usuários
+                <a href="javascript:void(0)" class=" float-end"><i class="pi pi-plus"></i></a>
+            </div>
+            <div class="card-body">
+
+                <p-table [value]="listaUsuarios()" [paginator]="true" [rows]="10">
+                    <ng-template #header>
+                        <tr>
+                            <th>Identificação</th>
+                            <th>Email</th>
+                            <th>Ativo</th>
+                            <th>Local</th>
+                            <th>Ações</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-item>
+                        <tr>
+                            <td>{{ item.identificacao }}</td>
+                            <td>{{ item.email }}</td>
+                            <td>{{ item.ativo }}</td>
+                            <td>{{ item.local }}</td>
+                            <td>
+                                <a href="javascript:void(0)" ><i class="pi pi-pencil"></i></a>
+                                <a href="javascript:void(0)" class="text-danger ms-2" ><i class="pi pi-trash"></i></a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+
+            </div>
+        </div>
+    </div>
+</div>

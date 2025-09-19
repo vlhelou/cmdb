@@ -1,4 +1,4 @@
-<p-dialog [(visible)]="showLogin" [modal]="true" header="Acesso" >
+<!-- <p-dialog [(visible)]="showLogin" [modal]="true" header="Acesso" >
     <form [formGroup]="formLogin" (ngSubmit)="login()">
         <div class="mb-3">
             <label for="exampleInputEmail1" class="form-label">Email</label>
@@ -10,13 +10,36 @@
         </div>
         <button type="submit" class="btn btn-primary">Acesso</button>
     </form>
+</p-dialog> -->
 
-</p-dialog>
+<p-popover #op>
+    <form [formGroup]="formLogin" (ngSubmit)="login()">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Identificação</label>
+            <input type="email" class="form-control" formControlName="identificacao" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Senha</label>
+            <input type="password" class="form-control" formControlName="senha">
+        </div>
+        <div class="mb-3">
+            <p-checkbox inputId="ingredient1" name="chLocal" [binary]="true" formControlName="local" />
+            <label for="ingredient1" class="ml-2">Local</label>
+        </div>
+        <div class="row">
+            <div class="col-5"><button type="submit" class="btn btn-primary">Acesso</button></div>
+            <div class="col-7">
+                <a href="javascript:void(0)" style="font-size: 70%;">Esqueci minha senha</a>
+            </div>
 
+        </div>
+    </form>
+
+</p-popover>
 
 <div class="presentation-container">
     <h1>Bem-vindo ao CMDB
-        <button class="btn btn-primary float-end" (click)="showLogin = true">Login</button>
+        <button class="btn btn-primary float-end" (click)="iniciaLogin($event, op)">Login</button>
     </h1>
     <p>O CMDB (Configuration Management Database) é uma ferramenta poderosa para gerenciar e monitorar a infraestrutura
         de

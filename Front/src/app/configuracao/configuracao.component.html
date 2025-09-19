@@ -12,7 +12,7 @@
 
     <div class="col-6">
         <div class="card">
-            <div class="card-header">{{configuracaoSelecionada.nomeCompleto || 'Selecione uma configuração'}}</div>
+            <div class="card-header">{{configuracaoSelecionada.nomeCompleto || 'Selecione uma configuração'}} ({{configuracaoSelecionada.id}})</div>
             <div class="card-body">
 
                 @switch (configuracaoSelecionada.tipoValor) { @case ('texto') {

@@ -1,7 +1,9 @@
+using Cmdb.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
+using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,7 +32,15 @@ builder.Services.AddDbContext<Cmdb.Model.Db>(opt =>
 });
 
 
-builder.Services.AddCors(options =>
+
+var db = builder?.Services?.BuildServiceProvider().GetService<Cmdb.Model.Db>();
+if (db == null)
+    throw new Exception("Erro ao conectar ao banco de dados");
+
+string chaveJWT = db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 16)?.ValorTexto ?? "";
+
+
+builder!.Services.AddCors(options =>
 {
     options.AddPolicy("Geral",
         corsPolicyBuilder =>
@@ -41,7 +51,8 @@ builder.Services.AddCors(options =>
         });
 });
 
-var key = Convert.FromBase64String(builder.Configuration.GetValue<string>("jwt") ?? string.Empty);
+//var key = Convert.FromBase64String(builder.Configuration.GetValue<string>("jwt") ?? string.Empty);
+var key = Encoding.UTF8.GetBytes(chaveJWT);
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

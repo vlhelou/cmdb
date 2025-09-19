@@ -82,7 +82,7 @@ public class Usuario : Controller
     [Authorize(Roles = "admin")]
     public IActionResult Lista()
     {
-        return Ok(_db.SegUsuario.ToList());
+        return Ok(_db.SegUsuario.AsNoTracking().ToList());
     }
 
     [HttpGet("[action]")]
@@ -354,19 +354,19 @@ public class Usuario : Controller
             throw new Exception("Configuração de orgs não encontrada");
         string? strChave = valores.FirstOrDefault(p => p.Id == 2)?.ValorTexto;
         decimal? duracao = valores.FirstOrDefault(p => p.Id == 17)?.ValorNumerico;
-        string? token = valores.FirstOrDefault(p => p.Id == 16)?.ValorTexto;
+        string? chaveJWT = valores.FirstOrDefault(p => p.Id == 16)?.ValorTexto;
 
-        if (string.IsNullOrEmpty(strChave) || duracao is null || string.IsNullOrEmpty(token))
+        if (string.IsNullOrEmpty(strChave) || duracao is null || string.IsNullOrEmpty(chaveJWT))
             throw new Exception("Token, chave ou duração inválidos");
 
         Guid chave;
         if (!Guid.TryParse(strChave, out chave))
             throw new Exception("Chave de criptografia não configurada");
 
-        var jwtLimpo = Util.Descriptografa(token, chave, "AES");
+        
 
 
-        var jwtKey = Encoding.UTF8.GetBytes(jwtLimpo);
+        var jwtKey = Encoding.UTF8.GetBytes(chaveJWT);
         var tokenHandler = new JwtSecurityTokenHandler();
         var role = usuario.Administrador ? "admin" : "user";
         ClaimsIdentity claim = new ClaimsIdentity(new Claim[]

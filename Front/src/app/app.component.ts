@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
 import { ToolbarModule } from 'primeng/toolbar';
 import { segUsuarioService } from 'src/model/seg/usuario.service';
 import { MenubarModule } from 'primeng/menubar';
@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
 
     items: MenuItem[] | undefined;
 
-    constructor(private srv: segUsuarioService) {
+    constructor(private srv: segUsuarioService, private router: Router) {
             this.srv.currentUser.subscribe({
                 next: (data) => {
                 }
@@ -50,5 +50,10 @@ export class AppComponent implements OnInit {
                 icon: 'pi pi-envelope'
             }
         ]
+    }
+
+    sair() {
+        this.router.navigate(['/publico']);
+        this.srv.Logout();
     }
 }

@@ -61,4 +61,8 @@ export class segUsuarioService {
     }
 
 
+    lista(): Observable<segUsuario[]> {
+        const url = pathUrl + `lista`;
+        return this.http.get<segUsuario[]>(url);
+    }
 }
