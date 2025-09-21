@@ -1343,21 +1343,20 @@ COPY corp.arquivo (id, nome, tipo, conteudo) FROM stdin;
 COPY corp.configuracao (id, idpai, nome, ativo, tipovalor, valornumerico, valortexto, valordata, valorcomplexo, valorsensivel, ajuda) FROM stdin;
 1	\N	CMDB	t	grupo	\N	\N	\N	\N	f	\N
 4	3	AD	t	grupo	\N	\N	\N	\N	f	\N
-5	4	Usuário	t	texto	\N	\N	\N	\N	f	\N
 9	4	Searchbase	t	texto	\N	dc=cmdb,dc=com	\N	\N	f	\N
 3	1	Conexão	t	grupo	\N	\N	\N	\N	f	\N
 12	4	Pesquisa nome usuário	t	texto	\N	(&(objectClass=person)(uid={0}))	\N	\N	f	\N
-11	4	DN	t	texto	\N	uid={0},ou=People,dc=cmdb,dc=com	\N	\N	f	\N
 10	4	Propriedades	t	complexo	\N	\N	\N	{\r\n    "Email":"mail",\r\n    "Descricao":"description",\r\n    "Nome":"Name",\r\n    "SammAccount":"SamAccountName"\r\n}	f	\N
 13	3	tetse	t	texto	\N	8888	\N	\N	f	\N
 14	1	Segurança	t	grupo	\N	\N	\N	\N	f	\N
 15	14	JWT	t	grupo	\N	\N	\N	\N	f	\N
 17	15	Duração Horas	t	numerico	240.0000	\N	\N	\N	f	\N
 2	14	chave	t	texto	\N	bcf4a772-a7b9-4ed5-9a99-f30f96cbe452	\N	\N	f	\N
-16	15	Token	t	texto	\N	1XYXJgvc9NBI+bVySCl3HLAKl5U4gjPG2saPjwL5bGdm5D0omDVt5geMxMfIGEttl8WTGvw7f73I+2sMYjDoDMZU5+M9WLrEW1EV2nFfFI3PE2AOyBoaobkMgLl7jzfcYqyb5oC6GP1JEyyNa70twA==	\N	\N	t	\N
 7	4	Porta	t	numerico	389.0000	\N	\N	\N	f	\N
 8	4	Senha	t	texto	\N	veXdgbn14GuHsjSJl14gdg==	\N	\N	t	\N
 6	4	Servidor	t	texto	\N	192.168.0.100	\N	\N	f	\N
+16	15	Chave JWT	t	texto	\N	1XYXJgvc9NBI+bVySCl3HLAKl5U4gjPG2saPjwL5bGdm5D0omDVt5geMxMfIGEttl8WTGvw7f73I+2sMYjDoDMZU5+M9WLrEW1EV2nFfFI3PE2AOyBoaobkMgLl7jzfcYqyb5oC6GP1JEyyNa70twA==	\N	\N	f	\N
+11	4	Usuário DN	t	texto	\N	uid=john,ou=People,dc=cmdb,dc=com	\N	\N	f	\N
 \.
 
 
@@ -2105,7 +2104,7 @@ CREATE UNIQUE INDEX ixsegorganogramaidpainome ON seg.organograma USING btree (id
 -- Name: usuario_identificacao_idx; Type: INDEX; Schema: seg; Owner: postgres
 --
 
-CREATE UNIQUE INDEX usuario_identificacao_idx ON seg.usuario USING btree (lower((email)::text));
+CREATE UNIQUE INDEX usuario_identificacao_idx ON seg.usuario USING btree (local, lower((email)::text));
 
 
 --

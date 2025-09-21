@@ -12,6 +12,9 @@ import { segUsuario } from 'src/model/seg/usuario'
 export class UsuarioCadastroComponent implements OnInit {
 
     listaUsuarios = signal<any[]>([]);
+
+    teste = signal('teste')
+    outro = 'sdkfjdskfj';
     constructor(private usuarioService: segUsuarioService) { }
 
     ngOnInit(): void {
