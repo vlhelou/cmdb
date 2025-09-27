@@ -102,6 +102,7 @@ public class Usuario : Controller
 
 
     [HttpPost("[action]")]
+    [Authorize(Roles = "admin")]
     public Model.Seg.Usuario Grava([FromBody] UsuarioCadastro prm)
     {
         if (prm == null)
@@ -164,6 +165,28 @@ public class Usuario : Controller
 
     }
 
+    [HttpGet("[action]/{id:int}")]
+    [Authorize(Roles = "admin")]
+    public IActionResult Exclui(int id)
+    {
+
+        if (id == 0)
+            throw new Exception("Id não informado");
+
+        var usuario = _db.SegUsuario.FirstOrDefault(p=>p.Id==id);
+
+
+        Model.Seg.Usuario Logado = Util.Claim2Usuario(HttpContext.User.Claims);
+        var Autor = _db.SegUsuario.AsNoTracking().FirstOrDefault(p => p.Id == Logado.Id);
+
+        if (Autor == null)
+            throw new Exception("Autor não localizado");
+
+        if (!Autor.Administrador || !Autor.Ativo)
+            throw new Exception("Autor inativo ou não é administrador");
+
+        return Ok();
+    }
 
 
     [HttpGet("[action]")]
