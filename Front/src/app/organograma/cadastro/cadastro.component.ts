@@ -1,10 +1,7 @@
-import { Component, OnInit, effect, input, output, signal } from '@angular/core';
-import { FormGroup, Validators, FormArray, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-// import { JsonPipe } from '@angular/common';
+import { Component,  effect, input, output } from '@angular/core';
+import { FormGroup, Validators,  FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
-// import { TipoService } from 'src/model/corp/tipo.service'
-// import { corpTipo } from 'src/model/corp/tipo';
 import { segOrganograma } from 'src/model/seg/organograma'
 import { OrganogramaService } from 'src/model/seg/organograma.service'
 import { SelectModule } from 'primeng/select';

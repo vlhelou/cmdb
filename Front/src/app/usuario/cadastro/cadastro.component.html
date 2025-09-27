@@ -1,26 +1,20 @@
-<hr>
-<div>{{ teste() }}</div>
-<hr>
-<div>{{ outro }}</div>
-<hr>
-
-
+<p-confirmpopup />
 <div class="row">
-    <div class="col-12">
+    <div [ngClass]="{'col-6': showFormulario()==true,'col-12': showFormulario()==false}">
         <div class="card">
             <div class="card-header">
                 Usuários
-                <a href="javascript:void(0)" class=" float-end"><i class="pi pi-plus"></i></a>
+                <a href="javascript:void(0)" class=" float-end" (click)="novoUsuario()"><i class="pi pi-plus"></i></a>
             </div>
             <div class="card-body">
-
                 <p-table [value]="listaUsuarios()" [paginator]="true" [rows]="10">
                     <ng-template #header>
                         <tr>
-                            <th>Identificação</th>
+                            <th>Identificação</th>  
                             <th>Email</th>
                             <th>Ativo</th>
                             <th>Local</th>
+                            <th>Adm</th>
                             <th>Ações</th>
                         </tr>
                     </ng-template>
@@ -28,18 +22,70 @@
                         <tr>
                             <td>{{ item.identificacao }}</td>
                             <td>{{ item.email }}</td>
-                            <td>{{ item.ativo }}</td>
-                            <td>{{ item.local }}</td>
+                            <td class="text-center"><input type="checkbox" [(ngModel)]="item.ativo" disabled
+                                class="form-check-input"></td>
+                            <td class="text-center">
+                                <input type="checkbox" [(ngModel)]="item.local" disabled
+                                class="form-check-input">
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" [(ngModel)]="item.administrador" disabled
+                                class="form-check-input">
+                            </td>
                             <td>
-                                <a href="javascript:void(0)" ><i class="pi pi-pencil"></i></a>
-                                <a href="javascript:void(0)" class="text-danger ms-2" ><i class="pi pi-trash"></i></a>
+                                <a href="javascript:void(0)" (click)="edita(item)"><i class="pi pi-pencil"></i></a>
+                                <a href="javascript:void(0)" class="text-danger ms-3" (click)="excluir(item, $event)"><i class="pi pi-trash"></i></a>
                             </td>
                         </tr>
                     </ng-template>
                 </p-table>
-
-
             </div>
         </div>
     </div>
+    @if (showFormulario()==true){
+    <div class="col-6">
+        <form [formGroup]="formulario" (ngSubmit)="salvar()">
+            <div class="card">
+                <div class="card-header">
+                    Edição de Usuário - <span style="font-weight: bold;"> {{ nomeHeader() }}</span>
+                    <a href="javascript:void(0)" class=" float-end" (click)="showFormulario.set(false)"><i
+                            class="pi pi-times"></i></a>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="identificacao" class="form-label">Identificação</label>
+                        <input type="text" id="identificacao" formControlName="identificacao" class="form-control"
+                            placeholder="Identificação do usuário"
+                            [ngClass]="{ 'is-invalid': formulario.get('identificacao')?.invalid }">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="text" id="email" formControlName="email" class="form-control "
+                            placeholder="Email do usuário"
+                            [ngClass]="{ 'is-invalid': formulario.get('email')?.invalid }">
+                    </div>
+                    <div style="display: flex;">
+                        <div class="mb-3 form-check w-25">
+                            <label for="local" class="form-check-label">Local</label>
+                            <input type="checkbox" id="local" formControlName="local" class="form-check-input">
+                        </div>
+                        <div class="mb-3 form-check w-25">
+                            <input type="checkbox" id="ativo" formControlName="ativo" class="form-check-input">
+                            <label for="ativo" class="form-check-label">Ativo</label>
+                        </div>
+                        <div class="mb-3 form-check w-25">
+                            <input type="checkbox" id="administrador" formControlName="administrador"
+                                class="form-check-input">
+                            <label for="administrador" class="form-check-label">Administrativo</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <button type="submit" class="btn btn-primary" [disabled]="formulario.invalid"><i
+                            class="pi pi-save"></i></button>
+                </div>
+            </div>
+        </form>
+    </div>
+    }
 </div>

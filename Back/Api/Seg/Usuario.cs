@@ -23,7 +23,6 @@ public class Usuario : Controller
         this._configuration = configuration;
     }
 
-    [AllowAnonymous]
     [HttpPost("[action]")]
     public IActionResult Novo([FromBody] UsrForm item)
     {
@@ -59,14 +58,15 @@ public class Usuario : Controller
         {
             if (localizado.Senha != (localizado.Id.ToString() + item.senha).ToSha512())
                 return BadRequest(new MensagemErro("usuário ou senha incorretos"));
-        } else
+        }
+        else
         {
             var cnLdap = DadosConexaoLdap();
             if (!ValidaLoginLdap(item.identificacao, item.senha, cnLdap))
                 return BadRequest(new MensagemErro("usuário ou senha incorretos"));
         }
 
-            string token = GeraToken(localizado, 24);
+        string token = GeraToken(localizado, 24);
         return Ok(new
         {
             token,
@@ -102,10 +102,22 @@ public class Usuario : Controller
 
 
     [HttpPost("[action]")]
-    public Model.Seg.Usuario Grava([FromBody] Model.Seg.Usuario usuario)
+    public Model.Seg.Usuario Grava([FromBody] UsuarioCadastro prm)
     {
-        if (usuario == null)
+        if (prm == null)
             throw new Exception("Parametro não informado");
+
+
+        Model.Seg.Usuario usuario = new()
+        {
+            Id = prm.id,
+            Identificacao = prm.identificacao,
+            Email = prm.email,
+            Administrador = prm.administrador,
+            Ativo = prm.ativo,
+            Local = prm.local
+        };
+
 
         Model.Seg.Usuario retorno;
         Model.Seg.Usuario Logado = Util.Claim2Usuario(HttpContext.User.Claims);
@@ -203,7 +215,7 @@ public class Usuario : Controller
 
     private ConexaoLdap DadosConexaoLdap()
     {
-        List<long> orgs = new() { 12, 7, 10, 9, 8, 6, 5, 2 ,11};
+        List<long> orgs = new() { 12, 7, 10, 9, 8, 6, 5, 2, 11 };
         var valores = _db.CorpConfiguracao.AsNoTracking().Where(p => orgs.Contains(p.Id));
         if (valores.Count() != orgs.Count)
             throw new Exception("Configuração de ldap não encontrada");
@@ -227,7 +239,7 @@ public class Usuario : Controller
             Senha = valores.FirstOrDefault(p => p.Id == 8)?.ValorTexto ?? string.Empty,
             Servidor = valores.FirstOrDefault(p => p.Id == 6)?.ValorTexto ?? string.Empty,
             Usuario = valores.FirstOrDefault(p => p.Id == 5)?.ValorTexto ?? string.Empty,
-            DN= valores.FirstOrDefault(p => p.Id == 11)?.ValorTexto ?? string.Empty,
+            DN = valores.FirstOrDefault(p => p.Id == 11)?.ValorTexto ?? string.Empty,
         };
         cnLadap.Senha = Util.Descriptografa(cnLadap.Senha, chave, "AES");
         try
@@ -250,9 +262,10 @@ public class Usuario : Controller
         cn.ConnectAsync(cnLdap.Servidor, cnLdap.Porta).Wait();
         try
         {
-            string strBind = string.Format(cnLdap.DN, usuario) ;
+            string strBind = string.Format(cnLdap.DN, usuario);
             cn.BindAsync(strBind, senha).Wait();
-        } catch (Exception)
+        }
+        catch (Exception)
         {
             return false;
         }
@@ -300,6 +313,7 @@ public class Usuario : Controller
     //    return Ok();
     //}
 
+    public record UsuarioCadastro(int id, string identificacao, string email, bool administrador, bool ativo, bool local);
 
     public record UsrForm
     {
@@ -327,7 +341,6 @@ public class Usuario : Controller
         }
     }
 
-
     public record UsrLogin
     {
         public string identificacao { get; set; } = string.Empty;
@@ -346,6 +359,7 @@ public class Usuario : Controller
         public string? SammAccount { get; set; }
 
     }
+
     private string GeraToken(Model.Seg.Usuario usuario, int validadeHoras)
     {
         List<long> orgs = new() { 2, 16, 17 };
@@ -363,7 +377,7 @@ public class Usuario : Controller
         if (!Guid.TryParse(strChave, out chave))
             throw new Exception("Chave de criptografia não configurada");
 
-        
+
 
 
         var jwtKey = Encoding.UTF8.GetBytes(chaveJWT);

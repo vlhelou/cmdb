@@ -61,8 +61,20 @@ export class segUsuarioService {
     }
 
 
-    lista(): Observable<segUsuario[]> {
-        const url = pathUrl + `lista`;
+    Lista(): Observable<segUsuario[]> {
+        const url = pathUrl + `Lista`;
         return this.http.get<segUsuario[]>(url);
     }
+
+    
+    Exclui(id: number): Observable<void> {
+        const url = pathUrl + `Exclui/${id}`;
+        return this.http.delete<void>(url);
+    }
+
+    Grava(usuario: any): Observable<segUsuario> {
+        const url = pathUrl + `Grava`;
+        return this.http.post<segUsuario>(url, usuario, httpOptions);
+    }
+
 }

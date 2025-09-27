@@ -52,6 +52,7 @@ export class ConfiguracaoComponent implements OnInit {
     itemSelecionado(event:any) {
         this.configuracaoSelecionada = event.node.data;
     }
+    
     itemDesselecionado() {
         this.selecionado = null;
         this.configuracaoSelecionada = null;
