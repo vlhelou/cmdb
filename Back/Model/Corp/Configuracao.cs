@@ -35,6 +35,10 @@ public record Configuracao
     [Column("valorsensivel")]
     public bool ValorSensivel { get; set; }
 
+    [Column("valorboleano")]
+    public bool? ValorBoleano { get; set; }
+
+
 
 
 }

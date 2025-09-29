@@ -38,6 +38,16 @@ public record Usuario
     [Column("email")]
     public string Email { get; set; } = string.Empty;
 
+
+
+    [Column("chavetrocasenha")]
+    [JsonIgnore]
+    public Guid? ChaveTrocaSenha { get; set; }
+
+    [Column("chavevalidade")]
+    [JsonIgnore]
+    public DateTimeOffset? ChaveValidade { get;set; }
+
     public void AjustaSenha(string senha)
     {
         Senha = (this.Id.ToString() + senha).ToSha512();

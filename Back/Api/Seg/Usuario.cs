@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 //using Novell.Directory.Ldap;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -82,7 +83,7 @@ public class Usuario : Controller
     [Authorize(Roles = "admin")]
     public IActionResult Lista()
     {
-        return Ok(_db.SegUsuario.AsNoTracking().ToList());
+        return Ok(_db.SegUsuario.AsNoTracking().OrderBy(p => p.Identificacao).ToList());
     }
 
     [HttpGet("[action]")]
@@ -173,7 +174,13 @@ public class Usuario : Controller
         if (id == 0)
             throw new Exception("Id não informado");
 
-        var usuario = _db.SegUsuario.FirstOrDefault(p=>p.Id==id);
+        var usuario = _db.SegUsuario
+            .Include(p => p.Locacoes)
+            .Include(p => p.Segredos)
+            .FirstOrDefault(p => p.Id == id);
+
+        if (usuario is null)
+            return BadRequest(new MensagemErro("Usuário não localizado"));
 
 
         Model.Seg.Usuario Logado = Util.Claim2Usuario(HttpContext.User.Claims);
@@ -185,9 +192,65 @@ public class Usuario : Controller
         if (!Autor.Administrador || !Autor.Ativo)
             throw new Exception("Autor inativo ou não é administrador");
 
+
+        _db.Remove(usuario);
+        _db.SaveChanges();
+
         return Ok();
     }
 
+
+    [HttpGet("[action]/{id:int}")]
+    [AllowAnonymous]
+    public IActionResult EsqueciSenha(int id)
+    {
+        var localizado = _db.SegUsuario.FirstOrDefault(p => p.Id == id);
+        if (localizado is null)
+            return BadRequest(new MensagemErro("Usuário não localizado"));
+
+
+        List<long> configuracoes = new() { 19, 20, 21, 22, 23, 24, 14 };
+        var config = _db.CorpConfiguracao.AsNoTracking().Where(p => configuracoes.Contains(p.Id));
+        if (config.Count() != configuracoes.Count())
+            return BadRequest(new MensagemErro("configurações não informadas"));
+
+        var porta = config.FirstOrDefault(p => p.Id == 20)?.ValorNumerico ?? 0;
+        SmtpClient smtpClient = new SmtpClient(config.FirstOrDefault(p => p.Id == 19)?.ValorTexto ?? string.Empty, (int)porta);
+        if (config.FirstOrDefault(p => p.Id == 21)?.ValorBoleano ?? false)
+        {
+            string usuario = config.FirstOrDefault(p => p.Id == 22)?.ValorTexto ?? string.Empty;
+            string senha = config.FirstOrDefault(p => p.Id == 24)?.ValorTexto ?? string.Empty;
+            string srtChave = config.FirstOrDefault(p => p.Id == 14)?.ValorTexto ?? string.Empty;
+            if (string.IsNullOrEmpty(srtChave))
+                return BadRequest(new MensagemErro("Chave de criptografia não encontrada"));
+            Guid chave;
+            if (!Guid.TryParse(srtChave, out chave))
+                return BadRequest(new MensagemErro("Chave de criptografia inválida"));
+            smtpClient.Credentials = new System.Net.NetworkCredential(usuario, Util.Descriptografa(senha, chave, "AES"));
+        }
+        smtpClient.EnableSsl = config.FirstOrDefault(p => p.Id == 23)?.ValorBoleano ?? false;
+
+
+        localizado.ChaveTrocaSenha = Guid.NewGuid();
+        localizado.ChaveValidade = DateTime.Now.AddHours(2).ToUniversalTime();
+        _db.SaveChanges();
+
+        MailMessage mail = new MailMessage();
+        mail.From = new MailAddress("naoresponder@cmdb.com.br");
+        mail.To.Add(localizado.Email);
+        mail.Subject = "Recuperação de email";
+        mail.Body = $"a chave para troca de senha é: {localizado.ChaveTrocaSenha}";
+
+        try
+        {
+            smtpClient.Send(mail);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new MensagemErro($"Falha ao enviar email: {ex.Message}"));
+        }
+        return Ok();
+    }
 
     [HttpGet("[action]")]
     [AllowAnonymous]

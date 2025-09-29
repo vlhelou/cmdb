@@ -28,9 +28,12 @@
         </div>
         <div class="row">
             <div class="col-5"><button type="submit" class="btn btn-primary">Acesso</button></div>
-            <div class="col-7">
-                <a href="javascript:void(0)" style="font-size: 70%;">Esqueci minha senha</a>
-            </div>
+            @if (formLogin.get('local')?.value == true) {
+
+                <div class="col-7">
+                    <a href="javascript:void(0)" style="font-size: 70%;">Esqueci minha senha</a>
+                </div>
+            }
 
         </div>
     </form>

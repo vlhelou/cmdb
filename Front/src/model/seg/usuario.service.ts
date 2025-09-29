@@ -69,7 +69,7 @@ export class segUsuarioService {
     
     Exclui(id: number): Observable<void> {
         const url = pathUrl + `Exclui/${id}`;
-        return this.http.delete<void>(url);
+        return this.http.get<void>(url);
     }
 
     Grava(usuario: any): Observable<segUsuario> {
