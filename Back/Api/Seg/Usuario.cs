@@ -208,6 +208,9 @@ public class Usuario : Controller
         if (localizado is null)
             return BadRequest(new MensagemErro("Usuário não localizado"));
 
+        if (localizado.Local == false)
+            return BadRequest(new MensagemErro("Usuário não é local"));
+
 
         List<long> configuracoes = new() { 19, 20, 21, 22, 23, 24, 14 };
         var config = _db.CorpConfiguracao.AsNoTracking().Where(p => configuracoes.Contains(p.Id));
