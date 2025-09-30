@@ -50,4 +50,15 @@ export class PublicoComponent {
     iniciaLogin(event: any, op: any) {
         op.toggle(event);
     }
+
+    esqueciSenha() {
+        const identificacao = this.formLogin.get('identificacao')?.value ;
+        if (identificacao) {
+            this.srv.EsqueciSenha(identificacao).subscribe({
+                next: (data) => {
+                    this.router.navigate(['/recuperacao-senha']);
+                }
+            });
+        }
+    }
 }

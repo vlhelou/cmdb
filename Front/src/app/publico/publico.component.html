@@ -31,7 +31,7 @@
             @if (formLogin.get('local')?.value == true) {
 
                 <div class="col-7">
-                    <a href="javascript:void(0)" style="font-size: 70%;">Esqueci minha senha</a>
+                    <a href="javascript:void(0)" (click)="esqueciSenha()" style="font-size: 70%;">Esqueci minha senha</a>
                 </div>
             }
 

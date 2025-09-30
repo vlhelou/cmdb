@@ -2,6 +2,7 @@ using System.Drawing;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cmdb;
 
@@ -103,6 +104,18 @@ public static class Util
         }
     }
 
+
+    public static Guid ChaveCriptografia(Model.Db db)
+    {
+        string? strChave = db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 2)?.ValorTexto;
+        if (string.IsNullOrEmpty(strChave))
+            throw new Exception("chave não localizada");
+
+        if (Guid.TryParse(strChave, out Guid retorno))
+            return retorno;
+
+        throw new Exception("falha ao converter a chave");
+    }
 }
 
 

@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 //using Novell.Directory.Ldap;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mail;
+using System.Runtime.Serialization;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -200,11 +201,11 @@ public class Usuario : Controller
     }
 
 
-    [HttpGet("[action]/{id:int}")]
+    [HttpGet("[action]/{identificacao}")]
     [AllowAnonymous]
-    public IActionResult EsqueciSenha(int id)
+    public IActionResult EsqueciSenha(string identificacao)
     {
-        var localizado = _db.SegUsuario.FirstOrDefault(p => p.Id == id);
+        var localizado = _db.SegUsuario.FirstOrDefault(p => p.Identificacao.ToLower() == identificacao.ToLower());
         if (localizado is null)
             return BadRequest(new MensagemErro("Usuário não localizado"));
 
@@ -235,7 +236,7 @@ public class Usuario : Controller
 
 
         localizado.ChaveTrocaSenha = Guid.NewGuid();
-        localizado.ChaveValidade = DateTime.Now.AddHours(2).ToUniversalTime();
+        localizado.ChaveValidade = DateTimeOffset.Now.AddHours(2).ToUniversalTime();
         _db.SaveChanges();
 
         MailMessage mail = new MailMessage();
@@ -252,6 +253,35 @@ public class Usuario : Controller
         {
             return BadRequest(new MensagemErro($"Falha ao enviar email: {ex.Message}"));
         }
+        return Ok();
+    }
+
+
+    [HttpPost("[action]")]
+    [AllowAnonymous]
+    public IActionResult RecuperaSenhaChave([FromBody] RecuperacaoChaveTipo prm)
+    {
+        var localizado = _db.SegUsuario.FirstOrDefault(p => p.ChaveTrocaSenha == prm.Chave);
+        if (localizado is null)
+            return BadRequest(new MensagemErro("chave não localizada"));
+
+        if (localizado.ChaveValidade < DateTimeOffset.Now)
+            return BadRequest(new MensagemErro("chave já vencida"));
+
+        try
+        {
+            var chave = Util.ChaveCriptografia(_db);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new MensagemErro($"falha ao obter chave de criptografia: {ex.Message}"));
+        }
+
+        localizado.Senha = (localizado.Id.ToString() + prm.Senha).ToSha512();
+        localizado.ChaveTrocaSenha = null;
+        localizado.ChaveValidade = null;
+        _db.SaveChanges();
+
         return Ok();
     }
 
@@ -384,6 +414,11 @@ public class Usuario : Controller
 
     }
 
+    public record RecuperacaoChaveTipo
+    {
+        public Guid Chave { get; set; }
+        public string Senha { get; set; } = string.Empty;
+    }
 
     //[HttpGet("[action]")]
     //[AllowAnonymous]

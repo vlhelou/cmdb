@@ -416,7 +416,8 @@ CREATE TABLE corp.configuracao (
     valordata time without time zone,
     valorcomplexo json,
     valorsensivel boolean,
-    ajuda character varying
+    ajuda character varying,
+    valorboleano boolean
 );
 
 
@@ -1069,7 +1070,9 @@ CREATE TABLE seg.usuario (
     administrador boolean NOT NULL,
     ativo boolean NOT NULL,
     local boolean NOT NULL,
-    email character varying(250) NOT NULL
+    email character varying(250) NOT NULL,
+    chavetrocasenha uuid,
+    chavevalidade timestamp with time zone
 );
 
 
@@ -1345,23 +1348,30 @@ COPY corp.arquivo (id, nome, tipo, conteudo) FROM stdin;
 -- Data for Name: configuracao; Type: TABLE DATA; Schema: corp; Owner: postgres
 --
 
-COPY corp.configuracao (id, idpai, nome, ativo, tipovalor, valornumerico, valortexto, valordata, valorcomplexo, valorsensivel, ajuda) FROM stdin;
-1	\N	CMDB	t	grupo	\N	\N	\N	\N	f	\N
-4	3	AD	t	grupo	\N	\N	\N	\N	f	\N
-9	4	Searchbase	t	texto	\N	dc=cmdb,dc=com	\N	\N	f	\N
-3	1	Conexão	t	grupo	\N	\N	\N	\N	f	\N
-12	4	Pesquisa nome usuário	t	texto	\N	(&(objectClass=person)(uid={0}))	\N	\N	f	\N
-10	4	Propriedades	t	complexo	\N	\N	\N	{\r\n    "Email":"mail",\r\n    "Descricao":"description",\r\n    "Nome":"Name",\r\n    "SammAccount":"SamAccountName"\r\n}	f	\N
-13	3	tetse	t	texto	\N	8888	\N	\N	f	\N
-14	1	Segurança	t	grupo	\N	\N	\N	\N	f	\N
-15	14	JWT	t	grupo	\N	\N	\N	\N	f	\N
-17	15	Duração Horas	t	numerico	240.0000	\N	\N	\N	f	\N
-2	14	chave	t	texto	\N	bcf4a772-a7b9-4ed5-9a99-f30f96cbe452	\N	\N	f	\N
-7	4	Porta	t	numerico	389.0000	\N	\N	\N	f	\N
-8	4	Senha	t	texto	\N	veXdgbn14GuHsjSJl14gdg==	\N	\N	t	\N
-6	4	Servidor	t	texto	\N	192.168.0.100	\N	\N	f	\N
-16	15	Chave JWT	t	texto	\N	1XYXJgvc9NBI+bVySCl3HLAKl5U4gjPG2saPjwL5bGdm5D0omDVt5geMxMfIGEttl8WTGvw7f73I+2sMYjDoDMZU5+M9WLrEW1EV2nFfFI3PE2AOyBoaobkMgLl7jzfcYqyb5oC6GP1JEyyNa70twA==	\N	\N	f	\N
-11	4	Usuário DN	t	texto	\N	uid=john,ou=People,dc=cmdb,dc=com	\N	\N	f	\N
+COPY corp.configuracao (id, idpai, nome, ativo, tipovalor, valornumerico, valortexto, valordata, valorcomplexo, valorsensivel, ajuda, valorboleano) FROM stdin;
+1	\N	CMDB	t	grupo	\N	\N	\N	\N	f	\N	\N
+4	3	AD	t	grupo	\N	\N	\N	\N	f	\N	\N
+9	4	Searchbase	t	texto	\N	dc=cmdb,dc=com	\N	\N	f	\N	\N
+3	1	Conexão	t	grupo	\N	\N	\N	\N	f	\N	\N
+12	4	Pesquisa nome usuário	t	texto	\N	(&(objectClass=person)(uid={0}))	\N	\N	f	\N	\N
+10	4	Propriedades	t	complexo	\N	\N	\N	{\r\n    "Email":"mail",\r\n    "Descricao":"description",\r\n    "Nome":"Name",\r\n    "SammAccount":"SamAccountName"\r\n}	f	\N	\N
+13	3	tetse	t	texto	\N	8888	\N	\N	f	\N	\N
+14	1	Segurança	t	grupo	\N	\N	\N	\N	f	\N	\N
+15	14	JWT	t	grupo	\N	\N	\N	\N	f	\N	\N
+17	15	Duração Horas	t	numerico	240.0000	\N	\N	\N	f	\N	\N
+2	14	chave	t	texto	\N	bcf4a772-a7b9-4ed5-9a99-f30f96cbe452	\N	\N	f	\N	\N
+7	4	Porta	t	numerico	389.0000	\N	\N	\N	f	\N	\N
+8	4	Senha	t	texto	\N	veXdgbn14GuHsjSJl14gdg==	\N	\N	t	\N	\N
+6	4	Servidor	t	texto	\N	192.168.0.100	\N	\N	f	\N	\N
+16	15	Chave JWT	t	texto	\N	1XYXJgvc9NBI+bVySCl3HLAKl5U4gjPG2saPjwL5bGdm5D0omDVt5geMxMfIGEttl8WTGvw7f73I+2sMYjDoDMZU5+M9WLrEW1EV2nFfFI3PE2AOyBoaobkMgLl7jzfcYqyb5oC6GP1JEyyNa70twA==	\N	\N	f	\N	\N
+11	4	Usuário DN	t	texto	\N	uid=john,ou=People,dc=cmdb,dc=com	\N	\N	f	\N	\N
+18	3	SMTP	t	grupo	\N	\N	\N	\N	f	\N	\N
+19	18	Servidor	t	texto	\N	localhost	\N	\N	f	\N	\N
+21	18	Autenticado	t	boleano	\N	22	\N	\N	f	\N	f
+22	18	Usuario	t	texto	\N	\N	\N	\N	f	\N	\N
+23	18	SSH	t	boleano	\N	\N	\N	\N	f	\N	f
+24	18	Senha	t	texto	\N	\N	\N	\N	t	\N	\N
+20	18	Porta	t	numerico	25.0000	22	\N	\N	f	\N	\N
 \.
 
 
@@ -1503,10 +1513,10 @@ COPY seg.organograma (id, idpai, nome, ativo, gd) FROM stdin;
 -- Data for Name: usuario; Type: TABLE DATA; Schema: seg; Owner: postgres
 --
 
-COPY seg.usuario (id, identificacao, gd, senha, administrador, ativo, local, email) FROM stdin;
-7	usr normal	1792a842-0721-4c92-9fc5-4f516cb58a3f	\N	f	f	f	fulano@silva.com
-1	admin	5c355ca3-8e6d-49ed-97a1-3f6eeff85d27	d2160e670a6261bcd5164a5b2164a89e98a34b54ccd59944ccc68fcc725f12ce3746367919d55fa43101e0d2e1f2ff1c1c824499622e0643024f9d77bfebcbd2	t	t	t	teste@gmail.com
-8	john	e2f7b8d8-62d6-4985-8441-8c06c54dd05f	\N	f	t	f	beltrano@com.br
+COPY seg.usuario (id, identificacao, gd, senha, administrador, ativo, local, email, chavetrocasenha, chavevalidade) FROM stdin;
+8	john	e2f7b8d8-62d6-4985-8441-8c06c54dd05f	\N	f	t	f	beltrano@com.br	\N	\N
+7	usr normal	1792a842-0721-4c92-9fc5-4f516cb58a3f	\N	f	t	f	fulano@silva.com	\N	\N
+1	admin	5c355ca3-8e6d-49ed-97a1-3f6eeff85d27	d2160e670a6261bcd5164a5b2164a89e98a34b54ccd59944ccc68fcc725f12ce3746367919d55fa43101e0d2e1f2ff1c1c824499622e0643024f9d77bfebcbd2	t	t	t	teste@gmail.com	\N	\N
 \.
 
 
@@ -1573,7 +1583,7 @@ SELECT pg_catalog.setval('chamado.sqchamado', 1, false);
 -- Name: configuracao_id_seq; Type: SEQUENCE SET; Schema: corp; Owner: postgres
 --
 
-SELECT pg_catalog.setval('corp.configuracao_id_seq', 17, true);
+SELECT pg_catalog.setval('corp.configuracao_id_seq', 24, true);
 
 
 --
@@ -1692,7 +1702,7 @@ SELECT pg_catalog.setval('seg.sqorganograma', 8, true);
 -- Name: squsuario; Type: SEQUENCE SET; Schema: seg; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seg.squsuario', 8, true);
+SELECT pg_catalog.setval('seg.squsuario', 9, true);
 
 
 --

@@ -66,7 +66,7 @@ export class segUsuarioService {
         return this.http.get<segUsuario[]>(url);
     }
 
-    
+
     Exclui(id: number): Observable<void> {
         const url = pathUrl + `Exclui/${id}`;
         return this.http.get<void>(url);
@@ -75,6 +75,15 @@ export class segUsuarioService {
     Grava(usuario: any): Observable<segUsuario> {
         const url = pathUrl + `Grava`;
         return this.http.post<segUsuario>(url, usuario, httpOptions);
+    }
+    RecuperaSenhaChave(prm: any): Observable<void> {
+        const url = pathUrl + `RecuperaSenhaChave`;
+        return this.http.post<void>(url, prm, httpOptions);
+    }
+
+    EsqueciSenha(identificacao: string): Observable<void> {
+        const url = pathUrl + `EsqueciSenha/${identificacao}`;
+        return this.http.get<void>(url);
     }
 
 }

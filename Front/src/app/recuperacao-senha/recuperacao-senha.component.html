@@ -1,27 +1,30 @@
 <div class="row">
     <div class="col-6 offset-3">
-        <div class="card">
-            <div class="card-header">Recuperação de Senha</div>
-            <div class="card-body">
-                <!-- <form [formGroup]="formRecuperacao" (ngSubmit)="recuperarSenha()"> -->
-                <div class="mb-3">
-                    <label for="email" class="form-label">Chave de Recuperação</label>
-                    <input type="email" class="form-control" formControlName="email" id="email" required>
+        <form [formGroup]="form" (ngSubmit)="ajustaSenha()">
+            <div class="card">
+                <div class="card-header">Recuperação de Senha</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Chave de Recuperação</label>
+                        <input type="text" class="form-control" formControlName="chave" id="chave" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="senha" class="form-label">Senha</label>
+                        <p-password formControlName="senha" id="senha" strongLabel="forte" mediumLabel="media"
+                            weakLabel="fraca"></p-password>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmacao" class="form-label">Confirmação senha</label>
+                        <input type="password" class="form-control" formControlName="confirmacao" id="confirmacao"
+                            required>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="senha" class="form-label">Senha</label>
-                    <input type="email" class="form-control" formControlName="email" id="email" required>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Confirmação senha</label>
-                    <input type="email" class="form-control" formControlName="email" id="email" required>
-                </div>
-                <!-- </form> -->
-            </div>
-            <div class="card-footer">
-                <button type="submit" class="btn btn-primary">Enviar</button>
+                <div class="card-footer text-end">
+                    <button type="submit" class="btn btn-primary" [disabled]="form.invalid"><i class="pi pi-send"></i>
+                    </button>
 
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
