@@ -14,7 +14,14 @@ import { SelectModule } from 'primeng/select';
 
 @Component({
     selector: 'app-segredo',
-    imports: [TableModule, PopoverModule, ConfirmDialogModule, DialogModule, FormsModule, ReactiveFormsModule, SelectModule],
+    imports: [
+        TableModule,
+        PopoverModule,
+        ConfirmDialogModule,
+        DialogModule,
+        FormsModule,
+        ReactiveFormsModule,
+        SelectModule],
     templateUrl: './segredo.component.html',
     styleUrl: './segredo.component.scss',
     providers: [ConfirmationService]
@@ -105,14 +112,14 @@ export class SegredoComponent implements OnInit {
         });
     }
 
-    novo(){
+    novo() {
         this.mostraNovo = true;
         this.formNovo.reset();
     }
 
     salvar() {
         if (this.formNovo.valid) {
-            this.srv.novo({...this.formNovo.value, idIc: this.ic()?.id}).subscribe({
+            this.srv.novo({ ...this.formNovo.value, idIc: this.ic()?.id }).subscribe({
                 next: () => {
                     this.atualiza(this.ic()?.id || 0);
                     this.mostraNovo = false;
