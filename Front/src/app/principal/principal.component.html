@@ -11,6 +11,7 @@
             </div>
         </div>
     </div>
+    @if (icSelecionado()){
     <div class="col-8">
         <div class="card">
             <div class="card-header text-success " style="font-weight: bold;">
@@ -54,7 +55,8 @@
                                 </div>
                                 <div class="col">
 
-                                    <button class="btn btn-primary" [disabled]="!icNovoPai" (click)="mudaPaternidade()">Novo pai</button>
+                                    <button class="btn btn-primary" [disabled]="!icNovoPai"
+                                        (click)="mudaPaternidade()">Novo pai</button>
                                 </div>
                             </div>
                         </p-tabpanel>
@@ -78,4 +80,5 @@
             </div>
         </div>
     </div>
+    }
 </div>

@@ -540,6 +540,7 @@ CREATE VIEW corp.vw_configuracao AS
             configuracao.valordata,
             configuracao.valorcomplexo,
             configuracao.valorsensivel,
+            configuracao.valorboleano,
             configuracao.ajuda,
             concat('', configuracao.nome) AS nomecompleto,
             ''::text AS listaancestrais,
@@ -556,6 +557,7 @@ CREATE VIEW corp.vw_configuracao AS
             filho.valordata,
             filho.valorcomplexo,
             filho.valorsensivel,
+            filho.valorboleano,
             filho.ajuda,
             concat(herd.nomecompleto, '.', filho.nome) AS nomecompleto,
             concat(herd.listaancestrais, ',', herd.id) AS listaancestrais,
@@ -575,7 +577,8 @@ CREATE VIEW corp.vw_configuracao AS
     ajuda,
     nomecompleto,
     listaancestrais,
-    nivel
+    nivel,
+    valorboleano
    FROM herdeiros;
 
 
@@ -1369,9 +1372,9 @@ COPY corp.configuracao (id, idpai, nome, ativo, tipovalor, valornumerico, valort
 19	18	Servidor	t	texto	\N	localhost	\N	\N	f	\N	\N
 21	18	Autenticado	t	boleano	\N	22	\N	\N	f	\N	f
 22	18	Usuario	t	texto	\N	\N	\N	\N	f	\N	\N
-23	18	SSH	t	boleano	\N	\N	\N	\N	f	\N	f
 24	18	Senha	t	texto	\N	\N	\N	\N	t	\N	\N
 20	18	Porta	t	numerico	25.0000	22	\N	\N	f	\N	\N
+23	18	SSH	t	boleano	\N	\N	\N	\N	f	\N	f
 \.
 
 
@@ -1515,8 +1518,8 @@ COPY seg.organograma (id, idpai, nome, ativo, gd) FROM stdin;
 
 COPY seg.usuario (id, identificacao, gd, senha, administrador, ativo, local, email, chavetrocasenha, chavevalidade) FROM stdin;
 8	john	e2f7b8d8-62d6-4985-8441-8c06c54dd05f	\N	f	t	f	beltrano@com.br	\N	\N
-7	usr normal	1792a842-0721-4c92-9fc5-4f516cb58a3f	\N	f	t	f	fulano@silva.com	\N	\N
 1	admin	5c355ca3-8e6d-49ed-97a1-3f6eeff85d27	d2160e670a6261bcd5164a5b2164a89e98a34b54ccd59944ccc68fcc725f12ce3746367919d55fa43101e0d2e1f2ff1c1c824499622e0643024f9d77bfebcbd2	t	t	t	teste@gmail.com	\N	\N
+10	Outro	12c3e72f-5b03-4316-bb4e-6b5de047957e	3c11e4f316c956a27655902dc1a19b925b8887d59eff791eea63edc8a05454ec594d5eb0f40ae151df87acd6e101761ecc5bb0d3b829bf3a85f5432493b22f37	f	t	t	teste@com	\N	\N
 \.
 
 
@@ -1702,7 +1705,7 @@ SELECT pg_catalog.setval('seg.sqorganograma', 8, true);
 -- Name: squsuario; Type: SEQUENCE SET; Schema: seg; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seg.squsuario', 9, true);
+SELECT pg_catalog.setval('seg.squsuario', 10, true);
 
 
 --

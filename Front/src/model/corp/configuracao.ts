@@ -8,6 +8,7 @@ export interface corpConfiguracao {
     valorData?: Date;
     valorComplexo?: object;
     valorSensivel: string;
+    valorBoleano?: boolean;
     ajuda?: number;
     nomeCompleto: string;
     listaAncestrais: string;

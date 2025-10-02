@@ -23,6 +23,9 @@
                 <textarea class="form-control" rows="4" cols="50"
                     [(ngModel)]="configuracaoSelecionada.valorComplexo"></textarea>
                 }
+                @case ('boleano'){
+                 <p-checkbox [(ngModel)]="configuracaoSelecionada.valorBoleano" [binary]="true" />   
+                }
                 }
             </div>
             <div class="card-footer text-end">

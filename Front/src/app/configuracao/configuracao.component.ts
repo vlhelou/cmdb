@@ -4,10 +4,11 @@ import { ConfiguracaoService } from 'src/model/corp/configuracao.service'
 import { TreeModule } from 'primeng/tree';
 import { TreeNode } from 'primeng/api';
 import { FormsModule } from '@angular/forms';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @Component({
     selector: 'app-configuracao',
-    imports: [TreeModule, FormsModule],
+    imports: [TreeModule, FormsModule, CheckboxModule],
     templateUrl: './configuracao.component.html',
     styleUrl: './configuracao.component.scss'
 })

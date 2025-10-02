@@ -82,6 +82,9 @@ public class Configuracao : ControllerBase
                 localizado.ValorComplexo = item.ValorComplexo;
                 break;
 
+            case "boleano":
+                localizado.ValorBoleano= item.ValorBoleano;
+                break;
             default:
                 return BadRequest(new { Mensagem = "Tipo de valor não suportado" });
         }

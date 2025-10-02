@@ -33,6 +33,10 @@ public record VwConfiguracao
     [Column("valorcomplexo", TypeName = "json")]
     public string? ValorComplexo { get; set; }
 
+    [Column("valorboleano")]
+    public bool? ValorBoleano { get; set; }
+
+
     [Column("valorsensivel")]
     public bool ValorSensivel { get; set; }
 
