@@ -1,1 +1,39 @@
-<p>conhecimento works!</p>
+<p-confirmdialog />
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">Conhecimentos
+                <a href="javascript:void(0)" class="float-end" (click)="novo()"> <i class="pi pi-plus"></i> </a>
+            </div>
+            <div class="card-body">
+                @if (lista() ){
+
+                <p-table [value]="lista()">
+                    <ng-template #header>
+                        <tr>
+                            <th>Problema</th>
+                            <th>Solução</th>
+                            <th>Data de Alteração</th>
+                            <th>Ação</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-item>
+                        <tr>
+                            <td>{{item.problema}}</td>
+                            <td>{{item.solucao}}</td>
+                            <td>{{item.dataAlteracao | date:'dd/MM/yyyy HH:mm'}}</td>
+                            <td>
+                                <a href="javascript:void(0)" (click)="edita(item)"><i class="pi pi-pencil"></i></a>
+                                <a href="javascript:void(0)" (click)="exclui(item.id, $event)"><i class="pi pi-trash"></i></a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
