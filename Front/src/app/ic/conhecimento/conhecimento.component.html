@@ -1,3 +1,27 @@
+<p-dialog header="Edição de conhecimento" [modal]="true" [(visible)]="mostraFormulario" [style]="{ width: '50rem' }">
+    <form [formGroup]="form">
+        <div class="card">
+            <!-- <div class="card-header">
+                Novo Conhecimento
+            </div> -->
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="problema">Problema</label>
+                    <input type="text" class="form-control" formControlName="problema">
+                </div>
+                <div class="mb-3">
+                    <label for="solucao">Solução</label>
+                    <textarea class="form-control" formControlName="solucao" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <button class="btn btn-primary" (click)="grava()"><i class="pi pi-save"></i></button>
+            </div>
+        </div>
+    </form>
+</p-dialog>
+
+
 <p-confirmdialog />
 
 
@@ -26,7 +50,8 @@
                             <td>{{item.dataAlteracao | date:'dd/MM/yyyy HH:mm'}}</td>
                             <td>
                                 <a href="javascript:void(0)" (click)="edita(item)"><i class="pi pi-pencil"></i></a>
-                                <a href="javascript:void(0)" (click)="exclui(item.id, $event)"><i class="pi pi-trash"></i></a>
+                                <a href="javascript:void(0)" class="text-danger ms-2" (click)="exclui(item.id, $event)"><i
+                                        class="pi pi-trash"></i></a>
                             </td>
                         </tr>
                     </ng-template>

@@ -30,7 +30,7 @@ public class Segredo : ControllerBase
 
         var segredos = _db.IcSegredo
              .Where(p =>
-                p.IdIC == id
+                p.IdIc == id
                 && (p.IdUsuarioDono.HasValue && p.IdUsuarioDono == idLogado 
                     || (p.IdOrganogramaDono.HasValue && organograma.Contains(p.IdOrganogramaDono.Value))
                     )
@@ -67,7 +67,7 @@ public class Segredo : ControllerBase
             //segredo de usuário
             var segredo = new Model.IC.Segredo
             {
-                IdIC = item.idIc,
+                IdIc = item.idIc,
                 IdUsuarioDono = idLogado,
                 Conteudo = Util.Criptografa(item.conteudo, localizado.Gd),
                 Algoritmo = "AES"
@@ -85,7 +85,7 @@ public class Segredo : ControllerBase
                 return BadRequest(new MensagemErro("Organograma não localizado"));
             var segredo = new Model.IC.Segredo
             {
-                IdIC = item.idIc,
+                IdIc = item.idIc,
                 IdOrganogramaDono = item.IdOrganogramaDono,
                 Conteudo = Util.Criptografa(item.conteudo, organograma.Gd),
                 Algoritmo = "AES"

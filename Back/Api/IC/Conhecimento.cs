@@ -18,7 +18,7 @@ public class Conhecimento : ControllerBase
     [HttpGet("[action]/{id}")]
     public IActionResult ConhecimentosPorIC(int id)
     {
-        var retorno = _db.IcConhecimento.AsNoTracking().Where(p => p.IdIC == id).ToList();
+        var retorno = _db.IcConhecimento.AsNoTracking().Where(p => p.IdIc == id).ToList();
         return Ok(retorno);
     }
 
@@ -41,8 +41,8 @@ public class Conhecimento : ControllerBase
             {
                 return BadRequest(new MensagemErro("Conhecimento não localizado"));
             }
-            localizado.DataAlteracao = DateTimeOffset.Now;
-            localizado.IdUsuario = idLogado;
+            localizado.DataAlteracao = DateTimeOffset.Now.ToUniversalTime();
+            localizado.IdAutor = idLogado;
             localizado.Problema = item.Problema;
             localizado.Solucao = item.Solucao;
             _db.IcConhecimento.Update(localizado);

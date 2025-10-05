@@ -7,6 +7,7 @@ import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } 
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
     selector: 'app-conhecimento',
@@ -15,7 +16,8 @@ import { TableModule } from 'primeng/table';
         ReactiveFormsModule,
         ConfirmDialogModule,
         TableModule,
-        DatePipe
+        DatePipe,
+        DialogModule
     ],
     templateUrl: './conhecimento.component.html',
     styleUrl: './conhecimento.component.scss',
@@ -24,6 +26,7 @@ import { TableModule } from 'primeng/table';
 export class ConhecimentoComponent {
     ic = input<icIc | undefined>();
     lista = signal<IcConhecimento[]>([]);
+    mostraFormulario = false;
 
     form = new FormGroup({
         id: new FormControl<number>(0),
@@ -37,9 +40,7 @@ export class ConhecimentoComponent {
     constructor(private srv: IcConhecimentoService,private confirmationService: ConfirmationService) {
         effect(() => {
             if (this.ic()) {
-                if (this.ic()) {
-
-                }
+                this.atualiza();
             }
         });
     }
@@ -58,6 +59,7 @@ export class ConhecimentoComponent {
         if (this.form.valid) {
             this.srv.Grava(this.form.value).subscribe({
                 next: r => {
+                    this.mostraFormulario = false;
                     this.atualiza();
                 }
             });
@@ -87,11 +89,16 @@ export class ConhecimentoComponent {
         this.form.patchValue({
             id: 0,
             idIc: this.ic()?.id || 0,
+            idAutor: 0,
             dataAlteracao: new Date()
         });
+        this.mostraFormulario = true;
     }
 
     edita(item: IcConhecimento) {
+        this.form.reset();
         this.form.patchValue(item);
+        this.form.controls['idIc'].setValue(item.idIc);
+        this.mostraFormulario = true;
     }
 }

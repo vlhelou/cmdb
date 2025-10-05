@@ -11,7 +11,7 @@ public record Conhecimento
     public int Id { get; set; }
 
     [Column("idic")]
-    public int IdIC { get; set; }
+    public int IdIc { get; set; }
 
     [Column("problema")]
     public string Problema { get; set; }=string.Empty;
@@ -19,17 +19,17 @@ public record Conhecimento
     [Column("solucao")]
     public string Solucao { get; set; }=string.Empty;
 
-    [Column("idusuario")]
-    public int IdUsuario { get; set; }
+    [Column("idautor")]
+    public int IdAutor { get; set; }
 
     [Column("dataalteracao")]
     public DateTimeOffset DataAlteracao { get; set; }
 
-    [ForeignKey("IdIC")]
+    [ForeignKey("IdIc")]
     public Model.IC.VwIc? IC { get; set; }
 
-    [ForeignKey("IdUsuario")]
-    public Seg.Usuario? UsuarioDono { get; set; }
+    [ForeignKey("IdAutor")]
+    public Seg.Usuario? Autor{ get; set; }
 
 
 }

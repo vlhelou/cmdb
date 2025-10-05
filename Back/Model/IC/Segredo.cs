@@ -11,7 +11,7 @@ public record Segredo
     public int Id { get; set; }
 
     [Column("idic")]
-    public int IdIC { get; set; }
+    public int IdIc { get; set; }
 
     [Column("conteudo")]
     [JsonIgnore]
@@ -27,7 +27,7 @@ public record Segredo
     [JsonIgnore]
     public string Algoritmo { get; set; } = "Rijndael";
 
-    [ForeignKey("IdIC")]
+    [ForeignKey("IdIc")]
     public Model.IC.VwIc? IC { get; set; }
 
 
