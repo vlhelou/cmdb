@@ -19,17 +19,15 @@
             </div>
             <div class="card-body">
 
-                <p-tabs value="0" [scrollable]="true">
+                <p-tabs [value]="tabSelecionado" [scrollable]="true">
                     <p-tablist>
+                        <p-tab value="5">Dependências</p-tab>
                         <p-tab value="0">Cadastro</p-tab>
-                        @if (icSelecionado()){
 
                         <p-tab value="1">Cria filho</p-tab>
-                        }
                         <p-tab value="2">Segredos</p-tab>
                         <p-tab value="3">Mudança de paternidade</p-tab>
                         <p-tab value="4">Conhecimento</p-tab>
-                        <p-tab value="5">Dependências</p-tab>
                         <p-tab value="6">Dependentes</p-tab>
                     </p-tablist>
                     <p-tabpanels>

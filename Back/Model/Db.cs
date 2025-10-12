@@ -4,18 +4,12 @@ namespace Cmdb.Model;
 
 public class Db(DbContextOptions<Db> options) : DbContext(options)
 {
- 
-    public static readonly ILoggerFactory MyLoggerFactory
-        = LoggerFactory.Create(builder => { 
-            builder.AddConsole(); 
-        });
-    
-    
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        
-    }
+    public static readonly ILoggerFactory MyLoggerFactory
+        = LoggerFactory.Create(builder =>
+        {
+            builder.AddConsole();
+        });
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -25,11 +19,12 @@ public class Db(DbContextOptions<Db> options) : DbContext(options)
             .EnableDetailedErrors();
 
     }
+
+
     //seg
     public DbSet<Model.Seg.Usuario> SegUsuario { get; set; }
     public DbSet<Model.Seg.Organograma> SegOrganograma { get; set; }
     public DbSet<Model.Seg.VwOrganograma> SegVwOrganograma { get; set; }
-
 
     //corp
     public DbSet<Model.Corp.Tipo> CorpTipo { get; set; }
@@ -42,6 +37,7 @@ public class Db(DbContextOptions<Db> options) : DbContext(options)
     public DbSet<Model.IC.VwIc> IcVwIc { get; set; }
     public DbSet<Model.IC.Segredo> IcSegredo { get; set; }
     public DbSet<Model.IC.Conhecimento> IcConhecimento { get; set; }
+    public DbSet<Model.IC.Dependencia> IcDependencia { get; set; }
 
 
 }
