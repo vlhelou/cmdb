@@ -10,6 +10,7 @@ import { SegredoComponent } from 'src/app/ic/segredo/segredo.component'
 import { ConhecimentoComponent } from 'src/app/ic/conhecimento/conhecimento.component'
 import { icIc } from 'src/model/ic/ic';
 import { IcService } from 'src/model/ic/ic.service';
+import { DependenciaComponent } from 'src/app/ic/dependencia/dependencia.component'
 
 
 @Component({
@@ -22,7 +23,8 @@ import { IcService } from 'src/model/ic/ic.service';
     TabsModule,
     CadastroComponent,
     SegredoComponent,
-    ConhecimentoComponent
+    ConhecimentoComponent,
+    DependenciaComponent
   ],
   templateUrl: './principal.component.html',
   styleUrl: './principal.component.scss'
