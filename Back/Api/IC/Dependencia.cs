@@ -28,7 +28,7 @@ public class Dependencia : ControllerBase
             return Ok(_db.IcDependencia
                 .AsNoTracking()
                 .Include(p => p.IcDependente)
-                .Where(p => p.IdPrincipal == id)
+                .Where(p => p.IdIcPrincipal == id)
                 .OrderBy(p => p.IcDependente!.Nome)
                 .ToList());
     }
@@ -57,7 +57,7 @@ public class Dependencia : ControllerBase
             localizado.IdAutor = idLogado;
             localizado.Observacao = item.Observacao;
             localizado.IdIcDependente = item.IdIcDependente;
-            localizado.IdPrincipal = item.IdPrincipal;
+            localizado.IdIcPrincipal = item.IdIcPrincipal;
             _db.IcDependencia.Update(localizado);
             _db.SaveChanges();
             return Ok(localizado);

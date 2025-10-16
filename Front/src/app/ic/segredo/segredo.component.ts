@@ -38,7 +38,10 @@ export class SegredoComponent implements OnInit {
         conteudo: new FormControl('', Validators.required),
     });
 
-    constructor(private srv: IcSegredoService, private confirmationService: ConfirmationService, private usuario: segUsuarioService) {
+    constructor(
+        private srv: IcSegredoService,
+        private confirmationService: ConfirmationService,
+        private usuario: segUsuarioService) {
         effect(() => {
             if (this.ic()) {
                 if (this.ic()?.id) {
