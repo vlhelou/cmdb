@@ -29,5 +29,10 @@ export class DependenciaService {
     return this.http.get<IcDependencia[]>(url);
   }
 
+  Exclui(id: number): Observable<IcDependencia[]> {
+    const url = pathUrl + `Exclui/${id}`;
+    return this.http.get<IcDependencia[]>(url);
+  }
+
 
 }

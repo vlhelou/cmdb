@@ -37,7 +37,7 @@ export class PrincipalComponent {
   icSelecionado = signal<icIc | undefined>(undefined);
   icAtualiza = signal<icIc | undefined>(undefined);
   icNovoPai: icIc | undefined = undefined;
-  tabSelecionado = "5";
+  tabSelecionado = "0";
   constructor(private srv: IcService) { }
 
   autoCompleteSelecionado(event: icIc | undefined) {

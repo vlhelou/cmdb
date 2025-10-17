@@ -1,19 +1,21 @@
-import { Component, effect, input, signal, OnInit } from '@angular/core';
+import { Component, effect, input, signal } from '@angular/core';
 import { icIc } from 'src/model/ic/ic';
 import { TableModule } from 'primeng/table';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IcAutocompleteComponent } from 'src/app/ic/ic-autocomplete/ic-autocomplete.component'
 import { DependenciaService } from 'src/model/ic/dependencia.service';
 import { IcDependencia } from 'src/model/ic/dependencia';
-
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-dependencia',
-    imports: [TableModule, FormsModule, ReactiveFormsModule, IcAutocompleteComponent],
+    imports: [TableModule, FormsModule, ReactiveFormsModule, IcAutocompleteComponent, ConfirmPopupModule],
     templateUrl: './dependencia.component.html',
-    styleUrl: './dependencia.component.scss'
+    styleUrl: './dependencia.component.scss',
+    providers: [ConfirmationService]
 })
-export class DependenciaComponent implements OnInit {
+export class DependenciaComponent {
     ic = input<icIc | undefined>();
     dependente = input<boolean>(false);
     lista = signal<IcDependencia[]>([]);
@@ -29,41 +31,70 @@ export class DependenciaComponent implements OnInit {
         observacao: new FormControl<string | null>(null),
     });
 
-    constructor(private srv: DependenciaService) {
-
+    constructor(private srv: DependenciaService, private confirmationService: ConfirmationService) {
         effect(() => {
             if (this.ic()) {
+                this.form.reset();
                 if (this.ic()?.id) {
-                    // console.log('Dependencia: ', this.ic());
-                    const idic = this.ic()?.id || 0;
-                    this.srv.DependenciasPorIC(idic, this.dependente()).subscribe({
-                        next: (dados) => {
-                            this.lista.set(dados);
-                        }
-                    });
-                    // this.atualiza(idic);
-                } else {
-                    // this.lista.set([]);
+                    this.atualiza();
                 }
             }
         });
-
-    }
-    ngOnInit() {
     }
 
+    atualiza() {
+        const idic = this.ic()?.id || 0;
+        this.srv.DependenciasPorIC(idic, this.dependente()).subscribe({
+            next: (dados) => {
+                this.lista.set(dados);
+            }
+        });
+
+    }
     grava() {
         const envio = this.form.value;
-        envio.idIcPrincipal = this.ic()?.id || 0;
-        envio.idIcDependente = envio.dependente?.id || 0;
+        if (this.dependente()) {
+            envio.idIcPrincipal = this.ic()?.id || 0;
+            envio.idIcDependente = envio.dependente?.id || 0;
+        } else {
+            envio.idIcPrincipal = envio.dependente?.id || 0;
+            envio.idIcDependente = this.ic()?.id || 0;
+        }
         envio.idAutor = 0;
+        envio.id = 0;
         envio.dataAlteracao = new Date();
         this.srv.Grava(envio).subscribe({
             next: (data) => {
-                // console.log('Gravou dependencia: ', data);
-                console.log('Gravar dependencia: ', envio);
+                this.atualiza();
             }
         });
         this.form.reset();
+    }
+
+
+
+    exclui(item: IcDependencia, event: any) {
+        console.log('Excluir dependencia: ', item);
+        this.confirmationService.confirm({
+            target: event.currentTarget as EventTarget,
+            message: 'Confirma a exclusão desta dependência?',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Sim',
+            rejectLabel: 'Não',
+            rejectButtonStyleClass: 'p-button-danger',
+
+            accept: () => {
+                this.srv.Exclui(item.id).subscribe({
+                    next: () => {
+                        const idic = this.ic()?.id || 0;
+                        this.atualiza();
+                    }
+                });
+            },
+            reject: () => {
+                // this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+            }
+        });
+
     }
 }

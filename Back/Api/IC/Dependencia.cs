@@ -20,15 +20,15 @@ public class Dependencia : ControllerBase
         if (dependente)
             return Ok(_db.IcDependencia
                 .AsNoTracking()
-                .Include(p => p.IcPrincipal)
-                .Where(p => p.IdIcDependente == id)
+                .Include(p => p.IcDependente)
+                .Where(p => p.IdIcPrincipal == id)
                 .OrderBy(p => p.IcPrincipal!.Nome)
                 .ToList());
         else
             return Ok(_db.IcDependencia
                 .AsNoTracking()
-                .Include(p => p.IcDependente)
-                .Where(p => p.IdIcPrincipal == id)
+                .Include(p => p.IcPrincipal)
+                .Where(p => p.IdIcDependente == id)
                 .OrderBy(p => p.IcDependente!.Nome)
                 .ToList());
     }
@@ -64,7 +64,7 @@ public class Dependencia : ControllerBase
         }
     }
 
-    [HttpDelete("[action]/{id}")]
+    [HttpGet("[action]/{id}")]
     [Authorize(Roles = "admin")]
     public IActionResult Exclui(int id)
     {

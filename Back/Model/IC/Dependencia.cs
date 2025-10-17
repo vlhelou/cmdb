@@ -27,9 +27,9 @@ public record Dependencia
     public DateTimeOffset DataAlteracao { get; set; } = DateTimeOffset.Now.ToUniversalTime();
 
     [ForeignKey("IdIcPrincipal")]
-    public virtual IC? IcPrincipal { get; set; }
+    public virtual VwIc? IcPrincipal { get; set; }
 
 
     [ForeignKey("IdIcDependente")]
-    public virtual IC? IcDependente { get; set; }
+    public virtual VwIc? IcDependente { get; set; }
 }

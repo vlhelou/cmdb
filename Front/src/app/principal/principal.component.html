@@ -21,13 +21,12 @@
 
                 <p-tabs [value]="tabSelecionado" [scrollable]="true">
                     <p-tablist>
-                        <p-tab value="5">Dependências</p-tab>
                         <p-tab value="0">Cadastro</p-tab>
-
                         <p-tab value="1">Cria filho</p-tab>
                         <p-tab value="2">Segredos</p-tab>
                         <p-tab value="3">Mudança de paternidade</p-tab>
                         <p-tab value="4">Conhecimento</p-tab>
+                        <p-tab value="5">Dependências</p-tab>
                         <p-tab value="6">Dependentes</p-tab>
                     </p-tablist>
                     <p-tabpanels>
@@ -64,9 +63,7 @@
                             <app-dependencia [ic]="icSelecionado()" [dependente]="true"></app-dependencia>
                         </p-tabpanel>
                         <p-tabpanel value="6">
-                            <p class="m-0">
-                                Dependentes
-                            </p>
+                            <app-dependencia [ic]="icSelecionado()" [dependente]="false"></app-dependencia>
                         </p-tabpanel>
                     </p-tabpanels>
                 </p-tabs>

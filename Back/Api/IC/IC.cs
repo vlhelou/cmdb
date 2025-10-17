@@ -149,6 +149,8 @@ public class IC : ControllerBase
         //List<int> MinhasLocacoes = Logado.Locacoes.Select(p => p.IdOrganograma).ToList();
         //caso seja novo
 
+        item.Nome=item.Nome.Trim();
+
         if (item.Id == 0)
         {
             if (item.IdPai == null)
