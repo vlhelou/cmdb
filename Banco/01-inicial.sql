@@ -606,9 +606,9 @@ CREATE TABLE ic.conhecimento (
     id integer DEFAULT nextval('ic.sqconhecimento'::regclass) NOT NULL,
     idic integer NOT NULL,
     problema character varying(400) NOT NULL,
-    solucao character varying(4000),
+    solucao character varying(4000) NOT NULL,
     idautor integer NOT NULL,
-    dataalteracao timestamp without time zone DEFAULT now() NOT NULL
+    dataalteracao timestamp with time zone DEFAULT now() NOT NULL
 );
 
 
@@ -637,7 +637,8 @@ CREATE TABLE ic.dependencia (
     idicprincipal integer NOT NULL,
     idicdependente integer NOT NULL,
     idautor integer NOT NULL,
-    dataalteracao timestamp with time zone NOT NULL
+    dataalteracao timestamp with time zone NOT NULL,
+    observacao character varying(500)
 );
 
 
@@ -1401,6 +1402,7 @@ COPY corp.tipo (id, nome, grupo, ativo) FROM stdin;
 --
 
 COPY ic.conhecimento (id, idic, problema, solucao, idautor, dataalteracao) FROM stdin;
+4	1	outra coisa	hjjh	1	2025-10-05 20:45:58.10271-03
 \.
 
 
@@ -1408,7 +1410,8 @@ COPY ic.conhecimento (id, idic, problema, solucao, idautor, dataalteracao) FROM 
 -- Data for Name: dependencia; Type: TABLE DATA; Schema: ic; Owner: postgres
 --
 
-COPY ic.dependencia (id, idicprincipal, idicdependente, idautor, dataalteracao) FROM stdin;
+COPY ic.dependencia (id, idicprincipal, idicdependente, idautor, dataalteracao, observacao) FROM stdin;
+1	2	4	1	2025-10-16 19:13:48.962168-03	kjkj
 \.
 
 
@@ -1421,8 +1424,8 @@ COPY ic.ic (id, idpai, nome, ativo, propriedades, idtipo, idorganograma) FROM st
 4	2	outro filho	t	[]	1	\N
 5	2	mais um filho	t	[]	1	\N
 6	1	outro filho	t	[]	1	\N
-3	2	filho teste 	t	[{"Nome": "kjkj", "Valor": "kjkj"}]	1	\N
-2	1	nome teste 	t	[{"Nome": "yuy", "Valor": "uyuy"}, {"Nome": "4554", "Valor": "5454"}]	1	1
+3	2	filho teste	t	[{"Nome": "kjkj", "Valor": "kjkj"}]	1	\N
+2	1	nome teste	t	[{"Nome": "yuy", "Valor": "uyuy"}, {"Nome": "4554", "Valor": "5454"}]	1	1
 7	6	neto 4	t	[]	1	\N
 \.
 
@@ -1467,6 +1470,7 @@ COPY ic.segredo (id, idic, conteudo, idusuariodono, idorganogramadono, algoritmo
 3	3	VfPcchPxa4SREhsGMxvlaqZETNvKV52NJECZhijFIaM=	\N	2	AES
 6	1	RM7vP5UWY3+GF2DLxDj9YA==	\N	2	AES
 7	1	/EXMq4jr3aINxpkZAwPolg==	1	\N	AES
+8	7	D04Vtw5EqQk3cLROQObXew==	\N	2	AES
 \.
 
 
@@ -1621,21 +1625,21 @@ SELECT pg_catalog.setval('ic.incidenteorganograma_id_seq', 1, false);
 -- Name: segredo_id_seq; Type: SEQUENCE SET; Schema: ic; Owner: postgres
 --
 
-SELECT pg_catalog.setval('ic.segredo_id_seq', 7, true);
+SELECT pg_catalog.setval('ic.segredo_id_seq', 8, true);
 
 
 --
 -- Name: sqconhecimento; Type: SEQUENCE SET; Schema: ic; Owner: postgres
 --
 
-SELECT pg_catalog.setval('ic.sqconhecimento', 1, false);
+SELECT pg_catalog.setval('ic.sqconhecimento', 4, true);
 
 
 --
 -- Name: sqdependencia; Type: SEQUENCE SET; Schema: ic; Owner: postgres
 --
 
-SELECT pg_catalog.setval('ic.sqdependencia', 1, false);
+SELECT pg_catalog.setval('ic.sqdependencia', 7, true);
 
 
 --
@@ -1965,13 +1969,6 @@ CREATE INDEX ix_conhecimenot_ic ON ic.conhecimento USING btree (idic);
 
 
 --
--- Name: ix_dependencia_icprincipal; Type: INDEX; Schema: ic; Owner: postgres
---
-
-CREATE INDEX ix_dependencia_icprincipal ON ic.dependencia USING btree (idicprincipal);
-
-
---
 -- Name: ix_dependencia_idicdependente; Type: INDEX; Schema: ic; Owner: postgres
 --
 
@@ -2060,13 +2057,6 @@ CREATE UNIQUE INDEX ix_vwicid ON ic.vw_ic USING btree (id);
 --
 
 CREATE INDEX ix_vwicnome ON ic.vw_ic USING btree (lower((nome)::text));
-
-
---
--- Name: ixdependenciadependencia; Type: INDEX; Schema: ic; Owner: postgres
---
-
-CREATE INDEX ixdependenciadependencia ON ic.dependencia USING btree (idicdependente);
 
 
 --

@@ -80,6 +80,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseCors("Geral");
 }
+app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
