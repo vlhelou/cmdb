@@ -18,6 +18,14 @@
 
 	<ItemGroup>
 		<Folder Include="Controllers\" />
+		<Folder Include="wwwroot\" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\front\front.client.esproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
+	</ItemGroup>
+
 
 </Project>
