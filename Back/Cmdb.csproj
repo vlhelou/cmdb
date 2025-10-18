@@ -24,11 +24,11 @@
 		<Folder Include="wwwroot\" />
 	</ItemGroup>
 
-	<ItemGroup>
+	<!--<ItemGroup>
 		<ProjectReference Include="..\front\front.client.esproj">
 			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 		</ProjectReference>
-	</ItemGroup>
+	</ItemGroup>-->
 
 
 </Project>
