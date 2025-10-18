@@ -49,7 +49,6 @@ export class IcTreeViewComponent implements OnInit, ControlValueAccessor {
 
         if (this.icNovo()?.id) {
           const id = this.icNovo()?.id;
-          console.log('Atualiza Tree com o novo IC:', id);
         }
       }
     });

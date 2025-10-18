@@ -16,8 +16,8 @@ import { segUsuarioService } from 'src/model/seg/usuario.service'
 export class PublicoComponent {
     showLogin = false;
     formLogin = new FormGroup({
-        identificacao: new FormControl<string>('admin', [Validators.required]),
-        senha: new FormControl<string>('123456', [Validators.required]),
+        identificacao: new FormControl<string>('', [Validators.required]),
+        senha: new FormControl<string>('', [Validators.required]),
         local: new FormControl<boolean>(true)
     });
     returnUrl: string | undefined;

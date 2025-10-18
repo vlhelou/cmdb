@@ -46,6 +46,11 @@ export class AppComponent implements OnInit {
                 routerLink: '/configuracao'
             },
             {
+                label: 'Tipo',
+                icon: 'pi pi-list-check',
+                routerLink: '/tipo'
+            },
+            {
                 label: 'Contato',
                 icon: 'pi pi-envelope'
             }

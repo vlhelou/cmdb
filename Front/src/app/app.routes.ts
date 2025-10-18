@@ -6,7 +6,8 @@ import { adminGuard } from 'src/guard/admin.guard';
 import { OrganogramaPrincipalComponent } from 'src/app/organograma/principal/principal.component'
 import { ConfiguracaoComponent } from 'src/app/configuracao/configuracao.component'
 import { UsuarioCadastroComponent } from 'src/app/usuario/cadastro/cadastro.component'
-import {RecuperacaoSenhaComponent} from 'src/app/recuperacao-senha/recuperacao-senha.component'
+import { RecuperacaoSenhaComponent } from 'src/app/recuperacao-senha/recuperacao-senha.component'
+import { TipoComponent } from 'src/app/tipo/tipo.component';
 
 
 export const routes: Routes = [
@@ -14,6 +15,7 @@ export const routes: Routes = [
     { path: 'organograma', component: OrganogramaPrincipalComponent, canActivate: [adminGuard] },
     { path: 'configuracao', component: ConfiguracaoComponent, canActivate: [adminGuard] },
     { path: 'usuario/cadastro', component: UsuarioCadastroComponent, canActivate: [adminGuard] },
+    { path: 'tipo', component: TipoComponent, canActivate: [adminGuard] },
     { path: 'publico', component: PublicoComponent },
     { path: 'recuperacao-senha', component: RecuperacaoSenhaComponent },
     { path: '', redirectTo: '/home', pathMatch: 'full' },
