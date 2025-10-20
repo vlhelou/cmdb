@@ -6,7 +6,7 @@ import { IcAutocompleteComponent } from 'src/app/ic/ic-autocomplete/ic-autocompl
 import { DependenciaService } from 'src/model/ic/dependencia.service';
 import { IcDependencia } from 'src/model/ic/dependencia';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService  } from 'primeng/api';
 
 @Component({
     selector: 'app-dependencia',
