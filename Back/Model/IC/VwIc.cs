@@ -38,7 +38,7 @@ public record VwIc
 
     [Column("pesquisats")]
     [JsonIgnore]
-    public NpgsqlTsVector? PesquisaTS { get; set; } 
+    public NpgsqlTsVector? PesquisaTS { get; set; }
 
     public ICollection<int> LstAncestrais
     {

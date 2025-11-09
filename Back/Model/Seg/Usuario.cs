@@ -46,7 +46,7 @@ public record Usuario
 
     [Column("chavevalidade")]
     [JsonIgnore]
-    public DateTimeOffset? ChaveValidade { get;set; }
+    public DateTimeOffset? ChaveValidade { get; set; }
 
     public void AjustaSenha(string senha)
     {

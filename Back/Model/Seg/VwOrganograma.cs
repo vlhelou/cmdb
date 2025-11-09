@@ -16,7 +16,7 @@ public class VwOrganograma
     public int? IdPai { get; set; }
 
     [Column("nome")]
-    public string Nome { get; set; }=string.Empty;
+    public string Nome { get; set; } = string.Empty;
 
     [Column("ativo")]
     public bool Ativo { get; set; }

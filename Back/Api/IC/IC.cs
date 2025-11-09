@@ -1,5 +1,4 @@
-﻿using Cmdb.Model;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -149,7 +148,7 @@ public class IC : ControllerBase
         //List<int> MinhasLocacoes = Logado.Locacoes.Select(p => p.IdOrganograma).ToList();
         //caso seja novo
 
-        item.Nome=item.Nome.Trim();
+        item.Nome = item.Nome.Trim();
 
         if (item.Id == 0)
         {
@@ -175,11 +174,12 @@ public class IC : ControllerBase
     [HttpGet("[action]/{id}")]
     public IActionResult IcEditavel(int id)
     {
-        bool retorno=false;
+        bool retorno = false;
         try
         {
             retorno = this.DetectaIcEditavel(id, this.User);
-        } catch(Exception ex)
+        }
+        catch (Exception ex)
         {
             return BadRequest(new MensagemErro(ex.Message));
         }

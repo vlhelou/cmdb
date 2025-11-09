@@ -14,10 +14,10 @@ public record Conhecimento
     public int IdIc { get; set; }
 
     [Column("problema")]
-    public string Problema { get; set; }=string.Empty;
+    public string Problema { get; set; } = string.Empty;
 
     [Column("solucao")]
-    public string Solucao { get; set; }=string.Empty;
+    public string Solucao { get; set; } = string.Empty;
 
     [Column("idautor")]
     public int IdAutor { get; set; }
@@ -29,7 +29,7 @@ public record Conhecimento
     public Model.IC.VwIc? IC { get; set; }
 
     [ForeignKey("IdAutor")]
-    public Seg.Usuario? Autor{ get; set; }
+    public Seg.Usuario? Autor { get; set; }
 
 
 }

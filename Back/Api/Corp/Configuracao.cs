@@ -1,6 +1,4 @@
-﻿using Cmdb.Model;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,11 +9,11 @@ namespace Cmdb.Api.Corp;
 public class Configuracao : ControllerBase
 {
     private readonly Model.Db _db;
-    private readonly Guid _chave ;
+    private readonly Guid _chave;
     public Configuracao(Model.Db db)
     {
         _db = db;
-        var strChave= _db.CorpVwConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 2)?.ValorTexto;
+        var strChave = _db.CorpVwConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 2)?.ValorTexto;
         if (string.IsNullOrWhiteSpace(strChave) || !Guid.TryParse(strChave.Trim(), out _chave))
             throw new Exception("Chave de criptografia não configurada");
 
@@ -83,7 +81,7 @@ public class Configuracao : ControllerBase
                 break;
 
             case "boleano":
-                localizado.ValorBoleano= item.ValorBoleano;
+                localizado.ValorBoleano = item.ValorBoleano;
                 break;
             default:
                 return BadRequest(new { Mensagem = "Tipo de valor não suportado" });

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cmdb.Api.IC;
@@ -31,7 +30,7 @@ public class Segredo : ControllerBase
         var segredos = _db.IcSegredo
              .Where(p =>
                 p.IdIc == id
-                && (p.IdUsuarioDono.HasValue && p.IdUsuarioDono == idLogado 
+                && (p.IdUsuarioDono.HasValue && p.IdUsuarioDono == idLogado
                     || (p.IdOrganogramaDono.HasValue && organograma.Contains(p.IdOrganogramaDono.Value))
                     )
               )
@@ -51,7 +50,7 @@ public class Segredo : ControllerBase
             return BadRequest(new MensagemErro("Dados inválidos"));
         if (string.IsNullOrEmpty(item.conteudo))
             return BadRequest(new MensagemErro("Conteúdo não pode ser vazio"));
-        
+
         int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
 
         var localizado = _db.SegUsuario
@@ -62,7 +61,7 @@ public class Segredo : ControllerBase
         if (localizado == null)
             return BadRequest(new MensagemErro("Usuário não localizado"));
 
-        if (item.IdOrganogramaDono==0)
+        if (item.IdOrganogramaDono == 0)
         {
             //segredo de usuário
             var segredo = new Model.IC.Segredo
@@ -132,14 +131,14 @@ public class Segredo : ControllerBase
                 if (dono == null)
                     return BadRequest(new MensagemErro("Proprietário do segredo não localizado"));
                 conteudo = Util.Descriptografa(segredo.Conteudo, dono.Gd, segredo.Algoritmo);
-                return Ok(new { conteudo});
+                return Ok(new { conteudo });
             }
         }
         else
         {
             var organograma = _db.SegOrganograma
                 .AsNoTracking()
-                .FirstOrDefault(p => p.Id == segredo.IdOrganogramaDono && p.Equipe!.Any(q=>q.IdUsuario==idLogado));
+                .FirstOrDefault(p => p.Id == segredo.IdOrganogramaDono && p.Equipe!.Any(q => q.IdUsuario == idLogado));
             if (organograma == null)
                 return BadRequest(new MensagemErro("usuário não pertence ao organograma proprietário do segredo"));
             conteudo = Util.Descriptografa(segredo.Conteudo, organograma.Gd, segredo.Algoritmo);
@@ -160,9 +159,9 @@ public class Segredo : ControllerBase
             .FirstOrDefault(x => x.Id == id);
         if (logado is null || segredo is null)
             return false;
-        if(segredo.IdUsuarioDono.HasValue && segredo.IdUsuarioDono == idUsuario)    
+        if (segredo.IdUsuarioDono.HasValue && segredo.IdUsuarioDono == idUsuario)
             return true;
-        if(segredo.IdOrganogramaDono.HasValue && logado.Locacoes != null && logado.Locacoes.Any(p=>p.IdOrganograma == segredo.IdOrganogramaDono))   
+        if (segredo.IdOrganogramaDono.HasValue && logado.Locacoes != null && logado.Locacoes.Any(p => p.IdOrganograma == segredo.IdOrganogramaDono))
             return true;
 
 

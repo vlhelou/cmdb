@@ -2,7 +2,12 @@
 <form [formGroup]="form" (ngSubmit)="grava()">
     <div class="row">
         <div class="col-6">
+            @if (dependente()){
             <label>Dependente</label>
+            }@else {
+            <label>Principal</label>
+            }
+
             <app-ic-autocomplete formControlName="dependente" />
         </div>
         <div class="col-5">

@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static Cmdb.Api.IC.IC;
 
 namespace Cmdb.Api.Seg;
 
@@ -19,7 +17,7 @@ public class Organograma : ControllerBase
     [HttpPost("[action]")]
     public IActionResult Pesquisa([FromBody] PesquisaOrg prm)
     {
-        var nomes = string.Join(" & ", prm.Chave.Split(' ').Where(p=> p.Trim().Length>0));
+        var nomes = string.Join(" & ", prm.Chave.Split(' ').Where(p => p.Trim().Length > 0));
         var consulta = _db.SegVwOrganograma.FromSql($"""
             select 
             	id

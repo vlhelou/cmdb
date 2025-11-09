@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Cmdb.Model.IC;
+
 [Table("segredo", Schema = "ic")]
 public record Segredo
 {
@@ -15,7 +16,7 @@ public record Segredo
 
     [Column("conteudo")]
     [JsonIgnore]
-    public string Conteudo { get; set; }=string.Empty;
+    public string Conteudo { get; set; } = string.Empty;
 
     [Column("idusuariodono")]
     public int? IdUsuarioDono { get; set; }

@@ -10,12 +10,12 @@ public record Organograma
     [Key]
     [Column("id")]
     public int Id { get; set; }
-    
+
     [Column("idpai")]
     public int? IdPai { get; set; }
-    
+
     [Column("nome")]
-    public string Nome { get; set; }=string.Empty;
+    public string Nome { get; set; } = string.Empty;
 
     [Column("ativo")]
     public bool Ativo { get; set; }
