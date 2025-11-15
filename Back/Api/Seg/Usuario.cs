@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Novell.Directory.Ldap;
+
 //using Novell.Directory.Ldap;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mail;
@@ -17,6 +19,7 @@ public class Usuario : Controller
 {
     private readonly Model.Db _db;
     private readonly IConfiguration _configuration;
+    private readonly string[] PropsUser = { "mail", "displayName", "UserPrincipalName", "Description", "SamAccountName", "Name", "dn" };
 
     public Usuario(Model.Db db, IConfiguration configuration)
     {
@@ -48,7 +51,7 @@ public class Usuario : Controller
             return BadRequest(new MensagemErro("Parâmetro não informado"));
 
 
-        var x = _db.SegUsuario.ToList();
+        //var x = _db.SegUsuario.ToList();
         var localizado = _db.SegUsuario.FirstOrDefault(x => x.Identificacao.ToLower() == item.identificacao.ToLower());
         if (localizado == null)
             return BadRequest(new MensagemErro("usuario não localizado"));
@@ -284,56 +287,56 @@ public class Usuario : Controller
         return Ok();
     }
 
-    [HttpGet("[action]")]
-    [AllowAnonymous]
-    public IActionResult Teste()
-    {
-        using Novell.Directory.Ldap.LdapConnection cn = new();
-        //string SearchBase = "dc=example,dc=com";
-        string SearchBase = "dc=cmdb,dc=com";
-        string[] PropsUser = { "sn", "cn", "uid", "telephoneNumber", "mail" };
-        //cn.ConnectAsync("ldap.forumsys.com", 389).Wait();
-        cn.ConnectAsync("192.168.0.100", 389).Wait();
-        //cn.BindAsync(null, null).Wait();
-        cn.BindAsync("uid=john,ou=People,dc=cmdb,dc=com", "oculos").Wait();
-        //string searchFilter = $"(&(objectClass=person)(cn=Isaac Newton))";
-        string searchFilter = $"(&(objectClass=person)(uid=john))";
-        var Pesquisa = cn.SearchAsync(SearchBase, Novell.Directory.Ldap.LdapConnection.ScopeSub, searchFilter, PropsUser, false).Result;
-        UsuarioReply? retorno = null;
-        if (Pesquisa.HasMoreAsync().Result)
-        {
-            try
-            {
-                var item = Pesquisa.NextAsync().Result;
-                retorno = new();
-                string completo = item.ToString().ToLower();
-                retorno.Dn = item.Dn;
-                if (completo.IndexOf("mail") >= 0)
-                    retorno.Email = item.Get("mail")?.StringValue;
-                if (completo.IndexOf("description") >= 0)
-                    retorno.Descricao = item.Get("Description").StringValue;
-                if (completo.IndexOf("name") >= 0)
-                    retorno.Nome = item.Get("Name").StringValue;
-                if (completo.IndexOf("displayname") >= 0)
-                    retorno.NomeExibicao = item.Get("displayName").StringValue;
-                if (completo.IndexOf("samaccountname") >= 0)
-                    retorno.SammAccount = item.Get("SamAccountName").StringValue;
-                return Ok(retorno);
+    //[HttpGet("[action]")]
+    //[AllowAnonymous]
+    //public IActionResult Teste()
+    //{
+    //    using Novell.Directory.Ldap.LdapConnection cn = new();
+    //    //string SearchBase = "dc=example,dc=com";
+    //    string SearchBase = "dc=cmdb,dc=com";
+    //    string[] PropsUser = { "sn", "cn", "uid", "telephoneNumber", "mail" };
+    //    //cn.ConnectAsync("ldap.forumsys.com", 389).Wait();
+    //    cn.ConnectAsync("192.168.0.100", 389).Wait();
+    //    //cn.BindAsync(null, null).Wait();
+    //    cn.BindAsync("uid=john,ou=People,dc=cmdb,dc=com", "oculos").Wait();
+    //    //string searchFilter = $"(&(objectClass=person)(cn=Isaac Newton))";
+    //    string searchFilter = $"(&(objectClass=person)(uid=john))";
+    //    var Pesquisa = cn.SearchAsync(SearchBase, Novell.Directory.Ldap.LdapConnection.ScopeSub, searchFilter, PropsUser, false).Result;
+    //    UsuarioReply? retorno = null;
+    //    if (Pesquisa.HasMoreAsync().Result)
+    //    {
+    //        try
+    //        {
+    //            var item = Pesquisa.NextAsync().Result;
+    //            retorno = new();
+    //            string completo = item.ToString().ToLower();
+    //            retorno.Dn = item.Dn;
+    //            if (completo.IndexOf("mail") >= 0)
+    //                retorno.Email = item.Get("mail")?.StringValue;
+    //            if (completo.IndexOf("description") >= 0)
+    //                retorno.Descricao = item.Get("Description").StringValue;
+    //            if (completo.IndexOf("name") >= 0)
+    //                retorno.Nome = item.Get("Name").StringValue;
+    //            if (completo.IndexOf("displayname") >= 0)
+    //                retorno.NomeExibicao = item.Get("displayName").StringValue;
+    //            if (completo.IndexOf("samaccountname") >= 0)
+    //                retorno.SammAccount = item.Get("SamAccountName").StringValue;
+    //            return Ok(retorno);
 
-            }
-            catch (Exception ex)
-            {
-                return Ok(new { erro = ex.Message });
-            }
-        }
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            return Ok(new { erro = ex.Message });
+    //        }
+    //    }
 
-        return Ok(new { msg = "não acho nada" });
-    }
+    //    return Ok(new { msg = "não acho nada" });
+    //}
 
 
     private ConexaoLdap DadosConexaoLdap()
     {
-        List<long> orgs = new() { 12, 7, 10, 9, 8, 6, 5, 2, 11 };
+        List<long> orgs = new() { 2,  6, 7, 8, 9, 10, 11, 12 };
         var valores = _db.CorpConfiguracao.AsNoTracking().Where(p => orgs.Contains(p.Id));
         if (valores.Count() != orgs.Count)
             throw new Exception("Configuração de ldap não encontrada");
@@ -377,11 +380,36 @@ public class Usuario : Controller
     private bool ValidaLoginLdap(string usuario, string senha, ConexaoLdap cnLdap)
     {
         using Novell.Directory.Ldap.LdapConnection cn = new();
-        cn.ConnectAsync(cnLdap.Servidor, cnLdap.Porta).Wait();
+        cn.ConnectAsync(cnLdap.Servidor, (int)cnLdap.Porta).Wait();
+
+        cn.BindAsync(cnLdap.DN, cnLdap.Senha).Wait();
+        string searchFilter = string.Format(cnLdap.PesquisaNomeusuario, usuario);
+        var Pesquisa = cn.SearchAsync(cnLdap.SearchBase, LdapConnection.ScopeSub, searchFilter, PropsUser, false).Result;
+
+        string dnUsuarioLogin=string.Empty;
+        if (Pesquisa.HasMoreAsync().Result)
+        {
+            try
+            {
+                var item = Pesquisa.NextAsync().Result;
+                string completo = item.ToString().ToLower();
+                dnUsuarioLogin = item.Dn;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+
+
+        
         try
         {
-            string strBind = string.Format(cnLdap.DN, usuario);
-            cn.BindAsync(strBind, senha).Wait();
+            
+            cn.BindAsync(dnUsuarioLogin, senha).Wait();
         }
         catch (Exception)
         {
