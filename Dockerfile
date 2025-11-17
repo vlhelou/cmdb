@@ -15,7 +15,7 @@ RUN dotnet build "./Cmdb.csproj" -c $BUILD_CONFIGURATION -r linux-x64 --self-con
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Cmdb.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Cmdb.csproj" -c $BUILD_CONFIGURATION -r linux-x64 --self-contained true -o /app/publish 
 
 FROM node:latest AS buildng
 WORKDIR /usr/local/app
