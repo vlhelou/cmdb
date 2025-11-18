@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { corpConfiguracao } from 'src/model/corp/configuracao'
 import { ConfiguracaoService } from 'src/model/corp/configuracao.service'
 import { TreeModule } from 'primeng/tree';
@@ -15,7 +15,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 export class ConfiguracaoComponent implements OnInit {
     origemArvore: corpConfiguracao[] = [];
     configuracaoSelecionada: corpConfiguracao | null = null;
-    arvore: TreeNode[] = [];
+    arvore = signal<TreeNode[]|undefined>(undefined);
     selecionado: TreeNode | null = null;
 
     constructor(private srv: ConfiguracaoService) { }
@@ -25,11 +25,13 @@ export class ConfiguracaoComponent implements OnInit {
             next: data => {
                 this.origemArvore = data;
                 this.origemArvore.forEach((item) => {
-                    this.arvore.push({
+                    const novo = [{
                         label: item.nome,
                         data: item,
                         children: this.montaArvore(item),
-                    });
+                    }]
+                    // console.log(novo);
+                    this.arvore.set(novo);
                 });
             }
         });
