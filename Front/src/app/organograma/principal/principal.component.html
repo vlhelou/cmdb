@@ -46,7 +46,9 @@
                                 </div>
     
                             </p-tabpanel>
-                            <p-tabpanel value="3">Equipe</p-tabpanel>
+                            <p-tabpanel value="3">
+                                <app-equipe [org]="orgSelecionado()"></app-equipe>
+                            </p-tabpanel>
                         </p-tabpanels>
                     </p-tabs>
                 </div>

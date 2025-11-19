@@ -6,11 +6,11 @@ import { TabsModule } from 'primeng/tabs';
 import { CadastroComponent } from 'src/app/organograma/cadastro/cadastro.component'
 import { segOrganograma } from 'src/model/seg/organograma'
 import { OrganogramaService } from 'src/model/seg/organograma.service'
-
+import { EquipeComponent } from 'src/app/organograma/equipe/equipe.component'
 
 @Component({
   selector: 'app-principal',
-  imports: [OrgAutocompleteComponent, OrgTreeviewComponent, TabsModule, CadastroComponent, FormsModule],
+  imports: [OrgAutocompleteComponent, OrgTreeviewComponent, TabsModule, CadastroComponent, FormsModule, EquipeComponent],
   templateUrl: './principal.component.html',
   styleUrl: './principal.component.scss'
 })
