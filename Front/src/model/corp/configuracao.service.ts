@@ -8,7 +8,7 @@ const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
-const pathUrl = '/api/corp/configuracao/';
+const pathUrl = environment.root +'/api/corp/configuracao/';
 
 @Injectable({
   providedIn: 'root'
@@ -18,13 +18,15 @@ export class ConfiguracaoService {
   constructor(private http: HttpClient) { }
 
   ArvoreCompleta(): Observable<corpConfiguracao[]> {
-    const url = new URL(pathUrl + 'ArvoreCompleta', environment.root);
-    return this.http.get<corpConfiguracao[]>(url.toString());
+
+    const url = pathUrl + `ArvoreCompleta`;
+    console.log('URL',  url);
+    return this.http.get<corpConfiguracao[]>(url);
   }
 
   GravaValor(item: corpConfiguracao): Observable<corpConfiguracao> {
-    const url = new URL(pathUrl + 'GravaValor', environment.root); 
-    return this.http.post<corpConfiguracao>(url.toString(), item, httpOptions);
+    const url = pathUrl + `GravaValor`;
+    return this.http.post<corpConfiguracao>(url, item, httpOptions);
   }
 
 }

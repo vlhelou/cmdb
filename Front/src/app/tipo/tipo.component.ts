@@ -22,7 +22,7 @@ export class TipoComponent implements OnInit {
         id: new FormControl<number>(0),
         nome: new FormControl<string | null>(null, [Validators.required]),
         grupo: new FormControl<string | null>(null, [Validators.required]),
-        ativo: new FormControl<boolean | null>(null, [Validators.required]),
+        ativo: new FormControl<boolean | null>(null),
     });
 
 
@@ -70,7 +70,11 @@ export class TipoComponent implements OnInit {
     }
 
     grava() {
-        this.srv.Grava(this.form.value).subscribe({
+        const envio = this.form.value;
+        if (envio.id == null) {
+            envio.id = 0;
+        }
+        this.srv.Grava(envio).subscribe({
             next: (data) => {
                 this.atualiza();
                 this.form.reset();
