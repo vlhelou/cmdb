@@ -1,5 +1,5 @@
-import { Component,input, signal } from '@angular/core';
-import {segOrganograma} from 'src/model/seg/organograma';
+import { Component, input, signal } from '@angular/core';
+import { segOrganograma } from 'src/model/seg/organograma';
 
 
 @Component({
@@ -11,4 +11,7 @@ import {segOrganograma} from 'src/model/seg/organograma';
 export class EquipeComponent {
   org = input<segOrganograma | undefined>();
 
+  constructor() {
+
+  }
 }
