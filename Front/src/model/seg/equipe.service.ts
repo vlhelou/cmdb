@@ -13,7 +13,28 @@ const pathUrl = environment.root + '/api/seg/equipe/';
   providedIn: 'root',
 })
 export class EquipeService {
+
   constructor(private http: HttpClient) { }
+
+  UsuarioPorOrganograma(idIc: number): Observable<segEquipe[]> {
+    const url = pathUrl + `UsuarioPorOrganograma/${idIc}`;
+    return this.http.get<segEquipe[]>(url);
+  }
+
+  OrganogramasPorUsuario(idusuario: number): Observable<segEquipe[]> {
+    const url = pathUrl + `OrganogramasPorUsuario/${idusuario}`;
+    return this.http.get<segEquipe[]>(url);
+  }
+
+  Adicionar(idusuario: number, idIc: number): Observable<any> {
+    const url = pathUrl + `Adicionar/${idusuario}/${idIc}`;
+    return this.http.get<any>(url);
+  }
+
   
-  
+  Exclui(id: number): Observable<void> {
+    const url = pathUrl + `Exclui/${id}`;
+    return this.http.get<void>(url);
+  }
+
 }

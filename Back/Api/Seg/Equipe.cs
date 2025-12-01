@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cmdb.Api.Seg;
 
-[Route("api/[controller]")]
+[Route("api/seg/[controller]")]
 [ApiController]
 public class Equipe : ControllerBase
 {
@@ -76,7 +76,7 @@ public class Equipe : ControllerBase
 
     [HttpGet("[action]/{id}")]
     [Authorize(Roles = "admin")]
-    public IActionResult Remover(int id)
+    public IActionResult Exclui(int id)
     {
         var localizado  = _db.SegEquipe.Find(id);
         if (localizado != null)

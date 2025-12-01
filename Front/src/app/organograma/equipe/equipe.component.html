@@ -1,1 +1,28 @@
-<p>equipe works!</p>
+<p-confirmpopup />
+<app-usuario-auto-complete></app-usuario-auto-complete>
+@if(lista()){
+<div class="row">
+    <div class="col-12">
+
+        <p-table [value]="lista()">
+            <ng-template #header>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Ação
+                        <a href="javascript:void(0)" class="float-end"><i class="pi pi-plus"></i> </a>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-item>
+                <tr>
+                    <td>{{ item.usuario.identificacao }}</td>
+                    <td>
+                        <a href="javascript:void(0)" class="text-danger" (click)="exclui(item, $event)"><i
+                                class="pi pi-trash"></i></a>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+}
