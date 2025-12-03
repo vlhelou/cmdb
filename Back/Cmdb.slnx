@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="../MCP/MCP.csproj" Id="b3d8ccea-ba26-4f27-a7e0-35ab942b90b4" />
+  <Project Path="../McpServer/McpServer.csproj" Id="f1454370-035b-47b6-a3ed-340befcabd60" />
   <Project Path="Cmdb.csproj" />
 </Solution>

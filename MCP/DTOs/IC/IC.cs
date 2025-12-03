@@ -1,9 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
+using System.Text;
 
-namespace Cmdb.Model.IC;
+namespace McpServer.DTOs.IC;
 
-[Table("ic", Schema = "ic")]
 public record IC
 {
     [Key]
@@ -34,7 +37,7 @@ public record IC
     public IC? Pai { get; set; }
 
     [ForeignKey("IdTipo")]
-    public Model.Corp.Tipo? Tipo { get; set; }
+    public DTOs.Corp.Tipo? Tipo { get; set; }
 
     [ForeignKey("IdOrganograma")]
     public Seg.Organograma? Responsavel { get; set; }

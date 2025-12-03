@@ -287,51 +287,6 @@ public class Usuario : Controller
         return Ok();
     }
 
-    //[HttpGet("[action]")]
-    //[AllowAnonymous]
-    //public IActionResult Teste()
-    //{
-    //    using Novell.Directory.Ldap.LdapConnection cn = new();
-    //    //string SearchBase = "dc=example,dc=com";
-    //    string SearchBase = "dc=cmdb,dc=com";
-    //    string[] PropsUser = { "sn", "cn", "uid", "telephoneNumber", "mail" };
-    //    //cn.ConnectAsync("ldap.forumsys.com", 389).Wait();
-    //    cn.ConnectAsync("192.168.0.100", 389).Wait();
-    //    //cn.BindAsync(null, null).Wait();
-    //    cn.BindAsync("uid=john,ou=People,dc=cmdb,dc=com", "oculos").Wait();
-    //    //string searchFilter = $"(&(objectClass=person)(cn=Isaac Newton))";
-    //    string searchFilter = $"(&(objectClass=person)(uid=john))";
-    //    var Pesquisa = cn.SearchAsync(SearchBase, Novell.Directory.Ldap.LdapConnection.ScopeSub, searchFilter, PropsUser, false).Result;
-    //    UsuarioReply? retorno = null;
-    //    if (Pesquisa.HasMoreAsync().Result)
-    //    {
-    //        try
-    //        {
-    //            var item = Pesquisa.NextAsync().Result;
-    //            retorno = new();
-    //            string completo = item.ToString().ToLower();
-    //            retorno.Dn = item.Dn;
-    //            if (completo.IndexOf("mail") >= 0)
-    //                retorno.Email = item.Get("mail")?.StringValue;
-    //            if (completo.IndexOf("description") >= 0)
-    //                retorno.Descricao = item.Get("Description").StringValue;
-    //            if (completo.IndexOf("name") >= 0)
-    //                retorno.Nome = item.Get("Name").StringValue;
-    //            if (completo.IndexOf("displayname") >= 0)
-    //                retorno.NomeExibicao = item.Get("displayName").StringValue;
-    //            if (completo.IndexOf("samaccountname") >= 0)
-    //                retorno.SammAccount = item.Get("SamAccountName").StringValue;
-    //            return Ok(retorno);
-
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            return Ok(new { erro = ex.Message });
-    //        }
-    //    }
-
-    //    return Ok(new { msg = "não acho nada" });
-    //}
 
 
     private ConexaoLdap DadosConexaoLdap()

@@ -86,4 +86,9 @@ export class segUsuarioService {
         return this.http.get<void>(url);
     }
 
+    Pesquisa(prm: any): Observable<segUsuario[]> {
+        const url = pathUrl + `Pesquisa`;
+        return this.http.post<segUsuario[]>(url, prm, httpOptions);
+    }
+
 }
