@@ -3,7 +3,6 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { OrganogramaService } from 'src/model/seg/organograma.service';
-// import { icIc } from 'src/model/ic/ic';
 import { segOrganograma } from 'src/model/seg/organograma'
 
 @Component({
