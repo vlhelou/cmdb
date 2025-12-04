@@ -1,17 +1,20 @@
 import { Component, effect, input, signal } from '@angular/core';
 import { segOrganograma } from 'src/model/seg/organograma';
 import { segEquipe } from 'src/model/seg/equipe';
+import { FormsModule } from '@angular/forms';
 import { EquipeService } from 'src/model/seg/equipe.service';
 import { TableModule } from 'primeng/table';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ConfirmationService } from 'primeng/api';
+import { DialogModule } from 'primeng/dialog';
 import { UsuarioAutoCompleteComponent } from 'src/app/usuario/auto-complete/auto-complete.component'
 
 
 
 @Component({
     selector: 'app-equipe',
-    imports: [TableModule, ConfirmPopupModule, UsuarioAutoCompleteComponent],
+    imports: [TableModule, ConfirmPopupModule
+        , UsuarioAutoCompleteComponent, FormsModule, DialogModule],
     templateUrl: './equipe.component.html',
     styleUrl: './equipe.component.scss',
     providers: [ConfirmationService]
@@ -19,6 +22,8 @@ import { UsuarioAutoCompleteComponent } from 'src/app/usuario/auto-complete/auto
 export class EquipeComponent {
     org = input<segOrganograma | undefined>();
     lista = signal<segEquipe[]>([]);
+    novo: any;
+    mostraNovo = false;
 
     constructor(private srv: EquipeService, private confirmationService: ConfirmationService) {
         effect(() => {
@@ -41,19 +46,28 @@ export class EquipeComponent {
             target: event.currentTarget as EventTarget,
             message: 'Confirma a exclusão deste usuário da equipe?',
             icon: 'pi pi-exclamation-triangle',
-            rejectButtonProps: {
-                label: 'Cancela',
-                severity: 'secondary',
-                outlined: true
-            },
-            acceptButtonProps: {
-                label: 'Exclui',
-                severity: 'danger'
-            },
+            acceptLabel: 'Exclui',
+            rejectLabel: 'Cancela',
+            acceptButtonStyleClass: 'p-button-danger',
             accept: () => {
                 this.srv.Exclui(item.id).subscribe({
                     next: () => { this.atualiza(); }
                 });
+            }
+        });
+    }
+
+    abreNovo() {
+        this.novo = null;
+        this.mostraNovo = true;
+    }
+
+    gravaNovo() {
+        const idOrg = this.org()!.id;
+        this.srv.Adicionar(this.novo.id, idOrg).subscribe({
+            next: () => {
+                this.mostraNovo = false;
+                this.atualiza();
             }
         });
     }

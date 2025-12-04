@@ -39,22 +39,22 @@ public class Equipe : ControllerBase
         return Ok(retorno);
     }
 
-    [HttpGet("[action]/{idusuario}/{idic}")]
+    [HttpGet("[action]/{idusuario}/{idOrg}")]
     [Authorize(Roles = "admin")]
-    public IActionResult Adicionar(int idusuario, int idic)
+    public IActionResult Adicionar(int idusuario, int idOrg)
     {
 
         int IdLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
         var existente = _db.SegEquipe
             .AsNoTracking()
-            .Where(p => p.IdUsuario == idusuario && p.IdOrganograma == idic)
+            .Where(p => p.IdUsuario == idusuario && p.IdOrganograma == idOrg)
             .FirstOrDefault();
 
         if (existente != null)
             return BadRequest(new MensagemErro("Registro já existente"));
 
         var usuario = _db.SegUsuario.Find(idusuario);
-        var organograma = _db.SegOrganograma.Find(idic);
+        var organograma = _db.SegOrganograma.Find(idOrg);
 
         if (usuario == null || organograma == null)
             return NotFound(new MensagemErro("Usuário ou Organograma não encontrado"));
@@ -62,8 +62,8 @@ public class Equipe : ControllerBase
         var novaEquipe = new Model.Seg.Equipe
         {
             IdUsuario = idusuario,
-            IdOrganograma = idic,
-            Data = DateTime.Now,
+            IdOrganograma = idOrg,
+            Data = DateTimeOffset.Now.ToUniversalTime(),
             IdAutor = IdLogado
         };
 

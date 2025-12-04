@@ -20,7 +20,7 @@ public class Equipe
     public int IdAutor { get; set; }
 
     [Column("data")]
-    public DateTime Data { get; set; }
+    public DateTimeOffset Data { get; set; }
 
     [ForeignKey("IdUsuario")]
     public Usuario? Usuario { get; set; }
