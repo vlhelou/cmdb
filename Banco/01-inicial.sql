@@ -1013,7 +1013,7 @@ CREATE TABLE seg.equipe (
     idusuario integer NOT NULL,
     idorganograma integer NOT NULL,
     idautor integer NOT NULL,
-    data timestamp without time zone DEFAULT now()
+    data timestamp with time zone DEFAULT now()
 );
 
 
@@ -1359,12 +1359,9 @@ COPY corp.configuracao (id, idpai, nome, ativo, tipovalor, valornumerico, valort
 3	1	Conexão	t	grupo	\N	\N	\N	\N	f	\N	\N
 12	4	Pesquisa nome usuário	t	texto	\N	(&(objectClass=person)(uid={0}))	\N	\N	f	\N	\N
 10	4	Propriedades	t	complexo	\N	\N	\N	{\r\n    "Email":"mail",\r\n    "Descricao":"description",\r\n    "Nome":"Name",\r\n    "SammAccount":"SamAccountName"\r\n}	f	\N	\N
-13	3	tetse	t	texto	\N	8888	\N	\N	f	\N	\N
 14	1	Segurança	t	grupo	\N	\N	\N	\N	f	\N	\N
 15	14	JWT	t	grupo	\N	\N	\N	\N	f	\N	\N
-17	15	Duração Horas	t	numerico	240.0000	\N	\N	\N	f	\N	\N
 2	14	chave	t	texto	\N	bcf4a772-a7b9-4ed5-9a99-f30f96cbe452	\N	\N	f	\N	\N
-7	4	Porta	t	numerico	389.0000	\N	\N	\N	f	\N	\N
 8	4	Senha	t	texto	\N	veXdgbn14GuHsjSJl14gdg==	\N	\N	t	\N	\N
 6	4	Servidor	t	texto	\N	192.168.0.100	\N	\N	f	\N	\N
 16	15	Chave JWT	t	texto	\N	1XYXJgvc9NBI+bVySCl3HLAKl5U4gjPG2saPjwL5bGdm5D0omDVt5geMxMfIGEttl8WTGvw7f73I+2sMYjDoDMZU5+M9WLrEW1EV2nFfFI3PE2AOyBoaobkMgLl7jzfcYqyb5oC6GP1JEyyNa70twA==	\N	\N	f	\N	\N
@@ -1376,6 +1373,8 @@ COPY corp.configuracao (id, idpai, nome, ativo, tipovalor, valornumerico, valort
 24	18	Senha	t	texto	\N	\N	\N	\N	t	\N	\N
 20	18	Porta	t	numerico	25.0000	22	\N	\N	f	\N	\N
 23	18	SSH	t	boleano	\N	\N	\N	\N	f	\N	f
+7	4	Porta	t	numerico	389.0000	\N	\N	\N	f	\N	\N
+17	15	Duração Horas	t	numerico	240.0000	\N	\N	\N	f	\N	\N
 \.
 
 
@@ -1393,7 +1392,8 @@ COPY corp.expediente (id, data, turno1hrinicio, turno1hrtermino, turno2hrinicio,
 
 COPY corp.tipo (id, nome, grupo, ativo) FROM stdin;
 1	Outros	Tipo	t
-2	Servidor	Tipo	t
+8	Servido	Tipo	t
+9	Serviço	Tipo	t
 \.
 
 
@@ -1495,8 +1495,8 @@ COPY mudanca.mudanca (id, datacriacao, inicioprevisto, idsituacao) FROM stdin;
 --
 
 COPY seg.equipe (id, idusuario, idorganograma, idautor, data) FROM stdin;
-1	1	2	1	2025-08-16 20:19:45.051908
-2	1	5	1	2025-08-16 20:19:56.821085
+2	1	5	1	2025-08-16 20:19:56.821085-03
+6	8	1	1	2025-12-03 21:11:18.823636-03
 \.
 
 
@@ -1604,7 +1604,7 @@ SELECT pg_catalog.setval('corp.expediente_id_seq', 1, false);
 -- Name: sqtipo; Type: SEQUENCE SET; Schema: corp; Owner: postgres
 --
 
-SELECT pg_catalog.setval('corp.sqtipo', 2, true);
+SELECT pg_catalog.setval('corp.sqtipo', 9, true);
 
 
 --
@@ -1639,7 +1639,7 @@ SELECT pg_catalog.setval('ic.sqconhecimento', 4, true);
 -- Name: sqdependencia; Type: SEQUENCE SET; Schema: ic; Owner: postgres
 --
 
-SELECT pg_catalog.setval('ic.sqdependencia', 7, true);
+SELECT pg_catalog.setval('ic.sqdependencia', 8, true);
 
 
 --
@@ -1695,7 +1695,7 @@ SELECT pg_catalog.setval('mudanca.mudanca_id_seq', 1, false);
 -- Name: sqequipe; Type: SEQUENCE SET; Schema: seg; Owner: postgres
 --
 
-SELECT pg_catalog.setval('seg.sqequipe', 2, true);
+SELECT pg_catalog.setval('seg.sqequipe', 6, true);
 
 
 --

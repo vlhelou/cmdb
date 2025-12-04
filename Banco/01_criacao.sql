@@ -1008,7 +1008,7 @@ CREATE TABLE seg.equipe (
     idusuario integer NOT NULL,
     idorganograma integer NOT NULL,
     idautor integer NOT NULL,
-    data timestamp without time zone DEFAULT now()
+    data timestamp with time zone DEFAULT now()
 );
 
 
