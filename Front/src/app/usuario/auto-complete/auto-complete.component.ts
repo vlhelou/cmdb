@@ -8,7 +8,7 @@ import { segUsuarioService } from 'src/model/seg/usuario.service';
 
 @Component({
   selector: 'app-usuario-auto-complete',
-  imports: [],
+  imports: [AutoCompleteModule, FormsModule],
   templateUrl: './auto-complete.component.html',
   styleUrl: './auto-complete.component.scss',
   providers: [
@@ -67,12 +67,9 @@ export class UsuarioAutoCompleteComponent implements ControlValueAccessor {
   pesquisa(event: any) {
     const prm = {
       chave: event.query,
-      idTipo: this.idTipo() ? this.idTipo() : null,
-      ativo: this.ativo() ? this.ativo() : null,
-      filhoDe: this.filhoDe() ? this.filhoDe() : null
     };
     this.srv.Pesquisa(prm).subscribe({
-      next: (data) => {
+      next: (data:any) => {
         this.lista.set(data);
       }
     });

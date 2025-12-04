@@ -26,8 +26,8 @@ export class EquipeService {
     return this.http.get<segEquipe[]>(url);
   }
 
-  Adicionar(idusuario: number, idIc: number): Observable<any> {
-    const url = pathUrl + `Adicionar/${idusuario}/${idIc}`;
+  Adicionar(idusuario: number, idOrg: number): Observable<any> {
+    const url = pathUrl + `Adicionar/${idusuario}/${idOrg}`;
     return this.http.get<any>(url);
   }
 

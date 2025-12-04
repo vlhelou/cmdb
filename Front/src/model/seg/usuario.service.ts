@@ -76,6 +76,7 @@ export class segUsuarioService {
         const url = pathUrl + `Grava`;
         return this.http.post<segUsuario>(url, usuario, httpOptions);
     }
+
     RecuperaSenhaChave(prm: any): Observable<void> {
         const url = pathUrl + `RecuperaSenhaChave`;
         return this.http.post<void>(url, prm, httpOptions);
@@ -84,6 +85,11 @@ export class segUsuarioService {
     EsqueciSenha(identificacao: string): Observable<void> {
         const url = pathUrl + `EsqueciSenha/${identificacao}`;
         return this.http.get<void>(url);
+    }
+
+    Pesquisa(prm: any): Observable<segUsuario[]> {
+        const url = pathUrl + `Pesquisa`;
+        return this.http.post<segUsuario[]>(url, prm, httpOptions);
     }
 
 }

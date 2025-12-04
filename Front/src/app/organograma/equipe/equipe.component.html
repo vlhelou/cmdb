@@ -1,5 +1,18 @@
 <p-confirmpopup />
-<app-usuario-auto-complete></app-usuario-auto-complete>
+<p-dialog header="Novo membro de equipe" [modal]="true" [(visible)]="mostraNovo" >
+    <div class="row">
+        <div class="col-10" style="min-height: 200px;">
+       <app-usuario-auto-complete [(ngModel)]="novo"></app-usuario-auto-complete>
+
+        </div>
+        <div class="col-2 mt-2">
+            <a href="javascript:void(0)" (click)="gravaNovo()" ><i class="pi pi-save"></i></a>
+        </div>
+    </div>
+
+</p-dialog>
+
+
 @if(lista()){
 <div class="row">
     <div class="col-12">
@@ -8,8 +21,9 @@
             <ng-template #header>
                 <tr>
                     <th>Usuario</th>
-                    <th>Ação
-                        <a href="javascript:void(0)" class="float-end"><i class="pi pi-plus"></i> </a>
+                    <th>
+                        Ação
+                        <a href="javascript:void(0)" class="float-end" (click)="abreNovo()"><i class="pi pi-plus"></i> </a>
                     </th>
                 </tr>
             </ng-template>
@@ -25,4 +39,5 @@
         </p-table>
     </div>
 </div>
+
 }
