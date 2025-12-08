@@ -17,7 +17,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 var strcn = Environment.GetEnvironmentVariable("CMDB_DB") ?? "";
 
-Console.WriteLine(strcn.Replace(":", "="));
 
 var dataSourceBuilder = new NpgsqlDataSourceBuilder(strcn.Replace(":","="));
 dataSourceBuilder.EnableDynamicJson();

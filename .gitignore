@@ -60,7 +60,8 @@ BenchmarkDotNet.Artifacts/
 # .NET Core
 project.lock.json
 project.fragment.lock.json
-Back/Visual Studio 18/Visualizers
+**/Visual Studio 18/
+
 Back/Properties/launchSettings.json
 artifacts/
 
