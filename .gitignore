@@ -60,6 +60,8 @@ BenchmarkDotNet.Artifacts/
 # .NET Core
 project.lock.json
 project.fragment.lock.json
+Back/Visual Studio 18/Visualizers
+Back/Properties/launchSettings.json
 artifacts/
 
 # ASP.NET Scaffolding
@@ -398,6 +400,7 @@ FodyWeavers.xsd
 *.sln.iml
 
 cache
-
+# Angular
 Front/dist/cmdb/
+Front/package-lock.json
 
