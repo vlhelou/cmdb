@@ -20,6 +20,14 @@ public class Db(DbContextOptions<Db> options) : DbContext(options)
 
     }
 
+    //protected  override void OnModelCreating(ModelBuilder modelBuilder)
+    //{
+    //    modelBuilder.HasPostgresExtension("vector");
+    //    modelBuilder.Entity<IC.IC>()
+    //        .Property(b => b.Embedding)
+    //        .HasColumnName("embedding")
+    //        .HasColumnType("vector(1024)");
+    //}
 
     //seg
     public DbSet<Model.Seg.Usuario> SegUsuario { get; set; }

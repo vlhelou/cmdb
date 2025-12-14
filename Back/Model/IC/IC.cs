@@ -28,6 +28,11 @@ public record IC
     [Column("idorganograma")]
     public int? IdOrganograma { get; set; }
 
+    [Column("embedding", TypeName ="vector(1024)")]
+    public Pgvector.Vector? Embedding{ get; set; }
+
+    [Column("observacao")]
+    public string? Observacao { get; set; }
 
 
     [ForeignKey("IdPai")]
@@ -46,6 +51,7 @@ public record IC
         this.Ativo = item.Ativo;
         this.IdTipo = item.IdTipo;
         this.Propriedades = item.Propriedades;
+        this.Observacao = item.Observacao;
 
     }
 

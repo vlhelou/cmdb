@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
+using OllamaSharp;
 using System.Text;
 using System.Text.Json.Serialization;
+using static System.Net.WebRequestMethods;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,22 +17,29 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 
-var strcn = Environment.GetEnvironmentVariable("CMDB_DB") ?? "";
+var strcn = Environment.GetEnvironmentVariable("CMDB_DB")?.Replace(":", "=") ?? "";
+var verificaVetor = (Environment.GetEnvironmentVariable("vector") ?? string.Empty)=="true";
+
+NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
 
 
-var dataSourceBuilder = new NpgsqlDataSourceBuilder(strcn.Replace(":","="));
-dataSourceBuilder.EnableDynamicJson();
-var dataSource = dataSourceBuilder.Build();
+//var dataSourceBuilder = new NpgsqlDataSourceBuilder(strcn);
+//dataSourceBuilder.EnableDynamicJson();
+//dataSourceBuilder.UseVector();
+//var dataSource = dataSourceBuilder.Build();
 builder.Services.AddDbContext<Cmdb.Model.Db>(opt =>
 {
-
-    opt.UseNpgsql(dataSource, options =>
+    
+    opt.UseNpgsql(strcn.Replace(":", "="), options =>
     {
         options.EnableRetryOnFailure();
+        
+        options.UseVector();
     });
     opt.LogTo(Console.WriteLine);
 });
 
+builder.Services.AddTransient<OllamaApiClient>(sp => new OllamaApiClient(uriString: "http://localhost:11434", defaultModel: "mxbai-embed-large"));
 
 
 #pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'

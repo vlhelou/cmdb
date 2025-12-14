@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.SemanticKernel.Embeddings;
+using OllamaSharp;
 using System.Security.Claims;
 
 namespace Cmdb.Api.IC;
@@ -10,9 +12,11 @@ namespace Cmdb.Api.IC;
 public class IC : ControllerBase
 {
     private readonly Model.Db _db;
-    public IC(Model.Db db)
+    private readonly OllamaApiClient _service;
+    public IC(Model.Db db, OllamaApiClient service)
     {
         _db = db;
+        _service = service;
     }
 
 
@@ -198,6 +202,23 @@ public class IC : ControllerBase
         ic.IdPai = idNovoPai;
         _db.SaveChanges();
         return Ok();
+    }
+
+
+    [HttpGet("[action]")]
+    [AllowAnonymous]
+    public IActionResult TesteEmbeddings()
+    {
+        var lista = _db.IcIc.ToList();
+        foreach (var item in lista)
+        {
+            var embedding = _service.AsTextEmbeddingGenerationService();
+            var temp = embedding.GenerateEmbeddingAsync(item.Nome).Result;
+            item.Embedding = new Pgvector.Vector(temp);
+
+        }
+        _db.SaveChanges();
+        return Ok(lista.Count);
     }
 
     private void PopulaFilhosMenu(ref Model.IC.VwIc item, ref List<Model.IC.VwIc> lista)

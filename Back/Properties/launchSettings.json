@@ -5,7 +5,8 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "CMDB_DB": "Host=localhost;Database=cmdb;Username=usrapp;Password=usrapp"
+        "CMDB_DB": "Host=localhost;Database=cmdb;Username=usrapp;Password=usrapp",
+        "vector": "true"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5001"

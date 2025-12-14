@@ -15,6 +15,7 @@ export interface icIc{
     nomeCompleto: string;
     listaAncestrais: string;
     nivel: number;
+    observacao: string;
     lstAncestrais: number[];
  
     pai: icIc;

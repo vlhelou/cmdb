@@ -7,7 +7,8 @@
             </div>
             <div class="card-body">
                 <app-ic-tree-view [(ngModel)]="icTreeView" (selecionado)="autoCompleteSelecionado($event)"
-                    [icNovo]="icAtualiza()" />
+                    [icNovo]="icAtualiza()" #treeIc />
+                    <button class="btn btn-primary" (click)="treeIc.localizaItem(7)">Localiza Item</button>
             </div>
         </div>
     </div>
@@ -17,6 +18,7 @@
             <div class="card-header text-success " style="font-weight: bold;">
                 {{ icSelecionado()?.nomeCompleto }}
             </div>
+            
             <div class="card-body">
 
                 <p-tabs [value]="tabSelecionado" [scrollable]="true">

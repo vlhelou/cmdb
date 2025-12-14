@@ -11,6 +11,12 @@
                 placeholder="Selecione um Tipo" />
         </div>
     </div>
+    <div class="row">
+        <div class="col-12">
+            <label for="observacao">Observação</label>
+            <textarea pInputTextarea id="observacao" formControlName="observacao" rows="3" placeholder="Observação do IC" maxlength="1000"></textarea>
+        </div>
+    </div>
     @if (!novo()){
         <div class="row mt-2">
             <div class="col-4">
