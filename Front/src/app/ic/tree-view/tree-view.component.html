@@ -1,2 +1,4 @@
-<p-tree [value]="nodes"  selectionMode="single" [(selection)]="icSelecionado" 
+<p-tree [value]="nodes()"  selectionMode="single" [(selection)]="icSelecionado" #tree
 (onNodeSelect)="itemSelecionado($event)" (onNodeUnselect)="itemSelecionado(null)"/>
+
+

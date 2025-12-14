@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, output, forwardRef, input, effect, Input } from '@angular/core';
+import { Component, OnInit, signal, output, forwardRef, input, effect, Input, Signal } from '@angular/core';
 // import { JsonPipe, NgIf } from '@angular/common';
 import { IcService } from 'src/model/ic/ic.service';
 import { icIc } from 'src/model/ic/ic';
@@ -24,20 +24,16 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 export class IcTreeViewComponent implements OnInit, ControlValueAccessor {
 
     @Input() localizaItem(id: number): void {
+        console.log('ID:', id);
+        // const teste = this.expandRecursive(this.nodes()[0], true);   
+        // this.nodes.set([teste]);
         this.localizado = null;
-        for (const item of this.nodes) {
+        for (const item of this.nodes()) {
             if (item.data.id === id) {
                 console.log('Item encontrado na raiz:', item);
             } else {
                 this.localizaRecursivoPorid(item, id);
-                if (this.localizado) {
-                    let parent = this.localizado.parent;
-                    while (parent) {
-                        parent.expanded = true;
-                        parent = parent.parent;
-                    }
-
-                }
+                // console.log('Item localizado após busca recursiva:', this.localizado);
             }
         }
     }
@@ -45,20 +41,30 @@ export class IcTreeViewComponent implements OnInit, ControlValueAccessor {
 
 
     ic: icIc | Nullable = null;
-    nodes: TreeNode[] = [];
+    nodes = signal<TreeNode[]>([]);
     icSelecionado: any | Nullable = null;
     selecionado = output<icIc | undefined>();
     icNovo = input<icIc | undefined>();
     private localizado: any;
 
+    // private expandRecursive(node: TreeNode, isExpand: boolean): TreeNode {
+    //     return {
+    //         ...node,
+    //         expanded: isExpand,
+    //         children: node.children ? node.children.map((child) => this.expandRecursive(child, isExpand)) : node.children
+    //     };
+    // }
 
-    localizaRecursivoPorid(item: any, id: number): void {
+    localizaRecursivoPorid(item: any, id: number ): void {
+
         if (item.children) {
             for (const filho of item.children) {
+                filho.parent = item;
                 if (filho.key === id.toString()) {
+                    console.log('Item pai:', item);
                     console.log('Item encontrado:', filho);
-                    console.log('Item encontrado pai:', filho.parent);
                     this.localizado = filho;
+                    console.log(this.localizado);
                     return;
                 }
                 else {
@@ -111,28 +117,27 @@ export class IcTreeViewComponent implements OnInit, ControlValueAccessor {
                     label: this.ic.nome,
                     children: [],
                     data: this.ic,
-                    key: this.ic.id.toString()
+                    key: this.ic.id?.toString(),
                 };
-                this.populaFilhos(this.ic, tItem);
+                this.PopulaFilhos(this.ic, tItem);
                 menuTemp.push(tItem);
-                this.nodes = menuTemp;
+                this.nodes.set(menuTemp);
+
             }
         });
 
     }
 
-    private populaFilhos(origem: icIc, destino: TreeNode): void {
+    private PopulaFilhos(origem: icIc, destino: TreeNode): void {
         if (origem.filhos) {
             origem.filhos.forEach(filho => {
-                const classe = filho.ativoFinal ? undefined : 'inativo';
-                const tFilho: TreeNode = { label: filho.nome, data: filho, key: filho.id.toString() };
+                const tFilho: TreeNode = { label: filho.nome, data: filho, key: filho.id?.toString() };
                 destino.children = destino.children || [];
                 destino.children.push(tFilho);
-                this.populaFilhos(filho, tFilho);
+                this.PopulaFilhos(filho, tFilho);
             });
         }
     }
-
     itemSelecionado(event: any) {
         this.selecionado.emit(event.node.data);
     }
