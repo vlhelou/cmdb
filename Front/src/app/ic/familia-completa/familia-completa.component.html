@@ -1,0 +1,26 @@
+@if(familia()){
+<div>
+    <ul class="list-group">
+        @if(familia()?.ancestrais){
+
+        @for( ancestral of familia()?.ancestrais; track ancestral.id){
+        <li class="list-group-item list-group-item-dark">
+           <a href="javascript:void(0)" (click)="selecionaIc(ancestral.id)">{{ ancestral.nome }}</a>
+           <span class="float-end" style="font-size: 70%;">({{ ancestral.tipo.nome }})</span>
+        </li>
+        }
+        }
+
+        <li class="list-group-item active" style="padding-left: 10px;">{{ familia()?.nome }} 
+            <span class="float-end" style="font-size: 70%;">({{ familia()?.tipo?.nome }})</span>
+        </li>
+        @for( filho of familia()?.filhos; track filho.id){
+        <li class="list-group-item" style="padding-left: 20px;">
+            <a href="javascript:void(0)" (click)="selecionaIc(filho.id)">{{ filho.nome }}</a>
+            <span class="float-end" style="font-size: 70%;">({{ filho.tipo.nome }})</span>
+        </li>
+        }
+    </ul>
+
+</div>
+}

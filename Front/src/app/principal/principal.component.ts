@@ -4,7 +4,8 @@ import { TabsModule } from 'primeng/tabs';
 
 // import { JsonPipe } from '@angular/common';
 import { IcAutocompleteComponent } from 'src/app/ic/ic-autocomplete/ic-autocomplete.component';
-import { IcTreeViewComponent } from 'src/app/ic/tree-view/tree-view.component';
+// import { IcTreeViewComponent } from 'src/app/ic/tree-view/tree-view.component';
+import {FamiliaCompletaComponent} from 'src/app/ic/familia-completa/familia-completa.component'
 import { CadastroComponent } from 'src/app/ic/cadastro/cadastro.component'
 import { SegredoComponent } from 'src/app/ic/segredo/segredo.component'
 import { ConhecimentoComponent } from 'src/app/ic/conhecimento/conhecimento.component'
@@ -19,7 +20,8 @@ import { DependenciaComponent } from 'src/app/ic/dependencia/dependencia.compone
   imports: [
     IcAutocompleteComponent,
     FormsModule,
-    IcTreeViewComponent,
+    FamiliaCompletaComponent,
+    // IcTreeViewComponent,
     TabsModule,
     CadastroComponent,
     SegredoComponent,

@@ -6,9 +6,10 @@
                 <app-ic-autocomplete [(ngModel)]="icAutocomplete" (selecionado)="autoCompleteSelecionado($event)" />
             </div>
             <div class="card-body">
-                <app-ic-tree-view [(ngModel)]="icTreeView" (selecionado)="autoCompleteSelecionado($event)"
+                <app-ic-familia-completa [ic]="icSelecionado()"></app-ic-familia-completa>
+                <!-- <app-ic-tree-view [(ngModel)]="icTreeView" (selecionado)="autoCompleteSelecionado($event)"
                     [icNovo]="icAtualiza()" #treeIc />
-                    <button class="btn btn-primary" (click)="treeIc.localizaItem(7)">Localiza Item</button>
+                    <button class="btn btn-primary" (click)="treeIc.localizaItem(7)">Localiza Item</button> -->
             </div>
         </div>
     </div>
