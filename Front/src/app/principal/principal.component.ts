@@ -47,8 +47,11 @@ export class PrincipalComponent {
     this.icSelecionado.set(event);
   }
 
-  icCadastroGravado(event: any) {
+  icCadastroGravado(event: any, treeComponent: FamiliaCompletaComponent | null) {
     this.icAtualiza.set(event);
+    if (treeComponent) {
+      treeComponent.atualiza();
+    }
   }
 
   mudaPaternidade() {

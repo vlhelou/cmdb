@@ -4,7 +4,6 @@ import { icIc } from 'src/model/ic/ic';
 import { icSegredo } from 'src/model/ic/segredo'
 import { IcSegredoService } from 'src/model/ic/segredo.service'
 import { TableModule } from 'primeng/table';
-import { PopoverModule } from 'primeng/popover';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
@@ -12,11 +11,11 @@ import { segUsuarioService } from 'src/model/seg/usuario.service';
 import { segOrganograma } from 'src/model/seg/organograma'
 import { SelectModule } from 'primeng/select';
 
+
 @Component({
     selector: 'app-segredo',
     imports: [
         TableModule,
-        PopoverModule,
         ConfirmDialogModule,
         DialogModule,
         FormsModule,
@@ -32,6 +31,7 @@ export class SegredoComponent implements OnInit {
     conteudo = signal<string>('');
     organogramas = signal<segOrganograma[]>([]);
     mostraNovo = false;
+    mostraSegredo = false;
 
     formNovo = new FormGroup({
         idOrganogramaDono: new FormControl<number | null>(null),
@@ -86,10 +86,10 @@ export class SegredoComponent implements OnInit {
     }
 
 
-    mostraConteudo(event: any, op: any, id: number) {
+    mostraConteudo(id: number) {
         this.srv.Visualiza(id).subscribe({
             next: (data) => {
-                op.toggle(event)
+                this.mostraSegredo = true;
                 this.conteudo.set(data.conteudo || '');
                 // Manipule os dados recebidos conforme necessário
             }

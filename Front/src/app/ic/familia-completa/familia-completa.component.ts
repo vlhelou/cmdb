@@ -1,4 +1,4 @@
-import { Component, effect, input, signal } from '@angular/core';
+import { Component, effect, Input, input, output, signal } from '@angular/core';
 import { icIc } from 'src/model/ic/ic';
 import { IcService } from 'src/model/ic/ic.service';
 
@@ -11,11 +11,22 @@ import { IcService } from 'src/model/ic/ic.service';
 export class FamiliaCompletaComponent {
     ic = input<icIc | undefined>();
     familia = signal<icIc | null>(null);
+    selecionado = output<icIc | undefined>();
+
+    @Input() atualiza(): void {
+        if (this.ic()) {
+            this.srv.BuscaComFamilia(this.ic()!.id).subscribe({
+                next: (ret) => {
+                    this.familia.set(ret);
+                }
+            });
+        }               
+    }
 
 
     constructor(private srv: IcService) {
+        
         effect(() => {
-            console.log(this.ic());
             if (this.ic()) {
                 this.srv.BuscaComFamilia(this.ic()!.id).subscribe({
                     next: (ret) => {
@@ -35,8 +46,9 @@ export class FamiliaCompletaComponent {
 
     }
 
-    selecionaIc(id: number) {
-        return this.srv.BuscaComFamilia(id).subscribe({
+    selecionaIc(ic:icIc) {
+        this.selecionado.emit(ic);
+        return this.srv.BuscaComFamilia(ic.id).subscribe({
             next: (ret) => {
                 this.familia.set(ret);
             }
