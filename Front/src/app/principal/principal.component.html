@@ -1,3 +1,32 @@
+@if(usaEmbedding()){
+<p-panel header="Busca de IC via Embedding" [toggleable]="true" [collapsed]="false">
+    <div class="row">
+        <div class="col-12">
+
+            <textarea [(ngModel)]="pesquisaEmbeddingPrompt" class="form-control"></textarea>
+            <button class="btn btn-primary float-end mt-2 mb-2" (click)="pesquisaPrompt()">Pesquisa</button>
+        </div>
+    </div>
+    @if(icsPromptResultado().length > 0){
+    <div class="row">
+
+        <div class="col-12">
+            <h6>Resultados da pesquisa:</h6>
+            <ul class="list-group">
+                @for (item of icsPromptResultado(); track item.id) {
+                <li (click)="autoCompleteSelecionado(item)" class="list-group-item">{{ item.nomeCompleto }} <span class="float-end"
+                        style="font-size: 70%;">({{ item.tipo.nome
+                        }})</span>
+                </li>
+                }
+            </ul>
+        </div>
+    </div>
+    }
+</p-panel>
+}
+
+
 <div class="row">
     <div class="col-4">
         <div class="card">
@@ -6,7 +35,8 @@
                 <app-ic-autocomplete [(ngModel)]="icAutocomplete" (selecionado)="autoCompleteSelecionado($event)" />
             </div>
             <div class="card-body">
-                <app-ic-familia-completa [ic]="icSelecionado()" (selecionado)="autoCompleteSelecionado($event)" #treeIc></app-ic-familia-completa>
+                <app-ic-familia-completa [ic]="icSelecionado()" (selecionado)="autoCompleteSelecionado($event)"
+                    #treeIc></app-ic-familia-completa>
             </div>
         </div>
     </div>
@@ -16,7 +46,7 @@
             <div class="card-header text-success " style="font-weight: bold;">
                 {{ icSelecionado()?.nomeCompleto }}
             </div>
-            
+
             <div class="card-body">
 
                 <p-tabs [value]="tabSelecionado" [scrollable]="true">

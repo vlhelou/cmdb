@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Cmdb.Model.IC;
 
@@ -29,6 +30,7 @@ public record IC
     public int? IdOrganograma { get; set; }
 
     [Column("embedding", TypeName ="vector(1024)")]
+    [JsonIgnore]
     public Pgvector.Vector? Embedding{ get; set; }
 
     [Column("observacao")]

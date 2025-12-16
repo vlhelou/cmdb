@@ -39,14 +39,25 @@ builder.Services.AddDbContext<Cmdb.Model.Db>(opt =>
     opt.LogTo(Console.WriteLine);
 });
 
-builder.Services.AddTransient<OllamaApiClient>(sp => new OllamaApiClient(uriString: "http://localhost:11434", defaultModel: "mxbai-embed-large"));
+
 
 
 #pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
 var db = builder?.Services?.BuildServiceProvider().GetService<Cmdb.Model.Db>();
 #pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
+
+
 if (db == null)
     throw new Exception("Erro ao conectar ao banco de dados");
+
+var valoresEmbed = db.CorpConfiguracao.AsNoTracking().Where(p => p.Id == 26 || p.Id == 27 || p.Id == 28).ToList();
+string urlEmbed = valoresEmbed.FirstOrDefault(p => p.Id == 26)?.ValorTexto ?? "";
+string modeloEmbed = valoresEmbed.FirstOrDefault(p => p.Id == 27)?.ValorTexto ?? "";
+bool ativoEmbed = valoresEmbed.FirstOrDefault(p => p.Id == 28)?.ValorBoleano ?? false;
+
+if (ativoEmbed)
+    builder.Services.AddTransient<OllamaApiClient>(sp => new OllamaApiClient(uriString: urlEmbed, defaultModel: modeloEmbed));
+
 
 string chaveJWT = db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 16)?.ValorTexto ?? "";
 

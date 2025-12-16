@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Cmdb.Model.IC;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.AI;
 using Microsoft.SemanticKernel.Embeddings;
 using OllamaSharp;
+using Pgvector.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Cmdb.Api.IC;
 
@@ -13,10 +17,12 @@ public class IC : ControllerBase
 {
     private readonly Model.Db _db;
     private readonly OllamaApiClient _service;
+    private readonly bool embeddingHabilitado;
     public IC(Model.Db db, OllamaApiClient service)
     {
         _db = db;
         _service = service;
+        embeddingHabilitado = db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 28)?.ValorBoleano ?? false;
     }
 
 
@@ -33,32 +39,7 @@ public class IC : ControllerBase
     [HttpGet("[action]/{id}")]
     public IActionResult BuscaComFamilia(int id)
     {
-        var Localizado = _db.IcVwIc
-            .AsNoTracking()
-            .Where(p => p.Id == id)
-            .Include(p => p.Tipo)
-            .Include(p => p.Responsavel)
-            .FirstOrDefault();
-        if (Localizado == null)
-            throw new Exception("IC não localizado");
-        Localizado.Ancestrais = _db.IcVwIc.Where(p => Localizado.LstAncestrais.AsEnumerable().Contains(p.Id))
-            .AsNoTracking()
-            .Include(p => p.Tipo)
-            .OrderBy(p => p.Nivel)
-            .ToList<Model.IC.VwIc>();
-        Localizado.Filhos = _db.IcVwIc.AsNoTracking()
-            .Where(p => p.IdPai == Localizado.Id).Include(p => p.Tipo).ToList();
-        if (Localizado.Ancestrais.Count > 0)
-        {
-            Localizado.Pai = Localizado.Ancestrais.Last();
-        }
-
-        foreach (var filho in Localizado.Filhos)
-            filho.Pai = null;
-
-        foreach (var pai in Localizado.Ancestrais)
-            pai.Filhos = null;
-        Localizado.Filhos = Localizado.Filhos.OrderBy(p => p.Tipo!.Nome).ThenBy(p => p.Nome).ToList();
+        var Localizado = this.LocalizaComFamilia(id);
         return Ok(Localizado);
 
     }
@@ -107,6 +88,43 @@ public class IC : ControllerBase
         var retorno = consulta.Include(p => p.Tipo).ToList();
         return Ok(retorno);
 
+    }
+
+    [HttpPost("[action]")]
+    public async Task<IActionResult> PesquisaEmbedding([FromBody] JsonElement prm)
+    {
+        if (!embeddingHabilitado)
+            return BadRequest(new MensagemErro("Pesquisa por embedding não está habilitada"));
+
+        string prompt;
+        if (prm.TryGetProperty("prompt", out JsonElement jprompt))
+        {
+            prompt = jprompt.GetString() ?? string.Empty;
+        }
+        else
+        {
+            return BadRequest(new MensagemErro("Parâmetro 'prompt' não informado"));
+        }
+
+
+        var embedding = _service.AsTextEmbeddingGenerationService();
+        var temp = await embedding.GenerateEmbeddingAsync(JsonSerializer.Serialize(prompt));
+
+
+        var primeiros = _db.IcIc.AsNoTracking()
+            .Where(p=>p.Embedding != null)
+            .OrderBy(p => p.Embedding!.CosineDistance(new Pgvector.Vector(temp.ToArray())))
+            .Take(5)
+            .ToList();
+
+        var ids = primeiros.Select(primeiros => primeiros.Id).ToList();
+
+        var completo = _db.IcVwIc
+            .Where(p => ids.Contains(p.Id))
+            .Include(p=>p.Tipo)
+            .AsNoTracking().ToList();
+
+        return Ok(completo);
     }
 
 
@@ -161,6 +179,13 @@ public class IC : ControllerBase
 
             _db.Entry(item).State = EntityState.Added;
             _db.SaveChanges();
+            if (embeddingHabilitado)
+            {
+                var origem = this.LocalizaComFamilia(item.Id);
+                var embedding = _service.AsTextEmbeddingGenerationService();
+                var temp = embedding.GenerateEmbeddingAsync(JsonSerializer.Serialize(origem)).Result;
+                item.Embedding = new Pgvector.Vector(temp);
+            }
             return Ok(item);
         }
         else
@@ -170,10 +195,24 @@ public class IC : ControllerBase
                 return BadRequest(new MensagemErro("IC não localizado"));
             localizado.Altera(item);
             _db.SaveChanges();
+            if (embeddingHabilitado)
+            {
+                var origem = this.LocalizaComFamilia(item.Id);
+                var embedding = _service.AsTextEmbeddingGenerationService();
+                var temp = embedding.GenerateEmbeddingAsync(JsonSerializer.Serialize(origem)).Result;
+                item.Embedding = new Pgvector.Vector(temp);
+            }
+
             return Ok(localizado);
         }
     }
 
+
+    [HttpGet("[action]")]
+    public IActionResult UsaEmbedding()
+    {
+        return Ok(embeddingHabilitado);
+    }
 
     [HttpGet("[action]/{id}")]
     public IActionResult IcEditavel(int id)
@@ -204,16 +243,60 @@ public class IC : ControllerBase
         return Ok();
     }
 
+    private VwIc LocalizaComFamilia(int id)
+    {
+        var localizado = _db.IcVwIc
+            .AsNoTracking()
+            .Where(p => p.Id == id)
+            .Include(p => p.Tipo)
+            .Include(p => p.Responsavel)
+            .FirstOrDefault();
+        if (localizado == null)
+            throw new Exception("IC não localizado");
+        localizado.Ancestrais = _db.IcVwIc.Where(p => localizado.LstAncestrais.AsEnumerable().Contains(p.Id))
+            .AsNoTracking()
+            .Include(p => p.Tipo)
+            .OrderBy(p => p.Nivel)
+            .ToList<Model.IC.VwIc>();
+        localizado.Filhos = _db.IcVwIc
+            .AsNoTracking()
+            .Where(p => p.IdPai == localizado.Id)
+            .Include(p => p.Tipo)
+            .OrderBy(p => p.Tipo!.Nome)
+            .ThenBy(p => p.Nome).ToList();
+        if (localizado.Ancestrais.Count > 0)
+        {
+            localizado.Pai = localizado.Ancestrais.Last();
+        }
+
+        //foreach (var filho in Localizado.Filhos)
+        //    filho.Pai = null;
+
+        //foreach (var pai in Localizado.Ancestrais)
+        //    pai.Filhos = null;
+
+
+        Console.Write(localizado.ToString());
+        var x = JsonSerializer.Serialize(localizado);
+
+        return localizado;
+
+    }
 
     [HttpGet("[action]")]
-    [AllowAnonymous]
-    public IActionResult TesteEmbeddings()
+    public IActionResult GeraTodos()
     {
+        if (!embeddingHabilitado)
+            return Ok();
+
         var lista = _db.IcIc.ToList();
         foreach (var item in lista)
         {
+            var localizado = this.LocalizaComFamilia(item.Id);
+            if (localizado == null)
+                continue;
             var embedding = _service.AsTextEmbeddingGenerationService();
-            var temp = embedding.GenerateEmbeddingAsync(item.Nome).Result;
+            var temp = embedding.GenerateEmbeddingAsync(JsonSerializer.Serialize(localizado)).Result;
             item.Embedding = new Pgvector.Vector(temp);
 
         }
