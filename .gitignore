@@ -405,3 +405,4 @@ cache
 Front/dist/cmdb/
 Front/package-lock.json
 
+/Back/Properties/launchSettings.json
