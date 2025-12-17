@@ -63,6 +63,7 @@ export class CadastroComponent implements OnInit {
           ativoFinal: this.ic()?.ativoFinal,
           ativoPai: this.ic()?.ativoPai,
           idTipo: this.ic()?.idTipo,
+          observacao: this.ic()?.observacao,
           // responsavel: this.ic()?.responsavel,
         });
         this.icPropriedades.clear();
@@ -84,6 +85,7 @@ export class CadastroComponent implements OnInit {
           ativoPai: true,
           idTipo: null,
           responsavel: null,
+          observacao: null,
           propriedades: []
         });
       }

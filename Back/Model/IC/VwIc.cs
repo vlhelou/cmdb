@@ -36,6 +36,10 @@ public record VwIc
     [Column("nivel")]
     public int Nivel { get; set; }
 
+    [Column("observacao")]
+    public string? Observacao { get; set; }
+
+
     [Column("pesquisats")]
     [JsonIgnore]
     public NpgsqlTsVector? PesquisaTS { get; set; }
