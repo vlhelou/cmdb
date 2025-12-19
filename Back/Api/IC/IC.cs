@@ -112,7 +112,7 @@ public class IC : ControllerBase
 
 
         var primeiros = _db.IcIc.AsNoTracking()
-            .Where(p=>p.Embedding != null)
+            .Where(p => p.Embedding != null)
             .OrderBy(p => p.Embedding!.CosineDistance(new Pgvector.Vector(temp.ToArray())))
             .Take(5)
             .ToList();
@@ -121,7 +121,7 @@ public class IC : ControllerBase
 
         var completo = _db.IcVwIc
             .Where(p => ids.Contains(p.Id))
-            .Include(p=>p.Tipo)
+            .Include(p => p.Tipo)
             .AsNoTracking().ToList();
 
         return Ok(completo);
@@ -284,12 +284,13 @@ public class IC : ControllerBase
     }
 
     [HttpGet("[action]")]
-    public IActionResult GeraTodos()
+    [Authorize(Roles = "admin")]
+    public IActionResult EmbeddingRestante()
     {
         if (!embeddingHabilitado)
-            return Ok();
+            return BadRequest(new MensagemErro("embedding não esta habilitado"));
 
-        var lista = _db.IcIc.ToList();
+        var lista = _db.IcIc.Where(p => p.Embedding == null).ToList();
         foreach (var item in lista)
         {
             var localizado = this.LocalizaComFamilia(item.Id);
@@ -298,10 +299,24 @@ public class IC : ControllerBase
             var embedding = _service.AsTextEmbeddingGenerationService();
             var temp = embedding.GenerateEmbeddingAsync(JsonSerializer.Serialize(localizado)).Result;
             item.Embedding = new Pgvector.Vector(temp);
+            _db.SaveChanges();
+        }
+        return Ok(lista.Count);
+    }
 
+
+    [HttpGet("[action]")]
+    [Authorize(Roles = "admin")]
+    public IActionResult EmbeddingZera()
+    {
+        var lista = _db.IcIc;
+        foreach (var item in lista)
+        {
+            item.Embedding = null;
         }
         _db.SaveChanges();
-        return Ok(lista.Count);
+
+        return Ok();
     }
 
     private void PopulaFilhosMenu(ref Model.IC.VwIc item, ref List<Model.IC.VwIc> lista)

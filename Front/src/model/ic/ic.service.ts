@@ -59,6 +59,16 @@ export class IcService {
     return this.http.get<boolean>(url);
   }
   
+  EmbeddingRestante(): Observable<void> {
+    const url = pathUrl + `EmbeddingRestante`;
+    return this.http.get<void>(url);
+  }
+
+  EmbeddingZera(): Observable<boolean> {
+    const url = pathUrl + `EmbeddingZera`;
+    return this.http.get<boolean>(url);
+  }
+  
   PesquisaEmbedding(prompt: string): Observable<icIc[]> {
     const envio  = {  prompt };
     const url = pathUrl + `PesquisaEmbedding`;

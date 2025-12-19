@@ -51,8 +51,9 @@ export class AppComponent implements OnInit {
                 routerLink: '/tipo'
             },
             {
-                label: 'Contato',
-                icon: 'pi pi-envelope'
+                label: 'Embedded',
+                icon: 'fa-solid fa-terminal',
+                routerLink: '/embedded'
             }
         ]
     }
