@@ -185,6 +185,7 @@ public class IC : ControllerBase
                 var embedding = _service.AsTextEmbeddingGenerationService();
                 var temp = embedding.GenerateEmbeddingAsync(JsonSerializer.Serialize(origem)).Result;
                 item.Embedding = new Pgvector.Vector(temp);
+                _db.SaveChanges();
             }
             return Ok(item);
         }
@@ -197,10 +198,11 @@ public class IC : ControllerBase
             _db.SaveChanges();
             if (embeddingHabilitado)
             {
-                var origem = this.LocalizaComFamilia(item.Id);
+                var origem = this.LocalizaComFamilia(localizado.Id);
                 var embedding = _service.AsTextEmbeddingGenerationService();
                 var temp = embedding.GenerateEmbeddingAsync(JsonSerializer.Serialize(origem)).Result;
-                item.Embedding = new Pgvector.Vector(temp);
+                localizado.Embedding = new Pgvector.Vector(temp);
+                _db.SaveChanges();
             }
 
             return Ok(localizado);
