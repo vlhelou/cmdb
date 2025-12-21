@@ -2,8 +2,10 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.0 (Debian 17.0-1.pgdg120+1)
--- Dumped by pg_dump version 17.0 (Debian 17.0-1.pgdg120+1)
+\restrict XKwH5hOwVfzI5rj2u7Yh8NJk7lE61o24weSJUlruF5QYzppqQKB3zx26D1BKDrW
+
+-- Dumped from database version 18.1 (Debian 18.1-1.pgdg13+2)
+-- Dumped by pg_dump version 18.1 (Debian 18.1-1.pgdg13+2)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -83,6 +85,20 @@ CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
+-- Name: vector; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS vector WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION vector; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION vector IS 'vector data type and ivfflat and hnsw access methods';
 
 
 --
@@ -664,7 +680,9 @@ CREATE TABLE ic.ic (
     ativo boolean NOT NULL,
     propriedades json,
     idtipo integer NOT NULL,
-    idorganograma integer
+    idorganograma integer,
+    embedding public.vector(1024),
+    observacao character varying(1000)
 );
 
 
@@ -1517,6 +1535,13 @@ CREATE UNIQUE INDEX ix_corptiponomegrupo ON corp.tipo USING btree (lower((grupo)
 
 
 --
+-- Name: idx_ic_embedding; Type: INDEX; Schema: ic; Owner: postgres
+--
+
+CREATE INDEX idx_ic_embedding ON ic.ic USING hnsw (embedding public.vector_l2_ops);
+
+
+--
 -- Name: ix_conhecimenot_ic; Type: INDEX; Schema: ic; Owner: postgres
 --
 
@@ -2266,7 +2291,7 @@ GRANT SELECT,USAGE ON SEQUENCE ic.sqsegredo TO usrapp;
 -- Name: TABLE vw_ic; Type: ACL; Schema: ic; Owner: postgres
 --
 
-GRANT SELECT ON TABLE ic.vw_ic TO usrapp;
+GRANT MAINTAIN ON TABLE ic.vw_ic TO usrapp;
 
 
 --
@@ -2370,4 +2395,6 @@ GRANT SELECT,USAGE ON SEQUENCE servico.sqchamado TO usrapp;
 --
 -- PostgreSQL database dump complete
 --
+
+\unrestrict XKwH5hOwVfzI5rj2u7Yh8NJk7lE61o24weSJUlruF5QYzppqQKB3zx26D1BKDrW
 
