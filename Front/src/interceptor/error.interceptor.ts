@@ -9,17 +9,22 @@ import { segUsuarioService } from 'src/model/seg/usuario.service';
 
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const srv=inject(segUsuarioService);
+  const srv = inject(segUsuarioService);
   const router = inject(Router);
   return next(req).pipe(
     catchError(error => {
-      if (error.status === 401) {
-        console.log('401 - Unauthorized');
-        srv.Logout();
-        router.navigate(['/publico']);
-      } else if (error.status === 500) {
-        // Exibir uma mensagem de erro ao usuário
+      const eleErro = document.getElementById('dvErro');
+      if (eleErro) {
+
+        if (eleErro.style && eleErro.style.display) {
+          eleErro.style.display = '';
+        }
+        eleErro.innerHTML = `<p><i class="pi pi-exclamation-triangle"></i>${error.error.mensagem}</p>`
+        setTimeout(() => {
+          eleErro.style.display = 'none';
+        }, 4000)
       }
+
       throw error;
     })
   );

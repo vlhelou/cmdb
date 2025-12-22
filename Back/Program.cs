@@ -19,7 +19,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 
 var strcn = Environment.GetEnvironmentVariable("CMDB_DB")?.Replace(":", "=") ?? "";
-var verificaVetor = (Environment.GetEnvironmentVariable("vector") ?? string.Empty)=="true";
+var verificaVetor = (Environment.GetEnvironmentVariable("vector") ?? string.Empty) == "true";
 
 NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
 
@@ -30,11 +30,11 @@ NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
 //var dataSource = dataSourceBuilder.Build();
 builder.Services.AddDbContext<Cmdb.Model.Db>(opt =>
 {
-    
+
     opt.UseNpgsql(strcn.Replace(":", "="), options =>
     {
         options.EnableRetryOnFailure();
-        
+
         options.UseVector();
     });
     opt.LogTo(Console.WriteLine);
@@ -57,8 +57,7 @@ string urlEmbed = valoresEmbed.FirstOrDefault(p => p.Id == 26)?.ValorTexto ?? ""
 string modeloEmbed = valoresEmbed.FirstOrDefault(p => p.Id == 27)?.ValorTexto ?? "";
 bool ativoEmbed = valoresEmbed.FirstOrDefault(p => p.Id == 28)?.ValorBoleano ?? false;
 
-if (ativoEmbed)
-    builder.Services.AddTransient<OllamaApiClient>(sp => new OllamaApiClient(uriString: urlEmbed, defaultModel: modeloEmbed));
+builder.Services.AddTransient<OllamaApiClient>(sp => new OllamaApiClient(uriString: urlEmbed, defaultModel: modeloEmbed));
 
 
 string chaveJWT = db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 16)?.ValorTexto ?? "";

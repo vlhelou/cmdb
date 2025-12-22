@@ -290,7 +290,7 @@ public class IC : ControllerBase
     public IActionResult EmbeddingRestante()
     {
         if (!embeddingHabilitado)
-            return BadRequest(new MensagemErro("embedding não esta habilitado"));
+            return BadRequest(new MensagemErro("Embedding não esta habilitado"));
 
         var lista = _db.IcIc.Where(p => p.Embedding == null).ToList();
         foreach (var item in lista)
@@ -311,6 +311,9 @@ public class IC : ControllerBase
     [Authorize(Roles = "admin")]
     public IActionResult EmbeddingZera()
     {
+        if (!embeddingHabilitado)
+            return BadRequest(new MensagemErro("Embedding não esta habilitado"));
+
         var lista = _db.IcIc;
         foreach (var item in lista)
         {
