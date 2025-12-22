@@ -1,3 +1,5 @@
+import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
+
 export const ptBr = {
     startsWith: 'Começa com',
     contains: 'Contém',
@@ -46,7 +48,23 @@ export function spinnerOn() {
     const blocker = document.getElementById("blocker");
     if (blocker) blocker.style.display = "block";
 }
+
 export function spinnerOff() {
     const blocker = document.getElementById("blocker");
     if (blocker) blocker.style.display = "none";
+}
+
+export function passwordsMatchValidator(
+    passwordField: string,
+    confirmField: string
+): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+        const password = control.get(passwordField);
+        const confirm = control.get(confirmField);
+
+        if (!password || !confirm) return null;
+        if (confirm.errors && !confirm.errors['passwordMismatch']) return null;
+
+        return password.value === confirm.value ? null : { passwordMismatch: true };
+    };
 }

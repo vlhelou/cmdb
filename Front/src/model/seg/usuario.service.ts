@@ -77,6 +77,11 @@ export class segUsuarioService {
         return this.http.post<segUsuario>(url, usuario, httpOptions);
     }
 
+    TrocaSenha(prm: any): Observable<void> {
+        const url = pathUrl + `TrocaSenha`;
+        return this.http.post<void>(url, prm, httpOptions);
+    }
+
     RecuperaSenhaChave(prm: any): Observable<void> {
         const url = pathUrl + `RecuperaSenhaChave`;
         return this.http.post<void>(url, prm, httpOptions);
@@ -91,5 +96,6 @@ export class segUsuarioService {
         const url = pathUrl + `Pesquisa`;
         return this.http.post<segUsuario[]>(url, prm, httpOptions);
     }
+
 
 }
