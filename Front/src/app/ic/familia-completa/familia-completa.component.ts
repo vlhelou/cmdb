@@ -48,6 +48,7 @@ export class FamiliaCompletaComponent {
 
     selecionaIc(ic:icIc) {
         this.selecionado.emit(ic);
+        // console.log('Selecionou IC', ic);
         return this.srv.BuscaComFamilia(ic.id).subscribe({
             next: (ret) => {
                 this.familia.set(ret);

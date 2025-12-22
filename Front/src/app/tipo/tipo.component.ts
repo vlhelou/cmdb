@@ -21,8 +21,8 @@ export class TipoComponent implements OnInit {
     form = new FormGroup({
         id: new FormControl<number>(0),
         nome: new FormControl<string | null>(null, [Validators.required]),
-        grupo: new FormControl<string | null>(null, [Validators.required]),
-        ativo: new FormControl<boolean | null>(null),
+        grupo: new FormControl<string | null>(null),
+        ativo: new FormControl<boolean >(true),
     });
 
 
@@ -74,10 +74,11 @@ export class TipoComponent implements OnInit {
         if (envio.id == null) {
             envio.id = 0;
         }
+        envio.grupo = 'Tipo';
         this.srv.Grava(envio).subscribe({
             next: (data) => {
                 this.atualiza();
-                this.form.reset();
+                this.form.reset({ativo: true});
             }
         });
     }

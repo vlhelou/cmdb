@@ -15,142 +15,144 @@ import { TextareaModule } from 'primeng/textarea';
 
 
 @Component({
-  selector: 'app-ic-cadastro',
-  imports: [FormsModule
-    , ReactiveFormsModule
-    , SelectModule
-    , InputTextModule
-    , CheckboxModule
-    , ToastModule
-    , TextareaModule],
-  templateUrl: './cadastro.component.html',
-  styleUrl: './cadastro.component.scss',
-  providers: [ConfirmationService, MessageService]
+    selector: 'app-ic-cadastro',
+    imports: [FormsModule
+        , ReactiveFormsModule
+        , SelectModule
+        , InputTextModule
+        , CheckboxModule
+        , ToastModule
+        , TextareaModule],
+    templateUrl: './cadastro.component.html',
+    styleUrl: './cadastro.component.scss',
+    providers: [ConfirmationService, MessageService]
 })
 export class CadastroComponent implements OnInit {
 
-  ic = input<icIc | undefined>();
-  icPai = input<icIc | undefined>();
-  novo = input<boolean | undefined>();
-  tipos = signal<corpTipo[]>([]);
-  gravado = output<any | undefined>();
-  frmIC = new FormGroup({
-    id: new FormControl<number>(0),
-    idPai: new FormControl<number | null>(null),
-    nome: new FormControl<string>('', [Validators.required, Validators.minLength(2)]),
-    ativo: new FormControl<boolean>(true),
-    ativoFinal: new FormControl<boolean>({ value: true, disabled: true }),
-    ativoPai: new FormControl<boolean>({ value: true, disabled: true }),
-    idTipo: new FormControl<number | null>(null, [Validators.required]),
-    responsavel: new FormControl<string | null>(null),
-    observacao: new FormControl<string | null>(null),
-    propriedades: new FormArray([
-      new FormGroup({
-        nome: new FormControl<string>('', [Validators.required]),
-        valor: new FormControl<string>('', [Validators.required]),
-      })
-    ]),
-  });
-
-  constructor(private srv: IcService, private tipo: TipoService, private messageService: MessageService) {
-    effect(() => {
-      if (this.ic()) {
-        this.frmIC.patchValue({
-          id: this.ic()?.id,
-          idPai: this.ic()?.idPai,
-          nome: this.ic()?.nome,
-          ativo: this.ic()?.ativo,
-          ativoFinal: this.ic()?.ativoFinal,
-          ativoPai: this.ic()?.ativoPai,
-          idTipo: this.ic()?.idTipo,
-          observacao: this.ic()?.observacao,
-          // responsavel: this.ic()?.responsavel,
-        });
-        this.icPropriedades.clear();
-        this.ic()?.propriedades.forEach((prop) => {
-          this.icPropriedades.push(new FormGroup({
-            nome: new FormControl<string>(prop.nome, [Validators.required]),
-            valor: new FormControl<string>(prop.valor, [Validators.required])
-          }));
-        });
-
-
-      } else {
-        this.frmIC.reset({
-          id: 0,
-          idPai: null,
-          nome: '',
-          ativo: true,
-          ativoFinal: true,
-          ativoPai: true,
-          idTipo: null,
-          responsavel: null,
-          observacao: null,
-          propriedades: []
-        });
-      }
-    });
-  }
-
-  ngOnInit(): void {
-    this.icPropriedades.controls = [];
-    this.tipo.ListaAtivos('tipo').subscribe({
-      next: (data) => {
-        this.tipos.set(data);
-      },
+    ic = input<icIc | undefined>();
+    icPai = input<icIc | undefined>();
+    novo = input<boolean | undefined>();
+    tipos = signal<corpTipo[]>([]);
+    gravado = output<any | undefined>();
+    frmIC = new FormGroup({
+        id: new FormControl<number>(0),
+        idPai: new FormControl<number | null>(null),
+        nome: new FormControl<string>('', [Validators.required, Validators.minLength(2)]),
+        ativo: new FormControl<boolean>(true),
+        ativoFinal: new FormControl<boolean>({ value: true, disabled: true }),
+        ativoPai: new FormControl<boolean>({ value: true, disabled: true }),
+        idTipo: new FormControl<number | null>(null, [Validators.required]),
+        responsavel: new FormControl<string | null>(null),
+        observacao: new FormControl<string | null>(null),
+        propriedades: new FormArray([
+            new FormGroup({
+                nome: new FormControl<string>('', [Validators.required]),
+                valor: new FormControl<string>('', [Validators.required]),
+            })
+        ]),
     });
 
-
-  }
-
-  get icPropriedades(): FormArray {
-    return this.frmIC.get('propriedades') as FormArray;
-  }
-  propriedadeNova() {
-    const propriedade = new FormGroup({
-      nome: new FormControl<string>('', [Validators.required]),
-      valor: new FormControl<string>('', [Validators.required])
-    });
-    this.icPropriedades.push(propriedade);
-    return propriedade;
-  }
-
-  propriedadeRemove(index: number) {
-    this.icPropriedades.removeAt(index);
-  }
-
-  grava() {
-    if (this.frmIC.valid) {
-      const icData = this.frmIC.value;
-      if (this.novo()) {
-        icData.idPai = this.icPai() ? this.icPai()?.id : null;
-      }
-      this.srv.Grava(icData).subscribe({
-        next: (p) => {
-          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'IC salvo com sucesso!' });
-          this.gravado.emit(p);
-          if (this.novo()) {
-            this.frmIC.reset({
-              id: 0,
-              idPai: null,
-              nome: '',
-              ativo: true,
-              ativoFinal: true,
-              ativoPai: true,
-              idTipo: null,
-              responsavel: null,
-              propriedades: []
-            });
-          }
-
-        }
-      });
+    constructor(private srv: IcService, private tipo: TipoService, private messageService: MessageService) {
+        effect(() => {
+            if (this.ic()) {
+                this.frmIC.patchValue({
+                    id: this.ic()?.id,
+                    idPai: this.ic()?.idPai,
+                    nome: this.ic()?.nome,
+                    ativo: this.ic()?.ativo,
+                    ativoFinal: this.ic()?.ativoFinal,
+                    ativoPai: this.ic()?.ativoPai,
+                    idTipo: this.ic()?.idTipo,
+                    observacao: this.ic()?.observacao,
+                    // responsavel: this.ic()?.responsavel,
+                });
+                this.icPropriedades.clear();
+                if (this.ic()?.propriedades) {
+                    this.ic()?.propriedades.forEach((prop) => {
+                        this.icPropriedades.push(new FormGroup({
+                            nome: new FormControl<string>(prop.nome, [Validators.required]),
+                            valor: new FormControl<string>(prop.valor, [Validators.required])
+                        }));
+                    });
+                }
 
 
+            } else {
+                this.frmIC.reset({
+                    id: 0,
+                    idPai: null,
+                    nome: '',
+                    ativo: true,
+                    ativoFinal: true,
+                    ativoPai: true,
+                    idTipo: null,
+                    responsavel: null,
+                    observacao: null,
+                    propriedades: []
+                });
+            }
+        });
+    }
 
+    ngOnInit(): void {
+        this.icPropriedades.controls = [];
+        this.tipo.ListaAtivos('tipo').subscribe({
+            next: (data) => {
+                this.tipos.set(data);
+            },
+        });
 
 
     }
-  }
+
+    get icPropriedades(): FormArray {
+        return this.frmIC.get('propriedades') as FormArray;
+    }
+    propriedadeNova() {
+        const propriedade = new FormGroup({
+            nome: new FormControl<string>('', [Validators.required]),
+            valor: new FormControl<string>('', [Validators.required])
+        });
+        this.icPropriedades.push(propriedade);
+        return propriedade;
+    }
+
+    propriedadeRemove(index: number) {
+        this.icPropriedades.removeAt(index);
+    }
+
+    grava() {
+        if (this.frmIC.valid) {
+            const icData = this.frmIC.value;
+            if (this.novo()) {
+                icData.idPai = this.icPai() ? this.icPai()?.id : null;
+            }
+            this.srv.Grava(icData).subscribe({
+                next: (p) => {
+                    this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'IC salvo com sucesso!' });
+                    this.gravado.emit(p);
+                    if (this.novo()) {
+                        this.frmIC.reset({
+                            id: 0,
+                            idPai: null,
+                            nome: '',
+                            ativo: true,
+                            ativoFinal: true,
+                            ativoPai: true,
+                            idTipo: null,
+                            responsavel: null,
+                            propriedades: []
+                        });
+                    }
+
+                }
+            });
+
+
+
+
+
+        }
+    }
 
 }

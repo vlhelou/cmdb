@@ -3,24 +3,21 @@
     <div class="card-header">Cadastro de Tipo</div>
     <div class="card-body">
         <form [formGroup]="form" (ngSubmit)="grava()">
-        
+
             <div class="row mb-3">
-                <div class="col-5">
+                <div class="col-10">
                     <label for="nome">Nome</label>
                     <input id="nome" type="text" class="form-control" formControlName="nome" />
                 </div>
-                <div class="col-5">
-                    <label for="grupo">Grupo</label>
-                    <input id="grupo" type="text" class="form-control" formControlName="grupo" />
-                </div>
                 <div class="col-1 mt-4">
-        
+
                     <p-checkbox inputId="chAtivo" [binary]="true" formControlName="ativo" />
                     <label for="chAtivo" class="ml-2"> Ativo </label>
-        
+
                 </div>
                 <div class="col-1  text-end mt-3">
-                    <button type="submit" class="btn btn-primary" [disabled]="form.invalid" ><i class="pi pi-save"></i> </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="form.invalid"><i class="pi pi-save"></i>
+                    </button>
                 </div>
             </div>
         </form>
@@ -29,24 +26,29 @@
 <div class="row mt-2">
     <div class="col-12">
         <div class="card">
-            <div class="card-header">tipos
+            <div class="card-header">Tipos
                 <a href="javascript:void(0)" class="float-end"><i class="pi pi-plus"></i></a>
             </div>
             <div class="card-body">
 
-                <p-table [value]="tipos()">
+                <p-table [value]="tipos()" [paginator]="true" [rows]="10">
                     <ng-template #header>
                         <tr>
                             <th>Nome</th>
-                            <th>Grupo</th>
                             <th>Ativo</th>
                             <th>Ações</th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <p-columnFilter type="text" field="nome"></p-columnFilter>
+                            </th>
+                            <th></th>
+                            <th></th>
                         </tr>
                     </ng-template>
                     <ng-template #body let-item>
                         <tr>
                             <td>{{ item.nome }}</td>
-                            <td>{{ item.grupo }}</td>
                             <td>
                                 <input type="checkbox" [(ngModel)]="item.ativo" disabled />
                             </td>

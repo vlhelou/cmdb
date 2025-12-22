@@ -14,8 +14,8 @@
             <h6>Resultados da pesquisa:</h6>
             <ul class="list-group">
                 @for (item of icsPromptResultado(); track item.id) {
-                <li (click)="autoCompleteSelecionado(item)" class="list-group-item">{{ item.nomeCompleto }} <span class="float-end"
-                        style="font-size: 70%;">({{ item.tipo.nome
+                <li (click)="autoCompleteSelecionado(item)" class="list-group-item">{{ item.nomeCompleto }} <span
+                        class="float-end" style="font-size: 70%;">({{ item.tipo.nome
                         }})</span>
                 </li>
                 }
