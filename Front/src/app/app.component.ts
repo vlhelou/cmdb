@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
     usuario: any;
     itemsBotao = [
         {
-            label: 'Meus dados', routerLink: ['/fileupload']
+            label: 'Meus dados', routerLink: ['/edit-me']
         },
         {
             label: 'Troca Senha',

@@ -9,6 +9,7 @@ import { UsuarioCadastroComponent } from 'src/app/usuario/cadastro/cadastro.comp
 import { RecuperacaoSenhaComponent } from 'src/app/recuperacao-senha/recuperacao-senha.component'
 import { TipoComponent } from 'src/app/tipo/tipo.component';
 import { EmbeddedComponent } from 'src/app/embedded/embedded.component';
+import { EditMeComponent } from 'src/app/edit-me/edit-me.component';
 
 
 export const routes: Routes = [
@@ -20,6 +21,7 @@ export const routes: Routes = [
     { path: 'publico', component: PublicoComponent },
     { path: 'recuperacao-senha', component: RecuperacaoSenhaComponent },
     { path: 'embedded', component: EmbeddedComponent, canActivate: [adminGuard] },
+    { path: 'edit-me', component: EditMeComponent, canActivate: [autenticadoGuard] },
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: '**', redirectTo: '/home' },
 ];

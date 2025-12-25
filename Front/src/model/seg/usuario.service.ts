@@ -98,4 +98,17 @@ export class segUsuarioService {
     }
 
 
+    Eu(): Observable<segUsuario> {
+        const url = pathUrl + `Eu`;
+        return this.http.get<segUsuario>(url);
+    }
+
+    AlteraEmail(email:string): Observable<segUsuario> {
+        const prm={email};
+        const url = pathUrl + `AlteraEmail`;
+        return this.http.post<segUsuario>(url, prm, httpOptions);
+    }
+
+
+
 }
