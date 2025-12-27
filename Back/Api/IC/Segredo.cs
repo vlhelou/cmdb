@@ -148,6 +148,34 @@ public class Segredo : ControllerBase
 
     }
 
+    [HttpGet("[action]")]
+    public IActionResult MeusSegredos()
+    {
+        int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
+        var localizado = _db.SegUsuario.AsNoTracking().FirstOrDefault(x => x.Id == idLogado);
+        if (localizado == null)
+            return BadRequest(new MensagemErro("Usuário não localizado"));
+
+        var organograma = _db.SegVwOrganograma
+            .Where(p => p.Equipe!.Any(q => q.IdUsuario == idLogado))
+            .AsNoTracking()
+            .Select(p => p.Id)
+            .ToList<int>();
+
+        var segredos = _db.IcSegredo
+             .Where(p =>
+                p.IdUsuarioDono.HasValue && p.IdUsuarioDono == idLogado
+                || (p.IdOrganogramaDono.HasValue && organograma.Contains(p.IdOrganogramaDono.Value))
+              )
+             .AsNoTracking()
+             .Include(p => p.OrganogramaDono)
+             .Include(p => p.IC)
+             .ToList();
+        return Ok(segredos);
+    }
+
+
+
     private bool AcessoPermitido(int id, int idUsuario)
     {
         var logado = _db.SegUsuario
@@ -167,6 +195,8 @@ public class Segredo : ControllerBase
 
         return false;
     }
+
+
 
     public record SegredoItem(int idIc, int IdOrganogramaDono, string conteudo);
 

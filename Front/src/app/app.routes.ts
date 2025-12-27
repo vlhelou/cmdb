@@ -14,6 +14,7 @@ import { EditMeComponent } from 'src/app/edit-me/edit-me.component';
 
 export const routes: Routes = [
     { path: 'home', component: PrincipalComponent, canActivate: [autenticadoGuard] },
+    { path: 'home/:id', component: PrincipalComponent, canActivate: [autenticadoGuard] },
     { path: 'organograma', component: OrganogramaPrincipalComponent, canActivate: [adminGuard] },
     { path: 'configuracao', component: ConfiguracaoComponent, canActivate: [adminGuard] },
     { path: 'usuario/cadastro', component: UsuarioCadastroComponent, canActivate: [adminGuard] },
