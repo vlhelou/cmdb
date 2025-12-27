@@ -1,3 +1,5 @@
+<p-confirmpopup />
+
 @if(eu()){
 
 <div class="row">
@@ -37,7 +39,10 @@
                     </ng-template>
                     <ng-template #body let-item>
                         <tr>
-                            <td>{{ item.organograma.nome }}</td>
+                            <td>{{ item.organograma.nome }}
+                                <a href="javascript:void(0)" class="text-danger float-end" (click)="exclusaoOrganograma($event, item.id)"><i class="pi pi-trash"></i>
+                                </a>
+                            </td>
                         </tr>
                     </ng-template>
                 </p-table>

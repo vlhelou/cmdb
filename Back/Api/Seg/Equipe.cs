@@ -88,4 +88,22 @@ public class Equipe : ControllerBase
         return NotFound(new MensagemErro("Registro não encontrado"));
     }
 
+
+    [HttpGet("[action]/{id}")]
+    public IActionResult ExcluiMeuOrganograma(int id)
+    {
+        int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
+        var localizado = _db.SegEquipe.FirstOrDefault(p => p.Id == id);
+        if (localizado is null)
+            return BadRequest(new MensagemErro("Equipe não localizado"));
+
+        if (localizado.IdUsuario != idLogado)
+            return BadRequest(new MensagemErro("usuário sem permissão para excluir essa equipe"));
+
+        _db.Remove(localizado);
+        _db.SaveChanges();
+
+        return Ok();
+    }
+
 }
