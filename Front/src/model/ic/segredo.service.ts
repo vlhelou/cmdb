@@ -30,9 +30,16 @@ export class IcSegredoService {
         const url = pathUrl + `Exclui/${id}`;
         return this.http.get<any>(url);
     }
+
     novo(item:any): Observable<any> {
         const url = pathUrl + `novo`;
         return this.http.post<any>(url, item, httpOptions);
+    }
+
+    
+    MeusSegredos(item:any): Observable<any[]> {
+        const url = pathUrl + `MeusSegredos`;
+        return this.http.get<any[]>(url);
     }
 
 

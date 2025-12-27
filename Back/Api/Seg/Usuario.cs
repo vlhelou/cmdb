@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.IdentityModel.Tokens;
 using Novell.Directory.Ldap;
 
@@ -51,7 +52,7 @@ public class Usuario : Controller
 
 
         //var x = _db.SegUsuario.ToList();
-        var localizado = _db.SegUsuario.FirstOrDefault(x => x.Identificacao.ToLower() == item.identificacao.ToLower());
+        var localizado = _db.SegUsuario.AsNoTracking().FirstOrDefault(x => x.Identificacao.ToLower() == item.identificacao.ToLower());
         if (localizado == null)
             return BadRequest(new MensagemErro("usuario não localizado"));
         if (!localizado.Ativo)
@@ -307,6 +308,77 @@ public class Usuario : Controller
     }
 
 
+    [HttpPost("[action]")]
+    public IActionResult TrocaSenha([FromBody] TrocadeSenha prm)
+    {
+        string senhaNova = prm.novaSenha.Trim();
+
+        if (string.IsNullOrEmpty(senhaNova))
+            return BadRequest(new MensagemErro("senha nova não informada"));
+        if (senhaNova.Length < 6)
+            return BadRequest(new MensagemErro("senha pequena"));
+
+        int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
+        var localizado = _db.SegUsuario.FirstOrDefault(x => x.Id == idLogado);
+        if (localizado == null)
+            return BadRequest(new MensagemErro("Usuário não localizado"));
+
+        if ((localizado.Id.ToString() + prm.senhaAtual).ToSha512() != localizado.Senha)
+            return BadRequest(new MensagemErro("senha atual não confere"));
+
+        localizado.Senha = (localizado.Id.ToString() + prm.novaSenha).ToSha512();
+        _db.SaveChanges();
+
+        return Ok();
+    }
+
+
+    [HttpGet("[action]")]
+    public IActionResult Eu()
+    {
+        int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
+        var localizado = _db.SegUsuario
+            .AsNoTracking()
+            .FirstOrDefault(x => x.Id == idLogado);
+
+        if (localizado is null)
+            return BadRequest(new MensagemErro("Usuário não localizado"));
+
+        var equipes = _db.SegEquipe
+            .AsNoTracking()
+            .Where(p => p.IdUsuario == idLogado)
+            .Include(p => p.Organograma)
+            .ToList();
+
+        localizado.Locacoes = equipes;
+
+        return Ok(localizado);
+    }
+
+
+    [HttpPost("[action]")]
+    public IActionResult AlteraEmail([FromBody] JsonElement prm)
+    {
+        if (prm.TryGetProperty("email", out JsonElement jemail))
+        {
+            string email = jemail.GetString()?.Trim()?? string.Empty;
+            int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
+            var localizado = _db.SegUsuario
+                .FirstOrDefault(x => x.Id == idLogado);
+            if (localizado is null)
+                return BadRequest(new MensagemErro("Usuário não localizado"));
+
+            localizado.Email = email;
+            _db.SaveChanges();
+
+            return Ok(localizado);
+        }
+        return BadRequest(new MensagemErro("falha ao obter parâmetro"));
+    }
+
+
+
+
     private ConexaoLdap DadosConexaoLdap()
     {
         List<long> orgs = new() { 2, 6, 7, 8, 9, 10, 11, 12 };
@@ -422,6 +494,7 @@ public class Usuario : Controller
     }
 
 
+    public record TrocadeSenha(string senhaAtual, string novaSenha);
     public record UsuarioCadastro(int id, string identificacao, string email, bool administrador, bool ativo, bool local);
 
     public record UsrForm

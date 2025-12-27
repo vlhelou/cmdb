@@ -1,6 +1,7 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TabsModule } from 'primeng/tabs';
+import { ActivatedRoute } from '@angular/router';
 
 import { IcAutocompleteComponent } from 'src/app/ic/ic-autocomplete/ic-autocomplete.component';
 import { FamiliaCompletaComponent } from 'src/app/ic/familia-completa/familia-completa.component'
@@ -42,9 +43,18 @@ export class PrincipalComponent implements OnInit {
     usaEmbedding = signal<boolean>(false);
     pesquisaEmbeddingPrompt: string = "";
     icsPromptResultado=signal< icIc[]>([]); 
-    constructor(private srv: IcService) { }
+    constructor(private srv: IcService,private route: ActivatedRoute) { }
 
     ngOnInit(): void {
+        const pid = this.route.snapshot.paramMap.get('id');
+        const id = parseInt(pid || '');
+        if (id){
+            this.srv.BuscaComFamilia(id).subscribe({
+                next: (ret) => {
+                    this.icSelecionado.set(ret);
+                }
+            });
+        }
         this.srv.UsaEmbedding().subscribe({
             next: (ret) => {
                 this.usaEmbedding.set(ret);

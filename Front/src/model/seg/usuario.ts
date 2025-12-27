@@ -1,5 +1,5 @@
 // import { SegOrganograma } from './Organograma';
-// import { SegEquipe } from './Equipe';
+import { segEquipe } from 'src/model/seg/equipe';
 
 
 export interface segUsuario {
@@ -10,5 +10,5 @@ export interface segUsuario {
     local: boolean;
     email: string;
 
-    // Locacoes: SegEquipe[];
+    locacoes: segEquipe[] | null;
 }

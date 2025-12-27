@@ -53,7 +53,7 @@ if (db == null)
     throw new Exception("Erro ao conectar ao banco de dados");
 
 var valoresEmbed = db.CorpConfiguracao.AsNoTracking().Where(p => p.Id == 26 || p.Id == 27 || p.Id == 28).ToList();
-string urlEmbed = valoresEmbed.FirstOrDefault(p => p.Id == 26)?.ValorTexto ?? "";
+string urlEmbed = valoresEmbed.FirstOrDefault(p => p.Id == 26)?.ValorTexto ?? "http://localhost:11434";
 string modeloEmbed = valoresEmbed.FirstOrDefault(p => p.Id == 27)?.ValorTexto ?? "";
 bool ativoEmbed = valoresEmbed.FirstOrDefault(p => p.Id == 28)?.ValorBoleano ?? false;
 

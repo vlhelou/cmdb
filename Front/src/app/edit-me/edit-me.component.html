@@ -1,0 +1,87 @@
+<p-confirmpopup />
+
+<p-dialog header="Conteúdo" [modal]="true" [(visible)]="mostraSegredo">
+    @if (conteudo()) {
+    <div>
+        {{ conteudo() }}
+    </div>
+    }
+
+</p-dialog>
+
+
+@if(eu()){
+
+<div class="row">
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header">Meus dados</div>
+            <div class="card-body">
+                <div>
+                    <label for="nome">Identificacao:</label>
+                    <input id="nome" type="text" disabled [value]="eu()?.identificacao" class="form-control" />
+                </div>
+                <div>
+                    <label for="nome">Ativo:</label>
+                    <input id="nome" type="text" disabled [value]="eu()?.ativo" class="form-control" />
+                </div>
+                <div>
+                    <label for="nome">Email:</label>
+                    <input id="nome" type="text" [(ngModel)]="email" class="form-control" />
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <button class="btn btn-primary" (click)="alteraEmail()"><i class="pi pi-save"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header">Meus organogramas</div>
+            <div class="card-body">
+                @if(equipes() ){
+
+                <p-table [value]="equipes()">
+                    <ng-template #body let-item>
+                        <tr>
+                            <td>{{ item.organograma.nome }}
+                                <a href="javascript:void(0)" class="text-danger float-end"
+                                    (click)="exclusaoOrganograma($event, item.id)"><i class="pi pi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                }
+
+
+
+            </div>
+        </div>
+    </div>
+    @if(segredos().length > 0){
+
+    <div class="col mt-2">
+        <div class="card">
+            <div class="card-header">Meus segredos</div>
+            <div class="card-body">
+                <p-table [value]="segredos()">
+                    <ng-template #body let-item>
+                        <tr>
+                            <td>
+                                <a [routerLink]="['/home', item.idIc ]">
+
+                                    {{ item.ic.nomeCompleto }}
+                                </a>
+                                <a href="javascript:void(0)" class="text-end float-end"
+                                    (click)="mostraConteudo(item.id)"><i class="pi pi-eye"></i></a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+    }
+</div>
+}

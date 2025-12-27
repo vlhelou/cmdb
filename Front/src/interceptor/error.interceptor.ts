@@ -13,6 +13,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   return next(req).pipe(
     catchError(error => {
+      if (error.status === 401) {
+        srv.Logout();
+        router.navigate(['/login']);
+      }
       const eleErro = document.getElementById('dvErro');
       if (eleErro) {
 
