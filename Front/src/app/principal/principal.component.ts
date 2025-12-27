@@ -48,7 +48,6 @@ export class PrincipalComponent implements OnInit {
     ngOnInit(): void {
         const pid = this.route.snapshot.paramMap.get('id');
         const id = parseInt(pid || '');
-        console.log('Parametro id:', id);
         if (id){
             this.srv.BuscaComFamilia(id).subscribe({
                 next: (ret) => {

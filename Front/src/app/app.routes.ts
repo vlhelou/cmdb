@@ -13,16 +13,16 @@ import { EditMeComponent } from 'src/app/edit-me/edit-me.component';
 
 
 export const routes: Routes = [
-    { path: 'home', component: PrincipalComponent, canActivate: [autenticadoGuard] },
-    { path: 'home/:id', component: PrincipalComponent, canActivate: [autenticadoGuard] },
-    { path: 'organograma', component: OrganogramaPrincipalComponent, canActivate: [adminGuard] },
-    { path: 'configuracao', component: ConfiguracaoComponent, canActivate: [adminGuard] },
-    { path: 'usuario/cadastro', component: UsuarioCadastroComponent, canActivate: [adminGuard] },
-    { path: 'tipo', component: TipoComponent, canActivate: [adminGuard] },
-    { path: 'publico', component: PublicoComponent },
-    { path: 'recuperacao-senha', component: RecuperacaoSenhaComponent },
-    { path: 'embedded', component: EmbeddedComponent, canActivate: [adminGuard] },
-    { path: 'edit-me', component: EditMeComponent, canActivate: [autenticadoGuard] },
+    { path: 'home', component: PrincipalComponent, canActivate: [autenticadoGuard], title: 'CMDB' },
+    { path: 'home/:id', component: PrincipalComponent, canActivate: [autenticadoGuard], title: 'CMDB' },
+    { path: 'organograma', component: OrganogramaPrincipalComponent, canActivate: [adminGuard], title: 'Organogramas' },
+    { path: 'configuracao', component: ConfiguracaoComponent, canActivate: [adminGuard], title: 'Configuração' },
+    { path: 'usuario/cadastro', component: UsuarioCadastroComponent, canActivate: [adminGuard], title: 'Cadastro de Usuário' },
+    { path: 'tipo', component: TipoComponent, canActivate: [adminGuard], title: 'Tipos' },
+    { path: 'publico', component: PublicoComponent, title: 'CMDB - Acesso Público' },
+    { path: 'recuperacao-senha', component: RecuperacaoSenhaComponent, title: 'Recuperação de Senha' },
+    { path: 'embedded', component: EmbeddedComponent, canActivate: [adminGuard], title: 'Embedded' },
+    { path: 'edit-me', component: EditMeComponent, canActivate: [autenticadoGuard], title: 'Editar Perfil' },
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: '**', redirectTo: '/home' },
 ];
