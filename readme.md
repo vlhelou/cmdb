@@ -17,8 +17,8 @@ Software para controlar os IC´s de forma hierarquica, com buscas variadas, por 
 
 
 ## Criando o banco de dados
-
-
+Observação: quando o bando de dados é criado, tem o usuário **admin**, com com a senha **123456**
+é recomendado que no primeiro acesso já coloque uma senha forte.
 
 1. Criar uma base de dados, normalmente utilizo o nome **cmdb**;
 2. Criar um usuário com o nome **usrapp**;
