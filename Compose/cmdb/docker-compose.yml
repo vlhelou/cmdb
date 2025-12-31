@@ -1,0 +1,30 @@
+networks:
+  cmdb_network:
+    driver: bridge
+
+services:
+  cmdb_db:
+    build:
+      context: ../../Banco/docker/
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword 
+      - TZ=America/Sao_Paulo
+    networks:
+      - cmdb_network
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../../Banco/docker/scripts:/docker-entrypoint-initdb.d/
+  cmdb_app:
+    image: vlhelou/cmdb:latest
+    restart: always
+    environment:
+      - CMDB_DB=${DB}
+    networks:
+      - cmdb_network
+    ports:
+      - "8080:8080"
+    depends_on:
+      - cmdb_db

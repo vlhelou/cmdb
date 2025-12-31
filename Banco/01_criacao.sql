@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict UOljgOlUJ3iFVry5Oo4cvOrDJkU5hpvNienOFJPOp7VNgYK3TfhEFltqvtOsqsM
+\restrict MNEsMzWYHjcUL22VtcFBQR9o4Zbdd5Kgb1OlSMxbFelzZHaPVsGnVlxCAtGQh2R
 
 -- Dumped from database version 18.1 (Debian 18.1-1.pgdg13+2)
 -- Dumped by pg_dump version 18.1 (Debian 18.1-1.pgdg13+2)
@@ -2392,5 +2392,5 @@ GRANT SELECT,USAGE ON SEQUENCE servico.sqchamado TO usrapp;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict UOljgOlUJ3iFVry5Oo4cvOrDJkU5hpvNienOFJPOp7VNgYK3TfhEFltqvtOsqsM
+\unrestrict MNEsMzWYHjcUL22VtcFBQR9o4Zbdd5Kgb1OlSMxbFelzZHaPVsGnVlxCAtGQh2R
 
