@@ -17,7 +17,7 @@ Software para controlar os IC´s de forma hierarquica, com buscas variadas, por 
 
 
 
-## configurando a aplicação
+## Instação via docker
 
 É necessário configurar uma variável de ambiente cmdb\_db contendo a string de conexão, pode substituir o caractere "=" por ":"
 

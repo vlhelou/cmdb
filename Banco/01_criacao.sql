@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict XKwH5hOwVfzI5rj2u7Yh8NJk7lE61o24weSJUlruF5QYzppqQKB3zx26D1BKDrW
+\restrict UOljgOlUJ3iFVry5Oo4cvOrDJkU5hpvNienOFJPOp7VNgYK3TfhEFltqvtOsqsM
 
 -- Dumped from database version 18.1 (Debian 18.1-1.pgdg13+2)
 -- Dumped by pg_dump version 18.1 (Debian 18.1-1.pgdg13+2)
@@ -894,7 +894,8 @@ CREATE MATERIALIZED VIEW ic.vw_ic AS
             concat('.', ic.nome) AS nomecompleto,
             ''::text AS listaancestrais,
             to_tsvector('portuguese'::regconfig, concat(' ', ic.nome, ' ', ic.propriedades)) AS pesquisats,
-            0 AS nivel
+            0 AS nivel,
+            ic.observacao
            FROM ic.ic
           WHERE (ic.idpai IS NULL)
         UNION ALL
@@ -910,7 +911,8 @@ CREATE MATERIALIZED VIEW ic.vw_ic AS
             concat(a.nomecompleto, '.', filho.nome) AS nomecompleto,
             concat(a.listaancestrais, ',', a.id) AS listaancestrais,
             to_tsvector('portuguese'::regconfig, concat(a.nomecompleto, ' ', filho.nome, ' ', filho.propriedades)) AS pesquisats,
-            (a.nivel + 1)
+            (a.nivel + 1),
+            filho.observacao
            FROM ic.ic filho,
             herdeiros a
           WHERE ((filho.idpai = a.id) AND (filho.id IS NOT NULL))
@@ -927,7 +929,8 @@ CREATE MATERIALIZED VIEW ic.vw_ic AS
     substr(nomecompleto, 2) AS nomecompleto,
     listaancestrais,
     pesquisats,
-    nivel
+    nivel,
+    observacao
    FROM herdeiros
   WITH NO DATA;
 
@@ -1532,13 +1535,6 @@ CREATE INDEX ix_servicoic_ic ON chamado.servicoic USING btree (idic);
 --
 
 CREATE UNIQUE INDEX ix_corptiponomegrupo ON corp.tipo USING btree (lower((grupo)::text), lower((nome)::text));
-
-
---
--- Name: idx_ic_embedding; Type: INDEX; Schema: ic; Owner: postgres
---
-
-CREATE INDEX idx_ic_embedding ON ic.ic USING hnsw (embedding public.vector_l2_ops);
 
 
 --
@@ -2291,7 +2287,7 @@ GRANT SELECT,USAGE ON SEQUENCE ic.sqsegredo TO usrapp;
 -- Name: TABLE vw_ic; Type: ACL; Schema: ic; Owner: postgres
 --
 
-GRANT MAINTAIN ON TABLE ic.vw_ic TO usrapp;
+GRANT SELECT,MAINTAIN ON TABLE ic.vw_ic TO usrapp;
 
 
 --
@@ -2396,5 +2392,5 @@ GRANT SELECT,USAGE ON SEQUENCE servico.sqchamado TO usrapp;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict XKwH5hOwVfzI5rj2u7Yh8NJk7lE61o24weSJUlruF5QYzppqQKB3zx26D1BKDrW
+\unrestrict UOljgOlUJ3iFVry5Oo4cvOrDJkU5hpvNienOFJPOp7VNgYK3TfhEFltqvtOsqsM
 

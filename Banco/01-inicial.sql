@@ -7,8 +7,10 @@ create user usrapp with password 'usrapp';
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.0 (Debian 17.0-1.pgdg120+1)
--- Dumped by pg_dump version 17.0 (Debian 17.0-1.pgdg120+1)
+\restrict UOljgOlUJ3iFVry5Oo4cvOrDJkU5hpvNienOFJPOp7VNgYK3TfhEFltqvtOsqsM
+
+-- Dumped from database version 18.1 (Debian 18.1-1.pgdg13+2)
+-- Dumped by pg_dump version 18.1 (Debian 18.1-1.pgdg13+2)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -88,6 +90,20 @@ CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
+-- Name: vector; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS vector WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION vector; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION vector IS 'vector data type and ivfflat and hnsw access methods';
 
 
 --
@@ -669,7 +685,9 @@ CREATE TABLE ic.ic (
     ativo boolean NOT NULL,
     propriedades json,
     idtipo integer NOT NULL,
-    idorganograma integer
+    idorganograma integer,
+    embedding public.vector(1024),
+    observacao character varying(1000)
 );
 
 
@@ -881,7 +899,8 @@ CREATE MATERIALIZED VIEW ic.vw_ic AS
             concat('.', ic.nome) AS nomecompleto,
             ''::text AS listaancestrais,
             to_tsvector('portuguese'::regconfig, concat(' ', ic.nome, ' ', ic.propriedades)) AS pesquisats,
-            0 AS nivel
+            0 AS nivel,
+            ic.observacao
            FROM ic.ic
           WHERE (ic.idpai IS NULL)
         UNION ALL
@@ -897,7 +916,8 @@ CREATE MATERIALIZED VIEW ic.vw_ic AS
             concat(a.nomecompleto, '.', filho.nome) AS nomecompleto,
             concat(a.listaancestrais, ',', a.id) AS listaancestrais,
             to_tsvector('portuguese'::regconfig, concat(a.nomecompleto, ' ', filho.nome, ' ', filho.propriedades)) AS pesquisats,
-            (a.nivel + 1)
+            (a.nivel + 1),
+            filho.observacao
            FROM ic.ic filho,
             herdeiros a
           WHERE ((filho.idpai = a.id) AND (filho.id IS NOT NULL))
@@ -914,7 +934,8 @@ CREATE MATERIALIZED VIEW ic.vw_ic AS
     substr(nomecompleto, 2) AS nomecompleto,
     listaancestrais,
     pesquisats,
-    nivel
+    nivel,
+    observacao
    FROM herdeiros
   WITH NO DATA;
 
@@ -1298,446 +1319,6 @@ ALTER TABLE ONLY mudanca.etapaarquivo ALTER COLUMN id SET DEFAULT nextval('mudan
 --
 
 ALTER TABLE ONLY mudanca.mudanca ALTER COLUMN id SET DEFAULT nextval('mudanca.mudanca_id_seq'::regclass);
-
-
---
--- Data for Name: chamado; Type: TABLE DATA; Schema: chamado; Owner: postgres
---
-
-COPY chamado.chamado (id, idautor, idsolicitante, datacriacao, slaprevisto, idservicoandamento, idsituacao, idorganograma) FROM stdin;
-\.
-
-
---
--- Data for Name: servico; Type: TABLE DATA; Schema: chamado; Owner: postgres
---
-
-COPY chamado.servico (id, datacriacao, idchamado, idservico, idatendente, slaprevisto, respostaformulario, idsituacao, slasaldo, slaoriginal) FROM stdin;
-\.
-
-
---
--- Data for Name: servicoic; Type: TABLE DATA; Schema: chamado; Owner: postgres
---
-
-COPY chamado.servicoic (id, idservico, idic) FROM stdin;
-\.
-
-
---
--- Data for Name: servicoinformacao; Type: TABLE DATA; Schema: chamado; Owner: postgres
---
-
-COPY chamado.servicoinformacao (id, idservico, data, idautor, informacao, idarquivo) FROM stdin;
-\.
-
-
---
--- Data for Name: situacao; Type: TABLE DATA; Schema: chamado; Owner: postgres
---
-
-COPY chamado.situacao (id, nome, contasla) FROM stdin;
-\.
-
-
---
--- Data for Name: arquivo; Type: TABLE DATA; Schema: corp; Owner: postgres
---
-
-COPY corp.arquivo (id, nome, tipo, conteudo) FROM stdin;
-\.
-
-
---
--- Data for Name: configuracao; Type: TABLE DATA; Schema: corp; Owner: postgres
---
-
-COPY corp.configuracao (id, idpai, nome, ativo, tipovalor, valornumerico, valortexto, valordata, valorcomplexo, valorsensivel, ajuda, valorboleano) FROM stdin;
-1	\N	CMDB	t	grupo	\N	\N	\N	\N	f	\N	\N
-4	3	AD	t	grupo	\N	\N	\N	\N	f	\N	\N
-9	4	Searchbase	t	texto	\N	dc=cmdb,dc=com	\N	\N	f	\N	\N
-3	1	Conexão	t	grupo	\N	\N	\N	\N	f	\N	\N
-12	4	Pesquisa nome usuário	t	texto	\N	(&(objectClass=person)(uid={0}))	\N	\N	f	\N	\N
-10	4	Propriedades	t	complexo	\N	\N	\N	{\r\n    "Email":"mail",\r\n    "Descricao":"description",\r\n    "Nome":"Name",\r\n    "SammAccount":"SamAccountName"\r\n}	f	\N	\N
-14	1	Segurança	t	grupo	\N	\N	\N	\N	f	\N	\N
-15	14	JWT	t	grupo	\N	\N	\N	\N	f	\N	\N
-2	14	chave	t	texto	\N	bcf4a772-a7b9-4ed5-9a99-f30f96cbe452	\N	\N	f	\N	\N
-8	4	Senha	t	texto	\N	veXdgbn14GuHsjSJl14gdg==	\N	\N	t	\N	\N
-6	4	Servidor	t	texto	\N	192.168.0.100	\N	\N	f	\N	\N
-16	15	Chave JWT	t	texto	\N	1XYXJgvc9NBI+bVySCl3HLAKl5U4gjPG2saPjwL5bGdm5D0omDVt5geMxMfIGEttl8WTGvw7f73I+2sMYjDoDMZU5+M9WLrEW1EV2nFfFI3PE2AOyBoaobkMgLl7jzfcYqyb5oC6GP1JEyyNa70twA==	\N	\N	f	\N	\N
-11	4	Usuário DN	t	texto	\N	uid=john,ou=People,dc=cmdb,dc=com	\N	\N	f	\N	\N
-18	3	SMTP	t	grupo	\N	\N	\N	\N	f	\N	\N
-19	18	Servidor	t	texto	\N	localhost	\N	\N	f	\N	\N
-21	18	Autenticado	t	boleano	\N	22	\N	\N	f	\N	f
-22	18	Usuario	t	texto	\N	\N	\N	\N	f	\N	\N
-24	18	Senha	t	texto	\N	\N	\N	\N	t	\N	\N
-20	18	Porta	t	numerico	25.0000	22	\N	\N	f	\N	\N
-23	18	SSH	t	boleano	\N	\N	\N	\N	f	\N	f
-7	4	Porta	t	numerico	389.0000	\N	\N	\N	f	\N	\N
-17	15	Duração Horas	t	numerico	240.0000	\N	\N	\N	f	\N	\N
-\.
-
-
---
--- Data for Name: expediente; Type: TABLE DATA; Schema: corp; Owner: postgres
---
-
-COPY corp.expediente (id, data, turno1hrinicio, turno1hrtermino, turno2hrinicio, turno2hrtermino) FROM stdin;
-\.
-
-
---
--- Data for Name: tipo; Type: TABLE DATA; Schema: corp; Owner: postgres
---
-
-COPY corp.tipo (id, nome, grupo, ativo) FROM stdin;
-1	Outros	Tipo	t
-8	Servido	Tipo	t
-9	Serviço	Tipo	t
-\.
-
-
---
--- Data for Name: conhecimento; Type: TABLE DATA; Schema: ic; Owner: postgres
---
-
-COPY ic.conhecimento (id, idic, problema, solucao, idautor, dataalteracao) FROM stdin;
-4	1	outra coisa	hjjh	1	2025-10-05 20:45:58.10271-03
-\.
-
-
---
--- Data for Name: dependencia; Type: TABLE DATA; Schema: ic; Owner: postgres
---
-
-COPY ic.dependencia (id, idicprincipal, idicdependente, idautor, dataalteracao, observacao) FROM stdin;
-1	2	4	1	2025-10-16 19:13:48.962168-03	kjkj
-\.
-
-
---
--- Data for Name: ic; Type: TABLE DATA; Schema: ic; Owner: postgres
---
-
-COPY ic.ic (id, idpai, nome, ativo, propriedades, idtipo, idorganograma) FROM stdin;
-1	\N	Root	t	[{"Nome": "yuy", "Valor": "uyuy"}]	1	1
-4	2	outro filho	t	[]	1	\N
-5	2	mais um filho	t	[]	1	\N
-6	1	outro filho	t	[]	1	\N
-3	2	filho teste	t	[{"Nome": "kjkj", "Valor": "kjkj"}]	1	\N
-2	1	nome teste	t	[{"Nome": "yuy", "Valor": "uyuy"}, {"Nome": "4554", "Valor": "5454"}]	1	1
-7	6	neto 4	t	[]	1	\N
-\.
-
-
---
--- Data for Name: incidente; Type: TABLE DATA; Schema: ic; Owner: postgres
---
-
-COPY ic.incidente (id, inicio, termino, causa, solucao, sintoma) FROM stdin;
-\.
-
-
---
--- Data for Name: incidenteic; Type: TABLE DATA; Schema: ic; Owner: postgres
---
-
-COPY ic.incidenteic (id, idincidente, idic) FROM stdin;
-\.
-
-
---
--- Data for Name: incidentemensagem; Type: TABLE DATA; Schema: ic; Owner: postgres
---
-
-COPY ic.incidentemensagem (id, idincidente, idautor, data, mensagem) FROM stdin;
-\.
-
-
---
--- Data for Name: incidenteorganograma; Type: TABLE DATA; Schema: ic; Owner: postgres
---
-
-COPY ic.incidenteorganograma (id, idincidente, idorganograma) FROM stdin;
-\.
-
-
---
--- Data for Name: segredo; Type: TABLE DATA; Schema: ic; Owner: postgres
---
-
-COPY ic.segredo (id, idic, conteudo, idusuariodono, idorganogramadono, algoritmo) FROM stdin;
-3	3	VfPcchPxa4SREhsGMxvlaqZETNvKV52NJECZhijFIaM=	\N	2	AES
-6	1	RM7vP5UWY3+GF2DLxDj9YA==	\N	2	AES
-7	1	/EXMq4jr3aINxpkZAwPolg==	1	\N	AES
-8	7	D04Vtw5EqQk3cLROQObXew==	\N	2	AES
-\.
-
-
---
--- Data for Name: etapaarquivo; Type: TABLE DATA; Schema: mudanca; Owner: postgres
---
-
-COPY mudanca.etapaarquivo (id) FROM stdin;
-\.
-
-
---
--- Data for Name: mudanca; Type: TABLE DATA; Schema: mudanca; Owner: postgres
---
-
-COPY mudanca.mudanca (id, datacriacao, inicioprevisto, idsituacao) FROM stdin;
-\.
-
-
---
--- Data for Name: equipe; Type: TABLE DATA; Schema: seg; Owner: postgres
---
-
-COPY seg.equipe (id, idusuario, idorganograma, idautor, data) FROM stdin;
-2	1	5	1	2025-08-16 20:19:56.821085-03
-6	8	1	1	2025-12-03 21:11:18.823636-03
-\.
-
-
---
--- Data for Name: organograma; Type: TABLE DATA; Schema: seg; Owner: postgres
---
-
-COPY seg.organograma (id, idpai, nome, ativo, gd) FROM stdin;
-1	\N	Corp	t	fe12a60b-fb0d-4967-bd0b-b736d0edbc3e
-3	2	Estagiario	t	6b5d816d-10ec-4ec2-bd82-25f6317fd263
-4	1	Infra	t	dd21caf2-bc40-4c40-8516-68cd08cee5d6
-5	4	Segurança	t	5ba312df-2d25-4408-acdf-395b159febc4
-2	1	Desenvolvimento	t	88b0ae78-df9b-4999-b1b5-5d118e6876d1
-6	4	estag 2	t	00000000-0000-0000-0000-000000000000
-7	2	front end	t	00000000-0000-0000-0000-000000000000
-8	4	rede	t	00000000-0000-0000-0000-000000000000
-\.
-
-
---
--- Data for Name: usuario; Type: TABLE DATA; Schema: seg; Owner: postgres
---
-
-COPY seg.usuario (id, identificacao, gd, senha, administrador, ativo, local, email, chavetrocasenha, chavevalidade) FROM stdin;
-8	john	e2f7b8d8-62d6-4985-8441-8c06c54dd05f	\N	f	t	f	beltrano@com.br	\N	\N
-1	admin	5c355ca3-8e6d-49ed-97a1-3f6eeff85d27	d2160e670a6261bcd5164a5b2164a89e98a34b54ccd59944ccc68fcc725f12ce3746367919d55fa43101e0d2e1f2ff1c1c824499622e0643024f9d77bfebcbd2	t	t	t	teste@gmail.com	\N	\N
-10	Outro	12c3e72f-5b03-4316-bb4e-6b5de047957e	3c11e4f316c956a27655902dc1a19b925b8887d59eff791eea63edc8a05454ec594d5eb0f40ae151df87acd6e101761ecc5bb0d3b829bf3a85f5432493b22f37	f	t	t	teste@com	\N	\N
-\.
-
-
---
--- Data for Name: servico; Type: TABLE DATA; Schema: servico; Owner: postgres
---
-
-COPY servico.servico (id, idorganograma, nome, descricao, formulario, ativo, sla, orientacao, tempoestimadoexecucao) FROM stdin;
-\.
-
-
---
--- Data for Name: servicoarquivos; Type: TABLE DATA; Schema: servico; Owner: postgres
---
-
-COPY servico.servicoarquivos (id, idservico, idarquivo, descricao) FROM stdin;
-\.
-
-
---
--- Data for Name: servicoativos; Type: TABLE DATA; Schema: servico; Owner: postgres
---
-
-COPY servico.servicoativos (id, idservico, idic) FROM stdin;
-\.
-
-
---
--- Name: chamado_id_seq; Type: SEQUENCE SET; Schema: chamado; Owner: postgres
---
-
-SELECT pg_catalog.setval('chamado.chamado_id_seq', 1, false);
-
-
---
--- Name: chamadoservico_id_seq; Type: SEQUENCE SET; Schema: chamado; Owner: postgres
---
-
-SELECT pg_catalog.setval('chamado.chamadoservico_id_seq', 1, false);
-
-
---
--- Name: servicoic_id_seq; Type: SEQUENCE SET; Schema: chamado; Owner: postgres
---
-
-SELECT pg_catalog.setval('chamado.servicoic_id_seq', 1, false);
-
-
---
--- Name: servicoinformacao_id_seq; Type: SEQUENCE SET; Schema: chamado; Owner: postgres
---
-
-SELECT pg_catalog.setval('chamado.servicoinformacao_id_seq', 1, false);
-
-
---
--- Name: sqchamado; Type: SEQUENCE SET; Schema: chamado; Owner: postgres
---
-
-SELECT pg_catalog.setval('chamado.sqchamado', 1, false);
-
-
---
--- Name: configuracao_id_seq; Type: SEQUENCE SET; Schema: corp; Owner: postgres
---
-
-SELECT pg_catalog.setval('corp.configuracao_id_seq', 24, true);
-
-
---
--- Name: expediente_id_seq; Type: SEQUENCE SET; Schema: corp; Owner: postgres
---
-
-SELECT pg_catalog.setval('corp.expediente_id_seq', 1, false);
-
-
---
--- Name: sqtipo; Type: SEQUENCE SET; Schema: corp; Owner: postgres
---
-
-SELECT pg_catalog.setval('corp.sqtipo', 9, true);
-
-
---
--- Name: incidentemensagem_id_seq; Type: SEQUENCE SET; Schema: ic; Owner: postgres
---
-
-SELECT pg_catalog.setval('ic.incidentemensagem_id_seq', 1, false);
-
-
---
--- Name: incidenteorganograma_id_seq; Type: SEQUENCE SET; Schema: ic; Owner: postgres
---
-
-SELECT pg_catalog.setval('ic.incidenteorganograma_id_seq', 1, false);
-
-
---
--- Name: segredo_id_seq; Type: SEQUENCE SET; Schema: ic; Owner: postgres
---
-
-SELECT pg_catalog.setval('ic.segredo_id_seq', 8, true);
-
-
---
--- Name: sqconhecimento; Type: SEQUENCE SET; Schema: ic; Owner: postgres
---
-
-SELECT pg_catalog.setval('ic.sqconhecimento', 4, true);
-
-
---
--- Name: sqdependencia; Type: SEQUENCE SET; Schema: ic; Owner: postgres
---
-
-SELECT pg_catalog.setval('ic.sqdependencia', 8, true);
-
-
---
--- Name: sqic; Type: SEQUENCE SET; Schema: ic; Owner: postgres
---
-
-SELECT pg_catalog.setval('ic.sqic', 7, true);
-
-
---
--- Name: sqincidente; Type: SEQUENCE SET; Schema: ic; Owner: postgres
---
-
-SELECT pg_catalog.setval('ic.sqincidente', 1, false);
-
-
---
--- Name: sqincidenteacao; Type: SEQUENCE SET; Schema: ic; Owner: postgres
---
-
-SELECT pg_catalog.setval('ic.sqincidenteacao', 1, false);
-
-
---
--- Name: sqincidenteic; Type: SEQUENCE SET; Schema: ic; Owner: postgres
---
-
-SELECT pg_catalog.setval('ic.sqincidenteic', 1, false);
-
-
---
--- Name: sqsegredo; Type: SEQUENCE SET; Schema: ic; Owner: postgres
---
-
-SELECT pg_catalog.setval('ic.sqsegredo', 1, false);
-
-
---
--- Name: etapaarquivo_id_seq; Type: SEQUENCE SET; Schema: mudanca; Owner: postgres
---
-
-SELECT pg_catalog.setval('mudanca.etapaarquivo_id_seq', 1, false);
-
-
---
--- Name: mudanca_id_seq; Type: SEQUENCE SET; Schema: mudanca; Owner: postgres
---
-
-SELECT pg_catalog.setval('mudanca.mudanca_id_seq', 1, false);
-
-
---
--- Name: sqequipe; Type: SEQUENCE SET; Schema: seg; Owner: postgres
---
-
-SELECT pg_catalog.setval('seg.sqequipe', 6, true);
-
-
---
--- Name: sqorganograma; Type: SEQUENCE SET; Schema: seg; Owner: postgres
---
-
-SELECT pg_catalog.setval('seg.sqorganograma', 8, true);
-
-
---
--- Name: squsuario; Type: SEQUENCE SET; Schema: seg; Owner: postgres
---
-
-SELECT pg_catalog.setval('seg.squsuario', 10, true);
-
-
---
--- Name: sqchamado; Type: SEQUENCE SET; Schema: servico; Owner: postgres
---
-
-SELECT pg_catalog.setval('servico.sqchamado', 1, false);
-
-
---
--- Name: sqservico; Type: SEQUENCE SET; Schema: servico; Owner: postgres
---
-
-SELECT pg_catalog.setval('servico.sqservico', 1, false);
-
-
---
--- Name: sqservicoarquivos; Type: SEQUENCE SET; Schema: servico; Owner: postgres
---
-
-SELECT pg_catalog.setval('servico.sqservicoarquivos', 1, false);
-
-
---
--- Name: sqservicoativos; Type: SEQUENCE SET; Schema: servico; Owner: postgres
---
-
-SELECT pg_catalog.setval('servico.sqservicoativos', 1, false);
 
 
 --
@@ -2711,7 +2292,7 @@ GRANT SELECT,USAGE ON SEQUENCE ic.sqsegredo TO usrapp;
 -- Name: TABLE vw_ic; Type: ACL; Schema: ic; Owner: postgres
 --
 
-GRANT SELECT ON TABLE ic.vw_ic TO usrapp;
+GRANT SELECT,MAINTAIN ON TABLE ic.vw_ic TO usrapp;
 
 
 --
@@ -2813,20 +2394,79 @@ GRANT SELECT,USAGE ON SEQUENCE servico.sqchamado TO usrapp;
 
 
 --
--- Name: vw_ic; Type: MATERIALIZED VIEW DATA; Schema: ic; Owner: postgres
---
-
-REFRESH MATERIALIZED VIEW ic.vw_ic;
-
-
---
--- Name: vw_organograma; Type: MATERIALIZED VIEW DATA; Schema: seg; Owner: postgres
---
-
-REFRESH MATERIALIZED VIEW seg.vw_organograma;
-
-
---
 -- PostgreSQL database dump complete
 --
 
+\unrestrict UOljgOlUJ3iFVry5Oo4cvOrDJkU5hpvNienOFJPOp7VNgYK3TfhEFltqvtOsqsM
+
+REFRESH MATERIALIZED view ic.vw_ic;
+
+REFRESH MATERIALIZED view seg.vw_organograma;
+
+
+/*			Tipo 			*/
+INSERT INTO corp.tipo (id,nome,grupo,ativo) VALUES
+	 (1,'Outros','Tipo',true);
+
+SELECT setval('corp.sqtipo', 1 );
+
+
+/*			Organograma 			*/
+INSERT INTO seg.organograma (id,idpai,nome,ativo,gd) VALUES
+	 (1,NULL,'Corp',true,'fe12a60b-fb0d-4967-bd0b-b736d0edbc3e'::uuid);
+
+SELECT setval('seg.sqorganograma', 1 );
+
+
+/*			IC 			*/
+INSERT INTO ic.ic (id,idpai,nome,ativo,propriedades,idtipo,idorganograma) VALUES
+	 (1,NULL,'Root',true,null,1,1);
+
+SELECT setval('ic.sqic', 1 );
+
+
+/*			IC 			*/
+INSERT INTO seg.usuario (id,identificacao,gd,senha,administrador,ativo,"local",email,chavetrocasenha,chavevalidade) VALUES
+	 (1,'admin','5c355ca3-8e6d-49ed-97a1-3f6eeff85d27'::uuid,'d2160e670a6261bcd5164a5b2164a89e98a34b54ccd59944ccc68fcc725f12ce3746367919d55fa43101e0d2e1f2ff1c1c824499622e0643024f9d77bfebcbd2',true,true,true,'teste@gmail.com',NULL,NULL);
+
+SELECT setval('seg.squsuario', 1 );
+
+
+
+/*			Configuracao 			*/
+INSERT INTO corp.configuracao (id,idpai,nome,ativo,tipovalor,valornumerico,valortexto,valordata,valorcomplexo,valorsensivel,ajuda,valorboleano) VALUES
+	 (1,NULL,'CMDB',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
+	 (4,3,'AD',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
+	 (9,4,'Searchbase',true,'texto',NULL,'dc=cmdb,dc=com',NULL,NULL,false,NULL,NULL),
+	 (3,1,'Conexão',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
+	 (12,4,'Pesquisa nome usuário',true,'texto',NULL,'(&(objectClass=person)(uid={0}))',NULL,NULL,false,NULL,NULL),
+	 (10,4,'Propriedades',true,'complexo',NULL,NULL,NULL,'{
+    "Email":"mail",
+    "Descricao":"description",
+    "Nome":"Name",
+    "SammAccount":"SamAccountName"
+}',false,NULL,NULL),
+	 (14,1,'Segurança',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
+	 (15,14,'JWT',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
+	 (2,14,'chave',true,'texto',NULL,'bcf4a772-a7b9-4ed5-9a99-f30f96cbe452',NULL,NULL,false,NULL,NULL),
+	 (8,4,'Senha',true,'texto',NULL,'veXdgbn14GuHsjSJl14gdg==',NULL,NULL,true,NULL,NULL);
+INSERT INTO corp.configuracao (id,idpai,nome,ativo,tipovalor,valornumerico,valortexto,valordata,valorcomplexo,valorsensivel,ajuda,valorboleano) VALUES
+	 (6,4,'Servidor',true,'texto',NULL,'192.168.0.100',NULL,NULL,false,NULL,NULL),
+	 (16,15,'Chave JWT',true,'texto',NULL,'1XYXJgvc9NBI+bVySCl3HLAKl5U4gjPG2saPjwL5bGdm5D0omDVt5geMxMfIGEttl8WTGvw7f73I+2sMYjDoDMZU5+M9WLrEW1EV2nFfFI3PE2AOyBoaobkMgLl7jzfcYqyb5oC6GP1JEyyNa70twA==',NULL,NULL,false,NULL,NULL),
+	 (11,4,'Usuário DN',true,'texto',NULL,'uid=john,ou=People,dc=cmdb,dc=com',NULL,NULL,false,NULL,NULL),
+	 (18,3,'SMTP',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
+	 (19,18,'Servidor',true,'texto',NULL,'localhost',NULL,NULL,false,NULL,NULL),
+	 (21,18,'Autenticado',true,'boleano',NULL,'22',NULL,NULL,false,NULL,false),
+	 (22,18,'Usuario',true,'texto',NULL,NULL,NULL,NULL,false,NULL,NULL),
+	 (24,18,'Senha',true,'texto',NULL,NULL,NULL,NULL,true,NULL,NULL),
+	 (20,18,'Porta',true,'numerico',25.0000,'22',NULL,NULL,false,NULL,NULL),
+	 (23,18,'SSH',true,'boleano',NULL,NULL,NULL,NULL,false,NULL,false);
+INSERT INTO corp.configuracao (id,idpai,nome,ativo,tipovalor,valornumerico,valortexto,valordata,valorcomplexo,valorsensivel,ajuda,valorboleano) VALUES
+	 (7,4,'Porta',true,'numerico',389.0000,NULL,NULL,NULL,false,NULL,NULL),
+	 (17,15,'Duração Horas',true,'numerico',240.0000,NULL,NULL,NULL,false,NULL,NULL),
+	 (25,1,'Embedding',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
+	 (27,25,'Modelo',true,'texto',NULL,'mxbai-embed-large',NULL,NULL,false,NULL,NULL),
+	 (26,25,'URL',true,'texto',NULL,'http://localhost:11434',NULL,NULL,false,NULL,NULL),
+	 (28,25,'Ativo',true,'boleano',NULL,NULL,NULL,NULL,false,NULL,true);
+
+SELECT setval('corp.configuracao_id_seq', 1 );
