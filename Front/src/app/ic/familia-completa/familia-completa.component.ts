@@ -23,9 +23,7 @@ export class FamiliaCompletaComponent {
         }               
     }
 
-
     constructor(private srv: IcService) {
-        
         effect(() => {
             if (this.ic()) {
                 this.srv.BuscaComFamilia(this.ic()!.id).subscribe({
@@ -36,14 +34,15 @@ export class FamiliaCompletaComponent {
             } else {
                 this.srv.BuscaComFamilia(1).subscribe({
                     next: (ret) => {
+                        if (!ret.filhos.length && ret.filhos.length == 0){
+                            this.selecionaIc(ret);
+                        }
                         this.familia.set(ret);
                     }
                 });
 
             }
         });
-
-
     }
 
     selecionaIc(ic:icIc) {

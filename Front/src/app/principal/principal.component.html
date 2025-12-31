@@ -1,29 +1,32 @@
 @if(usaEmbedding()){
-<p-panel header="Busca de IC via Embedding" [toggleable]="true" [collapsed]="false">
-    <div class="row">
-        <div class="col-12">
+    <div class="mb-3">
 
-            <textarea [(ngModel)]="pesquisaEmbeddingPrompt" class="form-control"></textarea>
-            <button class="btn btn-primary float-end mt-2 mb-2" (click)="pesquisaPrompt()">Pesquisa</button>
-        </div>
+        <p-panel header="Busca de IC via Embedding" [toggleable]="true" [collapsed]="false">
+            <div class="row">
+                <div class="col-12">
+        
+                    <textarea [(ngModel)]="pesquisaEmbeddingPrompt" class="form-control"></textarea>
+                    <button class="btn btn-primary float-end mt-2 mb-2" (click)="pesquisaPrompt()">Pesquisa</button>
+                </div>
+            </div>
+            @if(icsPromptResultado().length > 0){
+            <div class="row">
+        
+                <div class="col-12">
+                    <h6>Resultados da pesquisa:</h6>
+                    <ul class="list-group">
+                        @for (item of icsPromptResultado(); track item.id) {
+                        <li (click)="autoCompleteSelecionado(item)" class="list-group-item">{{ item.nomeCompleto }} <span
+                                class="float-end" style="font-size: 70%;">({{ item.tipo.nome
+                                }})</span>
+                        </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            }
+        </p-panel>
     </div>
-    @if(icsPromptResultado().length > 0){
-    <div class="row">
-
-        <div class="col-12">
-            <h6>Resultados da pesquisa:</h6>
-            <ul class="list-group">
-                @for (item of icsPromptResultado(); track item.id) {
-                <li (click)="autoCompleteSelecionado(item)" class="list-group-item">{{ item.nomeCompleto }} <span
-                        class="float-end" style="font-size: 70%;">({{ item.tipo.nome
-                        }})</span>
-                </li>
-                }
-            </ul>
-        </div>
-    </div>
-    }
-</p-panel>
 }
 
 
