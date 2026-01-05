@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.Json;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Novell.Directory.Ldap;
 
@@ -10,6 +11,7 @@ using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using static OllamaSharp.OllamaApiClient;
 
 
 namespace Cmdb.Api.Seg;
@@ -376,6 +378,32 @@ public class Usuario : Controller
         return BadRequest(new MensagemErro("falha ao obter parâmetro"));
     }
 
+
+    [HttpGet("[action]")]
+    [AllowAnonymous]
+    public IActionResult PrimeiroAcesso()
+    {
+        var primeiro = _db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 1)?.ValorBoleano ?? false;
+        return Ok(primeiro);
+    }
+
+
+    [HttpGet("[action]")]
+    [AllowAnonymous]
+    public IActionResult GravaPrimeiraSenha()
+    {
+        var primeiro = _db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 1);
+        if (primeiro is null || primeiro.ValorBoleano is null)
+            return BadRequest("Configuração não localizado");
+
+        if (!(bool)primeiro.ValorBoleano)
+            return BadRequest("Configuração não localizado");
+
+        primeiro.ValorBoleano = false;
+        _db.SaveChanges();
+
+        return Ok();
+    }
 
 
 

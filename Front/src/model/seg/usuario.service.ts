@@ -109,6 +109,10 @@ export class segUsuarioService {
         return this.http.post<segUsuario>(url, prm, httpOptions);
     }
 
+    PrimeiroAcesso(): Observable<boolean> {
+        const url = pathUrl + `PrimeiroAcesso`;
+        return this.http.get<boolean>(url);
+    }
 
 
 }

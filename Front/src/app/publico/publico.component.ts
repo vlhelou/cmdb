@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PopoverModule } from 'primeng/popover';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { segUsuarioService } from 'src/model/seg/usuario.service'
+import { DialogModule } from 'primeng/dialog';
 
 
 @Component({
     selector: 'app-publico',
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, PopoverModule, CheckboxModule],
+    imports: [FormsModule, ReactiveFormsModule, PopoverModule, CheckboxModule, DialogModule],
     templateUrl: './publico.component.html',
     styleUrl: './publico.component.scss'
 })
@@ -21,6 +22,7 @@ export class PublicoComponent {
         local: new FormControl<boolean>(true)
     });
     returnUrl: string | undefined;
+    primeiroAcesso=false;
 
 
     constructor(
@@ -31,6 +33,12 @@ export class PublicoComponent {
 
     ngOnInit(): void {
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        this.srv.PrimeiroAcesso().subscribe({
+            next: (data) => {
+                this.primeiroAcesso = data;
+                console.log('primeiroAcesso', data);    
+            }
+        });
     }
 
 
