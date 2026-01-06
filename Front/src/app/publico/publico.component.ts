@@ -5,12 +5,15 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { segUsuarioService } from 'src/model/seg/usuario.service'
 import { DialogModule } from 'primeng/dialog';
+import { passwordsMatchValidator } from '../util';
+import { PasswordModule } from 'primeng/password';
+import { ButtonModule } from 'primeng/button';
 
 
 @Component({
     selector: 'app-publico',
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, PopoverModule, CheckboxModule, DialogModule],
+    imports: [FormsModule, ReactiveFormsModule, PopoverModule, CheckboxModule, DialogModule, PasswordModule, ButtonModule],
     templateUrl: './publico.component.html',
     styleUrl: './publico.component.scss'
 })
@@ -22,7 +25,12 @@ export class PublicoComponent {
         local: new FormControl<boolean>(true)
     });
     returnUrl: string | undefined;
-    primeiroAcesso=false;
+    primeiroAcesso = false;
+
+    trocaSenhaForm = new FormGroup({
+        novaSenha: new FormControl<string>('', [Validators.required, Validators.minLength(6)]),
+        confirmacaoSenha: new FormControl<string>('', [Validators.required, Validators.minLength(6)]),
+    }, { validators: passwordsMatchValidator('novaSenha', 'confirmacaoSenha') });
 
 
     constructor(
@@ -36,7 +44,7 @@ export class PublicoComponent {
         this.srv.PrimeiroAcesso().subscribe({
             next: (data) => {
                 this.primeiroAcesso = data;
-                console.log('primeiroAcesso', data);    
+                console.log('primeiroAcesso', data);
             }
         });
     }
@@ -60,7 +68,7 @@ export class PublicoComponent {
     }
 
     esqueciSenha() {
-        const identificacao = this.formLogin.get('identificacao')?.value ;
+        const identificacao = this.formLogin.get('identificacao')?.value;
         if (identificacao) {
             this.srv.EsqueciSenha(identificacao).subscribe({
                 next: (data) => {
@@ -69,4 +77,19 @@ export class PublicoComponent {
             });
         }
     }
+
+    salvarTrocaSenha() {
+        const novaSenha = this.trocaSenhaForm.get('novaSenha')?.value;
+        if (novaSenha) {
+            this.srv.GravaPrimeiraSenha(novaSenha).subscribe({
+                next: (data) => {
+                    if (data === true) {
+                        this.primeiroAcesso = false;
+                        // this.showLogin = true;
+                    }
+                }
+            });
+        }
+    }
+
 }

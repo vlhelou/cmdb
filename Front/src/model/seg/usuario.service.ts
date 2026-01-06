@@ -114,5 +114,10 @@ export class segUsuarioService {
         return this.http.get<boolean>(url);
     }
 
+    GravaPrimeiraSenha(senha:string): Observable<boolean> {
+        const url = pathUrl + `GravaPrimeiraSenha`;
+        return this.http.post<boolean>(url, { senha }, httpOptions);
+    }
+
 
 }

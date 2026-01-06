@@ -26,7 +26,7 @@ SELECT setval('ic.sqic', 1 );
 
 /*			IC 			*/
 INSERT INTO seg.usuario (id,identificacao,gd,senha,administrador,ativo,"local",email,chavetrocasenha,chavevalidade) VALUES
-	 (1,'admin','5c355ca3-8e6d-49ed-97a1-3f6eeff85d27'::uuid,'d2160e670a6261bcd5164a5b2164a89e98a34b54ccd59944ccc68fcc725f12ce3746367919d55fa43101e0d2e1f2ff1c1c824499622e0643024f9d77bfebcbd2',true,true,true,'teste@gmail.com',NULL,NULL);
+	 (1,'admin','5c355ca3-8e6d-49ed-97a1-3f6eeff85d27'::uuid,'a',true,true,true,'teste@gmail.com',NULL,NULL);
 
 SELECT setval('seg.squsuario', 1 );
 
@@ -34,7 +34,7 @@ SELECT setval('seg.squsuario', 1 );
 
 /*			Configuracao 			*/
 INSERT INTO corp.configuracao (id,idpai,nome,ativo,tipovalor,valornumerico,valortexto,valordata,valorcomplexo,valorsensivel,ajuda,valorboleano) VALUES
-	 (1,NULL,'CMDB',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
+	 (1,NULL,'CMDB',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,true),
 	 (4,3,'AD',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
 	 (9,4,'Searchbase',true,'texto',NULL,'dc=cmdb,dc=com',NULL,NULL,false,NULL,NULL),
 	 (3,1,'Conexão',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),

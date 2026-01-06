@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.Json;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Novell.Directory.Ldap;
 
@@ -11,7 +9,6 @@ using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using static OllamaSharp.OllamaApiClient;
 
 
 namespace Cmdb.Api.Seg;
@@ -363,7 +360,7 @@ public class Usuario : Controller
     {
         if (prm.TryGetProperty("email", out JsonElement jemail))
         {
-            string email = jemail.GetString()?.Trim()?? string.Empty;
+            string email = jemail.GetString()?.Trim() ?? string.Empty;
             int idLogado = Util.Claim2Usuario(HttpContext.User.Claims).Id;
             var localizado = _db.SegUsuario
                 .FirstOrDefault(x => x.Id == idLogado);
@@ -388,18 +385,35 @@ public class Usuario : Controller
     }
 
 
-    [HttpGet("[action]")]
+    [HttpPost("[action]")]
     [AllowAnonymous]
-    public IActionResult GravaPrimeiraSenha()
+    public IActionResult GravaPrimeiraSenha([FromBody] JsonElement prm)
     {
-        var primeiro = _db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 1);
-        if (primeiro is null || primeiro.ValorBoleano is null)
+        Model.Seg.Usuario? primeiroUsuario;
+        string senha;
+        if (prm.TryGetProperty("senha", out JsonElement jsenha))
+        {
+            senha = jsenha.GetString()?.Trim() ?? string.Empty;
+            if (string.IsNullOrEmpty(senha))
+                return BadRequest("Senha não informada");
+            primeiroUsuario = _db.SegUsuario.FirstOrDefault(p=>p.Id==1);
+            if (primeiroUsuario is null)
+                return BadRequest("Usuário não localizado");
+        }
+        else
+        {
+            return BadRequest("Parâmetro senha não informado");
+        }
+        var configCMDB = _db.CorpConfiguracao.FirstOrDefault(p => p.Id == 1);
+        if (configCMDB is null || configCMDB.ValorBoleano is null)
             return BadRequest("Configuração não localizado");
 
-        if (!(bool)primeiro.ValorBoleano)
+        if (!(bool)configCMDB.ValorBoleano)
             return BadRequest("Configuração não localizado");
 
-        primeiro.ValorBoleano = false;
+        primeiroUsuario.Senha = (primeiroUsuario.Id.ToString() + senha).ToSha512();
+
+        configCMDB.ValorBoleano = false;
         _db.SaveChanges();
 
         return Ok();

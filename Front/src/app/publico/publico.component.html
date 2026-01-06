@@ -1,15 +1,42 @@
 <p-dialog header="Primeiro Acesso" [modal]="true" [(visible)]="primeiroAcesso" [style]="{ width: '25rem' }">
-    <span class="p-text-secondary block mb-8">Update your information.</span>
-    <div class="flex items-center gap-4 mb-4">
-        <label for="username" class="font-semibold w-24">Username</label>
-        <input pInputText id="username" class="flex-auto" autocomplete="off" />
-    </div>
-    <div class="flex items-center gap-4 mb-8">
-        <label for="email" class="font-semibold w-24">Email</label>
-        <input pInputText id="email" class="flex-auto" autocomplete="off" />
-    </div>
-    <div class="flex justify-end gap-2">
-    </div>
+    <form [formGroup]="trocaSenhaForm" (ngSubmit)="salvarTrocaSenha()">
+
+        <div class="campo">
+            <label for="novaSenha">Nova senha</label>
+            <p-password inputId="novaSenha" formControlName="novaSenha" [feedback]="true" toggleMask></p-password>
+            @if(trocaSenhaForm.get('novaSenha')?.invalid && trocaSenhaForm.get('novaSenha')?.touched){
+
+            <small class="erro">
+                Nova senha deve ter pelo menos 6 caracteres.
+            </small>
+            }
+        </div>
+
+        <div class="campo">
+            <label for="confirmacaoSenha">Confirme a nova senha</label>
+            <p-password inputId="confirmacaoSenha" formControlName="confirmacaoSenha" [feedback]="false"
+                toggleMask></p-password>
+            @if(trocaSenhaForm.get('confirmacaoSenha')?.invalid && trocaSenhaForm.get('confirmacaoSenha')?.touched){
+
+            <small class="erro">
+                Confirme a nova senha.
+            </small>
+            }
+        </div>
+
+        @if(trocaSenhaForm.errors?.['passwordMismatch'] && (trocaSenhaForm.dirty || trocaSenhaForm.touched)){
+        <div class="erro">
+            Nova senha e confirmação não conferem.
+        </div>
+        }
+
+        <div class="dialog-actions" style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
+            <button pButton type="button" label="Cancelar" severity="secondary"
+                ></button>
+            <button pButton type="submit" label="Salvar" [disabled]="trocaSenhaForm.invalid"></button>
+        </div>
+    </form>
+
 </p-dialog>
 
 <p-popover #op>
