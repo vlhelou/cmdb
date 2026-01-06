@@ -1,6 +1,6 @@
 <p-dialog header="Primeiro Acesso" [modal]="true" [(visible)]="primeiroAcesso" [style]="{ width: '25rem' }">
     <form [formGroup]="trocaSenhaForm" (ngSubmit)="salvarTrocaSenha()">
-
+        <h6>Usuário: <b>Admin</b> </h6>
         <div class="campo">
             <label for="novaSenha">Nova senha</label>
             <p-password inputId="novaSenha" formControlName="novaSenha" [feedback]="true" toggleMask></p-password>

@@ -44,7 +44,6 @@ export class PublicoComponent {
         this.srv.PrimeiroAcesso().subscribe({
             next: (data) => {
                 this.primeiroAcesso = data;
-                console.log('primeiroAcesso', data);
             }
         });
     }
@@ -83,10 +82,7 @@ export class PublicoComponent {
         if (novaSenha) {
             this.srv.GravaPrimeiraSenha(novaSenha).subscribe({
                 next: (data) => {
-                    if (data === true) {
-                        this.primeiroAcesso = false;
-                        // this.showLogin = true;
-                    }
+                    this.primeiroAcesso = false;
                 }
             });
         }
