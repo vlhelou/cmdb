@@ -9,14 +9,13 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      - POSTGRES_PASSWORD=mysecretpassword 
+      - POSTGRES_PASSWORD=${senhaPost} 
       - TZ=America/Sao_Paulo
     networks:
       - cmdb_network
     ports:
       - "5432:5432"
-    volumes:
-      - ../../Banco/docker/scripts:/docker-entrypoint-initdb.d/
+
   cmdb_app:
     image: vlhelou/cmdb:latest
     restart: always

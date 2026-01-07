@@ -66,6 +66,6 @@ INSERT INTO corp.configuracao (id,idpai,nome,ativo,tipovalor,valornumerico,valor
 	 (25,1,'Embedding',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
 	 (27,25,'Modelo',true,'texto',NULL,'mxbai-embed-large',NULL,NULL,false,NULL,NULL),
 	 (26,25,'URL',true,'texto',NULL,'http://localhost:11434',NULL,NULL,false,NULL,NULL),
-	 (28,25,'Ativo',true,'boleano',NULL,NULL,NULL,NULL,false,NULL,true);
+	 (28,25,'Ativo',true,'boleano',NULL,NULL,NULL,NULL,false,NULL,false);
 
 SELECT setval('corp.configuracao_id_seq', 1 );
