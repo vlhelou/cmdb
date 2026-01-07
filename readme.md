@@ -57,6 +57,8 @@ atenção para as partes abaixo desse script:
 ## Instalação via docker compose
 no diretório `Compose\cmdb` executar:
 
+    git clone https://github.com/vlhelou/cmdb 
+    cd .\cmdb\Compose\cmdb\
     docker compose up -d
 
 
