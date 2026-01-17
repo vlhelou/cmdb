@@ -7,7 +7,7 @@ create user usrapp with password 'usrapp';
 -- PostgreSQL database dump
 --
 
-\restrict MNEsMzWYHjcUL22VtcFBQR9o4Zbdd5Kgb1OlSMxbFelzZHaPVsGnVlxCAtGQh2R
+\restrict d7DrKTWZ9w2ecVTzkE0datLZokaJOqUAL6Qy9GTDJ0nB35WZb3rMifWDRI0sIJ8
 
 -- Dumped from database version 18.1 (Debian 18.1-1.pgdg13+2)
 -- Dumped by pg_dump version 18.1 (Debian 18.1-1.pgdg13+2)
@@ -2397,7 +2397,7 @@ GRANT SELECT,USAGE ON SEQUENCE servico.sqchamado TO usrapp;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict MNEsMzWYHjcUL22VtcFBQR9o4Zbdd5Kgb1OlSMxbFelzZHaPVsGnVlxCAtGQh2R
+\unrestrict d7DrKTWZ9w2ecVTzkE0datLZokaJOqUAL6Qy9GTDJ0nB35WZb3rMifWDRI0sIJ8
 
 REFRESH MATERIALIZED view ic.vw_ic;
 

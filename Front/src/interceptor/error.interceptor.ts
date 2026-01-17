@@ -13,20 +13,23 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   return next(req).pipe(
     catchError(error => {
-      if (error.status === 401 ) {
+      if (error.status == 401 ) {
+        router.navigate(['/publico']);
         srv.Logout();
-        router.navigate(['/login']);
-      }
-      const eleErro = document.getElementById('dvErro');
-      if (eleErro) {
+        
+      } else {
 
-        if (eleErro.style && eleErro.style.display) {
-          eleErro.style.display = '';
+        const eleErro = document.getElementById('dvErro');
+        if (eleErro) {
+  
+          if (eleErro.style && eleErro.style.display) {
+            eleErro.style.display = '';
+          }
+          eleErro.innerHTML = `<p><i class="pi pi-exclamation-triangle"></i>${error.error.mensagem}</p>`
+          setTimeout(() => {
+            eleErro.style.display = 'none';
+          }, 4000)
         }
-        eleErro.innerHTML = `<p><i class="pi pi-exclamation-triangle"></i>${error.error.mensagem}</p>`
-        setTimeout(() => {
-          eleErro.style.display = 'none';
-        }, 4000)
       }
 
       throw error;

@@ -48,7 +48,7 @@ public class IC : ControllerBase
     [HttpPost("[action]")]
     public IActionResult Pesquisa([FromBody] PesquisaIC prm)
     {
-        var nomes = string.Join(" & ", prm.Chave.Split(' '));
+        var nomes = string.Join(" & ", prm.Chave.Split(' ').Select(p=>p.Trim()+":*"));
 
 
 
@@ -67,6 +67,7 @@ public class IC : ControllerBase
             	, pesquisats
             	, nivel
             	, ts_rank(pesquisats , to_tsquery('portuguese',{nomes})) rank
+                , observacao
             from ic.vw_ic
             where pesquisats @@ to_tsquery('portuguese',{nomes})
             order by rank desc
