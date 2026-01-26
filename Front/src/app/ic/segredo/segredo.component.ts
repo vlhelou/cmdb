@@ -1,4 +1,4 @@
-import { Component, effect, input, signal, OnInit } from '@angular/core';
+import { Component, effect, input, signal, OnInit, output } from '@angular/core';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { icIc } from 'src/model/ic/ic';
 import { icSegredo } from 'src/model/ic/segredo'
@@ -29,6 +29,7 @@ export class SegredoComponent implements OnInit {
     ic = input<icIc | undefined>();
     lista = signal<icSegredo[]>([]);
     conteudo = signal<string>('');
+    quantidade = output<number>();
     organogramas = signal<segOrganograma[]>([]);
     mostraNovo = false;
     mostraSegredo = false;
@@ -80,6 +81,7 @@ export class SegredoComponent implements OnInit {
         this.srv.MeusSegredosPorIc(id).subscribe({
             next: (data) => {
                 this.lista.set(data);
+                this.quantidade.emit(data.length);
             }
         });
 
@@ -91,6 +93,10 @@ export class SegredoComponent implements OnInit {
             next: (data) => {
                 this.mostraSegredo = true;
                 this.conteudo.set(data.conteudo || '');
+                setTimeout(() => {
+                    this.mostraSegredo = false;
+                    this.conteudo.set('');
+                }, 4000);
                 // Manipule os dados recebidos conforme necessário
             }
         });

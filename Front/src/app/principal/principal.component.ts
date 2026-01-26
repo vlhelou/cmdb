@@ -12,6 +12,7 @@ import { icIc } from 'src/model/ic/ic';
 import { IcService } from 'src/model/ic/ic.service';
 import { DependenciaComponent } from 'src/app/ic/dependencia/dependencia.component'
 import { PanelModule } from 'primeng/panel';
+import { BadgeModule } from 'primeng/badge';
 
 
 @Component({
@@ -26,7 +27,8 @@ import { PanelModule } from 'primeng/panel';
         CadastroComponent,
         SegredoComponent,
         ConhecimentoComponent,
-        DependenciaComponent
+        DependenciaComponent,
+        BadgeModule
     ],
     templateUrl: './principal.component.html',
     styleUrl: './principal.component.scss'
@@ -42,13 +44,15 @@ export class PrincipalComponent implements OnInit {
     tabSelecionado = "0";
     usaEmbedding = signal<boolean>(false);
     pesquisaEmbeddingPrompt: string = "";
-    icsPromptResultado=signal< icIc[]>([]); 
-    constructor(private srv: IcService,private route: ActivatedRoute) { }
+    icsPromptResultado = signal<icIc[]>([]);
+    quantidadeSegredos = signal<number>(0);
+    quantidadeConhecimentos = signal<number>(0);
+    constructor(private srv: IcService, private route: ActivatedRoute) { }
 
     ngOnInit(): void {
         const pid = this.route.snapshot.paramMap.get('id');
         const id = parseInt(pid || '');
-        if (id){
+        if (id) {
             this.srv.BuscaComFamilia(id).subscribe({
                 next: (ret) => {
                     this.icSelecionado.set(ret);
@@ -79,7 +83,7 @@ export class PrincipalComponent implements OnInit {
         });
     }
 
-    pesquisaPrompt(){
+    pesquisaPrompt() {
         this.srv.PesquisaEmbedding(this.pesquisaEmbeddingPrompt).subscribe({
             next: (ret) => {
                 this.icsPromptResultado.set(ret);
@@ -87,5 +91,12 @@ export class PrincipalComponent implements OnInit {
         });
     }
 
+    retornoQuantidadeSegredos(event: any) {
+        this.quantidadeSegredos.set(event);
+    }
+
+    retornoQuantidadeConhecimentos(event: any) {
+        this.quantidadeConhecimentos.set(event);
+    }
 
 }
