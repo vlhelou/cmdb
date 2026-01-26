@@ -7,7 +7,7 @@ create user usrapp with password 'usrapp';
 -- PostgreSQL database dump
 --
 
-\restrict d7DrKTWZ9w2ecVTzkE0datLZokaJOqUAL6Qy9GTDJ0nB35WZb3rMifWDRI0sIJ8
+\restrict cbEzeCanDnP5iHVJAcp8MaoJHEInONGeBTNL5zmJ3FqFN3Z6TGrkGNqL9daKjkc
 
 -- Dumped from database version 18.1 (Debian 18.1-1.pgdg13+2)
 -- Dumped by pg_dump version 18.1 (Debian 18.1-1.pgdg13+2)
@@ -90,6 +90,20 @@ CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
+-- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
 
 
 --
@@ -882,6 +896,22 @@ CREATE SEQUENCE ic.sqsegredo
 ALTER SEQUENCE ic.sqsegredo OWNER TO postgres;
 
 --
+-- Name: temporario; Type: TABLE; Schema: ic; Owner: postgres
+--
+
+CREATE TABLE ic.temporario (
+    id integer,
+    nome character varying(100),
+    nomecompleto text,
+    propriedades json,
+    textoorigem text,
+    insert tsvector
+);
+
+
+ALTER TABLE ic.temporario OWNER TO postgres;
+
+--
 -- Name: vw_ic; Type: MATERIALIZED VIEW; Schema: ic; Owner: postgres
 --
 
@@ -898,7 +928,7 @@ CREATE MATERIALIZED VIEW ic.vw_ic AS
             ic.idorganograma,
             concat('.', ic.nome) AS nomecompleto,
             ''::text AS listaancestrais,
-            to_tsvector('portuguese'::regconfig, concat(' ', ic.nome, ' ', ic.propriedades)) AS pesquisats,
+            to_tsvector('portuguese'::regconfig, concat(' ', ic.nome, ' ', ic.propriedades, ' ', ic.observacao)) AS pesquisats,
             0 AS nivel,
             ic.observacao
            FROM ic.ic
@@ -915,7 +945,7 @@ CREATE MATERIALIZED VIEW ic.vw_ic AS
             COALESCE(filho.idorganograma, a.idorganograma) AS idorganograma,
             concat(a.nomecompleto, '.', filho.nome) AS nomecompleto,
             concat(a.listaancestrais, ',', a.id) AS listaancestrais,
-            to_tsvector('portuguese'::regconfig, concat(a.nomecompleto, ' ', filho.nome, ' ', filho.propriedades)) AS pesquisats,
+            to_tsvector('portuguese'::regconfig, concat(a.nomecompleto, ' ', filho.nome, ' ', filho.propriedades, ' ', filho.observacao)) AS pesquisats,
             (a.nivel + 1),
             filho.observacao
            FROM ic.ic filho,
@@ -1543,6 +1573,13 @@ CREATE UNIQUE INDEX ix_corptiponomegrupo ON corp.tipo USING btree (lower((grupo)
 
 
 --
+-- Name: articles_search_vector_idx; Type: INDEX; Schema: ic; Owner: postgres
+--
+
+CREATE INDEX articles_search_vector_idx ON ic.temporario USING gin (insert);
+
+
+--
 -- Name: ix_conhecimenot_ic; Type: INDEX; Schema: ic; Owner: postgres
 --
 
@@ -1645,6 +1682,13 @@ CREATE INDEX ix_vwicnome ON ic.vw_ic USING btree (lower((nome)::text));
 --
 
 CREATE UNIQUE INDEX ixdependenciaprincipaldependencia ON ic.dependencia USING btree (idicprincipal, idicdependente);
+
+
+--
+-- Name: recipes_name_trgm_idx; Type: INDEX; Schema: ic; Owner: postgres
+--
+
+CREATE INDEX recipes_name_trgm_idx ON ic.temporario USING gin (textoorigem public.gin_trgm_ops);
 
 
 --
@@ -2397,7 +2441,7 @@ GRANT SELECT,USAGE ON SEQUENCE servico.sqchamado TO usrapp;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict d7DrKTWZ9w2ecVTzkE0datLZokaJOqUAL6Qy9GTDJ0nB35WZb3rMifWDRI0sIJ8
+\unrestrict cbEzeCanDnP5iHVJAcp8MaoJHEInONGeBTNL5zmJ3FqFN3Z6TGrkGNqL9daKjkc
 
 REFRESH MATERIALIZED view ic.vw_ic;
 
