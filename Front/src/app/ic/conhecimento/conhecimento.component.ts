@@ -1,4 +1,4 @@
-import { Component, effect, input, signal, OnInit } from '@angular/core';
+import { Component, effect, input, signal, OnInit, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { icIc } from 'src/model/ic/ic';
 import { IcConhecimento } from 'src/model/ic/conhecimento';
@@ -27,6 +27,8 @@ export class ConhecimentoComponent {
     ic = input<icIc | undefined>();
     lista = signal<IcConhecimento[]>([]);
     mostraFormulario = false;
+    quantidade = output<number>();
+
 
     form = new FormGroup({
         id: new FormControl<number>(0),
@@ -37,7 +39,7 @@ export class ConhecimentoComponent {
         dataAlteracao: new FormControl<Date>(new Date()),
     });
 
-    constructor(private srv: IcConhecimentoService,private confirmationService: ConfirmationService) {
+    constructor(private srv: IcConhecimentoService, private confirmationService: ConfirmationService) {
         effect(() => {
             if (this.ic()) {
                 this.atualiza();
@@ -50,6 +52,7 @@ export class ConhecimentoComponent {
             this.srv.ConhecimentosPorIC(this.ic()!.id).subscribe({
                 next: r => {
                     this.lista.set(r);
+                    this.quantidade.emit(r.length);
                 }
             });
         }

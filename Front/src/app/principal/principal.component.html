@@ -1,32 +1,32 @@
 @if(usaEmbedding()){
-    <div class="mb-3">
+<div class="mb-3">
 
-        <p-panel header="Busca de IC via Embedding" [toggleable]="true" [collapsed]="false">
-            <div class="row">
-                <div class="col-12">
-        
-                    <textarea [(ngModel)]="pesquisaEmbeddingPrompt" class="form-control"></textarea>
-                    <button class="btn btn-primary float-end mt-2 mb-2" (click)="pesquisaPrompt()">Pesquisa</button>
-                </div>
+    <p-panel header="Busca de IC via Embedding" [toggleable]="true" [collapsed]="false">
+        <div class="row">
+            <div class="col-12">
+
+                <textarea [(ngModel)]="pesquisaEmbeddingPrompt" class="form-control"></textarea>
+                <button class="btn btn-primary float-end mt-2 mb-2" (click)="pesquisaPrompt()">Pesquisa</button>
             </div>
-            @if(icsPromptResultado().length > 0){
-            <div class="row">
-        
-                <div class="col-12">
-                    <h6>Resultados da pesquisa:</h6>
-                    <ul class="list-group">
-                        @for (item of icsPromptResultado(); track item.id) {
-                        <li (click)="autoCompleteSelecionado(item)" class="list-group-item">{{ item.nomeCompleto }} <span
-                                class="float-end" style="font-size: 70%;">({{ item.tipo.nome
-                                }})</span>
-                        </li>
-                        }
-                    </ul>
-                </div>
+        </div>
+        @if(icsPromptResultado().length > 0){
+        <div class="row">
+
+            <div class="col-12">
+                <h6>Resultados da pesquisa:</h6>
+                <ul class="list-group">
+                    @for (item of icsPromptResultado(); track item.id) {
+                    <li (click)="autoCompleteSelecionado(item)" class="list-group-item">{{ item.nomeCompleto }} <span
+                            class="float-end" style="font-size: 70%;">({{ item.tipo.nome
+                            }})</span>
+                    </li>
+                    }
+                </ul>
             </div>
-            }
-        </p-panel>
-    </div>
+        </div>
+        }
+    </p-panel>
+</div>
 }
 
 
@@ -56,9 +56,18 @@
                     <p-tablist>
                         <p-tab value="0">Cadastro</p-tab>
                         <p-tab value="1">Cria filho</p-tab>
-                        <p-tab value="2">Segredos</p-tab>
+                        <p-tab value="2">Segredos
+                            @if (quantidadeSegredos() > 0) {
+                            <p-badge [value]="quantidadeSegredos()" badgeSize="small" />
+                            }
+                        </p-tab>
                         <p-tab value="3">Mudança de paternidade</p-tab>
-                        <p-tab value="4">Conhecimento</p-tab>
+                        <p-tab value="4">Conhecimento
+                            @if (quantidadeConhecimentos() > 0) {
+                            <p-badge [value]="quantidadeConhecimentos()" badgeSize="small" />
+                            }
+
+                        </p-tab>
                         <p-tab value="5">Dependências</p-tab>
                         <p-tab value="6">Dependentes</p-tab>
                     </p-tablist>
@@ -75,7 +84,7 @@
                             </p>
                         </p-tabpanel>
                         <p-tabpanel value="2">
-                            <app-segredo [ic]="icSelecionado()" />
+                            <app-segredo [ic]="icSelecionado()" (quantidade)="retornoQuantidadeSegredos($event)" />
                         </p-tabpanel>
                         <p-tabpanel value="3">
                             <div class="row">
@@ -90,7 +99,8 @@
                             </div>
                         </p-tabpanel>
                         <p-tabpanel value="4">
-                            <app-conhecimento [ic]="icSelecionado()"></app-conhecimento>
+                            <app-conhecimento [ic]="icSelecionado()"
+                                (quantidade)="retornoQuantidadeConhecimentos($event)"></app-conhecimento>
                         </p-tabpanel>
                         <p-tabpanel value="5">
                             <app-dependencia [ic]="icSelecionado()" [dependente]="true"></app-dependencia>
