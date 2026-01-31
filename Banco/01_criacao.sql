@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict cbEzeCanDnP5iHVJAcp8MaoJHEInONGeBTNL5zmJ3FqFN3Z6TGrkGNqL9daKjkc
+\restrict CCReAN4QflaEIuoZ7dB4LhcDq0CGEGG4V63aAgFykrqztlRYtwxA9cfo5uV1EUV
 
 -- Dumped from database version 18.1 (Debian 18.1-1.pgdg13+2)
 -- Dumped by pg_dump version 18.1 (Debian 18.1-1.pgdg13+2)
@@ -940,7 +940,7 @@ CREATE MATERIALIZED VIEW ic.vw_ic AS
             COALESCE(filho.idorganograma, a.idorganograma) AS idorganograma,
             concat(a.nomecompleto, '.', filho.nome) AS nomecompleto,
             concat(a.listaancestrais, ',', a.id) AS listaancestrais,
-            to_tsvector('portuguese'::regconfig, concat(a.nomecompleto, ' ', filho.nome, ' ', filho.propriedades, ' ', filho.observacao)) AS pesquisats,
+            to_tsvector('portuguese'::regconfig, concat(replace(a.nomecompleto, '.'::text, ' '::text), ' ', filho.nome, ' ', filho.propriedades, ' ', filho.observacao)) AS pesquisats,
             (a.nivel + 1),
             filho.observacao
            FROM ic.ic filho,
@@ -2331,7 +2331,7 @@ GRANT SELECT,USAGE ON SEQUENCE ic.sqsegredo TO usrapp;
 -- Name: TABLE vw_ic; Type: ACL; Schema: ic; Owner: postgres
 --
 
-GRANT SELECT,MAINTAIN ON TABLE ic.vw_ic TO usrapp;
+GRANT SELECT,INSERT,MAINTAIN ON TABLE ic.vw_ic TO usrapp;
 
 
 --
@@ -2436,5 +2436,5 @@ GRANT SELECT,USAGE ON SEQUENCE servico.sqchamado TO usrapp;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict cbEzeCanDnP5iHVJAcp8MaoJHEInONGeBTNL5zmJ3FqFN3Z6TGrkGNqL9daKjkc
+\unrestrict CCReAN4QflaEIuoZ7dB4LhcDq0CGEGG4V63aAgFykrqztlRYtwxA9cfo5uV1EUV
 

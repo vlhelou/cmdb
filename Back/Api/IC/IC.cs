@@ -48,7 +48,7 @@ public class IC : ControllerBase
     [HttpPost("[action]")]
     public IActionResult Pesquisa([FromBody] PesquisaIC prm)
     {
-        var nomes = string.Join(" & ", prm.Chave.Split(' ').Select(p=>p.Trim()+":*"));
+        var nomes = string.Join(" & ", prm.Chave.Split(' ').Where(q=>q.Trim().Length>0).Select(p=>p.Trim()+":*"));
 
 
 
