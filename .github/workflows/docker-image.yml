@@ -19,6 +19,6 @@ jobs:
 
     - name: publish to docker hub versaon
       run: 
-        docker login -u vlhelou -p ${{secrets.GITHUB_TOKEN}}
+        docker login -u vlhelou -p ${{secrets.DOCKER_HUB_TOKEN}}
         docker push vlhelou/cmdb:$(date +%s)
         docker push vlhelou/cmdb:latest
