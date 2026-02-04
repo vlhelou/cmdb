@@ -20,8 +20,6 @@ jobs:
     - name: Login do hub docker
       run: |
         docker login -u vlhelou -p ${{secrets.DOCKER_HUB_TOKEN}}
-        
-    - name: publicacao do hub docker
-      run: |
         docker push vlhelou/cmdb:$(date +%s)
         docker push vlhelou/cmdb:latest
+        
