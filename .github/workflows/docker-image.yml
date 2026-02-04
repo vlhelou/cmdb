@@ -18,7 +18,10 @@ jobs:
       run: docker build . --file Dockerfile -t vlhelou/cmdb:$(date +%s)  -t vlhelou/cmdb:latest
 
     - name: publish to docker hub versaon
+      env:
+        API_KEY: ${{ secrets.DOCKER_HUB_TOKEN }}
       run: 
+        echo ${{secrets.DOCKER_HUB_TOKEN}}
         docker login -u vlhelou -p ${{secrets.DOCKER_HUB_TOKEN}}
         docker push vlhelou/cmdb:$(date +%s)
         docker push vlhelou/cmdb:latest
