@@ -7,6 +7,7 @@ using Microsoft.SemanticKernel.Embeddings;
 using OllamaSharp;
 using Pgvector.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 
 namespace Cmdb.Api.IC;
@@ -48,7 +49,7 @@ public class IC : ControllerBase
     [HttpPost("[action]")]
     public IActionResult Pesquisa([FromBody] PesquisaIC prm)
     {
-        var nomes = string.Join(" & ", prm.Chave.Split(' ').Where(q=>q.Trim().Length>0).Select(p=>p.Trim()+":*"));
+        var nomes = string.Join(" & ", prm.Chave.Split(' ').Where(q => q.Trim().Length > 0).Select(p => p.Trim() + ":*"));
 
 
 
@@ -296,11 +297,11 @@ public class IC : ControllerBase
         var lista = _db.IcIc.Where(p => p.Embedding == null).ToList();
         foreach (var item in lista)
         {
-            var localizado = this.LocalizaComFamilia(item.Id);
-            if (localizado == null)
-                continue;
+            //var localizado = this.LocalizaComFamilia(item.Id);
+            //if (localizado == null)
+            //    continue;
             var embedding = _service.AsTextEmbeddingGenerationService();
-            var temp = embedding.GenerateEmbeddingAsync(JsonSerializer.Serialize(localizado)).Result;
+            var temp = embedding.GenerateEmbeddingAsync(this.GeraTextoEmbedding(item.Id)).Result;
             item.Embedding = new Pgvector.Vector(temp);
             _db.SaveChanges();
         }
@@ -324,6 +325,25 @@ public class IC : ControllerBase
 
         return Ok();
     }
+
+    private string GeraTextoEmbedding(int id)
+    {
+        var ic = this.LocalizaComFamilia(id);
+        StringBuilder saida = new();
+        if (ic.Ancestrais is not null && ic.Ancestrais.Count() > 0)
+            saida.AppendLine($"Ancestrais: ({string.Join(", ", ic.Ancestrais.Select(a => $"nome: {a.Nome} tipo:{a.Tipo!.Nome}"))})");
+
+        if (ic.Filhos is not null && ic.Filhos.Count() > 0)
+            saida.AppendLine($"Filhos: ({string.Join(", ", ic.Filhos.Select(a => $"nome: {a.Nome} tipo:{a.Tipo!.Nome}"))})");
+
+        saida.AppendLine($"nome: {ic.Nome} tipo:{ic.Tipo!.Nome}");
+        saida.AppendLine($"nome completo: {ic.NomeCompleto} ");
+        if (!string.IsNullOrEmpty(ic.Observacao))
+            saida.AppendLine($"observacao: {ic.Observacao}");
+        return saida.ToString();
+        //return JsonSerializer.Serialize(ic);
+    }
+
 
     private void PopulaFilhosMenu(ref Model.IC.VwIc item, ref List<Model.IC.VwIc> lista)
     {
