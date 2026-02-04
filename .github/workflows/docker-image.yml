@@ -15,11 +15,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build da imagem
-      run: docker build . --file Dockerfile -t vlhelou/cmdb:$(date +%s)  -t vlhelou/cmdb:latest
+      run: docker build . --file Dockerfile  -t vlhelou/cmdb:latest
       
     - name: Login do hub docker
       run: |
         docker login -u vlhelou -p ${{secrets.DOCKER_HUB_TOKEN}}
-        docker push vlhelou/cmdb:$(date +%s)
         docker push vlhelou/cmdb:latest
         
