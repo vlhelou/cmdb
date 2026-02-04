@@ -16,14 +16,12 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build da imagem
       run: docker build . --file Dockerfile -t vlhelou/cmdb:$(date +%s)  -t vlhelou/cmdb:latest
-
-    - name: teste da api key
-      env:
-        API_KEY: ${{ secrets.DOCKER_HUB_TOKEN }}
-      run: echo $API_KEY
       
-    - name: publicacao do hub docker
+    - name: Login do hub docker
       run: |
         docker login -u vlhelou -p ${{secrets.DOCKER_HUB_TOKEN}}
+        
+    - name: publicacao do hub docker
+      run: |
         docker push vlhelou/cmdb:$(date +%s)
         docker push vlhelou/cmdb:latest
