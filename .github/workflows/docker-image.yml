@@ -19,7 +19,7 @@ jobs:
       
     - name: Login do hub docker
       run: |
-        docker login -u vlhelou -p ${{secrets.DOCKER_HUB_TOKEN}}
+        docker login -u vlhelou -p dckr_pat_PgWotwoTTRbcu4fTq0aIu_8dI4M
         
     - name: publicacao do hub docker
       run: |
