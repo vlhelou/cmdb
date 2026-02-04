@@ -16,3 +16,9 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build . --file Dockerfile -t vlhelou/cmdb:$(date +%s)  -t vlhelou/cmdb:latest
+
+    - name: publish to docker hub versaon
+      run: 
+        docker login -u vlhelou -p ${{secrets.GITHUB_TOKEN}}
+        docker push vlhelou/cmdb:$(date +%s)
+        docker push vlhelou/cmdb:latest
