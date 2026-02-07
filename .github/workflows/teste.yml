@@ -1,0 +1,13 @@
+name: teset
+
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pega Tag
+      run: |
+        echo meu teste
