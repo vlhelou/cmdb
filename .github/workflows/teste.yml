@@ -9,5 +9,4 @@ jobs:
 
     steps:
       - name: Pega Tag
-      run: |
-        echo meu teste
+      run: echo meu teste
