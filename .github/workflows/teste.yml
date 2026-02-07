@@ -10,10 +10,11 @@ jobs:
 
     steps:
     - name: cria Imagem
+      env:
+        tag: ${{github.ref_name}}
       run: | 
         echo inicia
-        echo maisUm
-        echo ${{github.ref_name}}
+        echo "$tag"
     
     
 
