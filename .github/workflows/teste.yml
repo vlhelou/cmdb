@@ -1,5 +1,4 @@
 name: teset
-
 on:
   workflow_dispatch
 
@@ -8,5 +7,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Pega Tag
-      run: echo meu teste
+    - uses: actions/checkout@v4
+    - name: cria Imagem
+      run: echo alguma coisa
+    
+    
+
