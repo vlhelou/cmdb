@@ -1,7 +1,9 @@
 name: Docker Image CI
 
 on:
-  workflow_dispatch
+  push:
+    tags:
+      - 'v*'
 jobs:
 
   build:
@@ -11,10 +13,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build da imagem
+      env:
+        tag: ${{github.ref_name}} 
       run: |
         echo tag
         echo $(git describe --tags --all)
         docker build . --file Dockerfile  -t vlhelou/cmdb:latest  
+        docker build . --file Dockerfile  -t vlhelou/cmdb:${tag:1}  
 
       
     - name: Login do hub docker
@@ -22,5 +27,6 @@ jobs:
         echo ${{github.ref}}
         docker login -u vlhelou -p ${{secrets.DOCKER_HUB_TOKEN}}
         docker push vlhelou/cmdb:latest
+        docker push vlhelou/cmdb:${tag:1} 
 
         
