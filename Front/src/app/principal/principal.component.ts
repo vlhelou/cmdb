@@ -13,7 +13,7 @@ import { IcService } from 'src/model/ic/ic.service';
 import { DependenciaComponent } from 'src/app/ic/dependencia/dependencia.component'
 import { PanelModule } from 'primeng/panel';
 import { BadgeModule } from 'primeng/badge';
-
+declare var webkitSpeechRecognition: any;
 
 @Component({
     selector: 'app-principal',
@@ -43,11 +43,16 @@ export class PrincipalComponent implements OnInit {
     icNovoPai: icIc | undefined = undefined;
     tabSelecionado = "0";
     usaEmbedding = signal<boolean>(false);
+    estiloMicrofone = signal<any>({ "font-size": "20px", "color": "black" });
     pesquisaEmbeddingPrompt: string = "";
     icsPromptResultado = signal<icIc[]>([]);
     quantidadeSegredos = signal<number>(0);
     quantidadeConhecimentos = signal<number>(0);
-    constructor(private srv: IcService, private route: ActivatedRoute) { }
+    recognition = new webkitSpeechRecognition();
+    constructor(private srv: IcService, private route: ActivatedRoute) {
+        this.recognition.interimResults = true;
+        this.recognition.lang = 'pt-BR';
+    }
 
     ngOnInit(): void {
         const pid = this.route.snapshot.paramMap.get('id');
@@ -63,6 +68,14 @@ export class PrincipalComponent implements OnInit {
             next: (ret) => {
                 this.usaEmbedding.set(ret);
             }
+        });
+
+        this.recognition.addEventListener('result', (event: any) => {
+            const transcript = Array.from(event.results)
+                .map((result: any) => result[0])
+                .map((result: any) => result.transcript)
+                .join('');
+            this.pesquisaEmbeddingPrompt = transcript;
         });
     }
 
@@ -97,6 +110,21 @@ export class PrincipalComponent implements OnInit {
 
     retornoQuantidadeConhecimentos(event: any) {
         this.quantidadeConhecimentos.set(event);
+    }
+
+    iniciaAudio() {
+        this.estiloMicrofone.set({ "font-size": "20px", "color": "red" });
+        this.recognition.start();
+        // console.log('Speech recognition started');
+
+        this.recognition.addEventListener('end', () => {
+            this.recognition.stop();
+            // console.log('End speech recognition');
+            this.estiloMicrofone.set({ "font-size": "20px", "color": "black" });
+            this.pesquisaPrompt();
+
+        });
+
     }
 
 }
