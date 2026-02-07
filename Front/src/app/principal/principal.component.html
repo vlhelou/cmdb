@@ -6,6 +6,14 @@
             <div class="col-12">
 
                 <textarea [(ngModel)]="pesquisaEmbeddingPrompt" class="form-control"></textarea>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <a href="javascript:void(0)" [style]="estiloMicrofone()" (click)="iniciaAudio()"><i class="fa-solid fa-microphone"></i></a>
+            </div>
+            <div class="col-6 text-end">
                 <button class="btn btn-primary float-end mt-2 mb-2" (click)="pesquisaPrompt()">Pesquisa</button>
             </div>
         </div>
