@@ -18,6 +18,7 @@ jobs:
       
     - name: Login do hub docker
       run: |
+        echo ${{github.ref}}
         docker login -u vlhelou -p ${{secrets.DOCKER_HUB_TOKEN}}
         docker push vlhelou/cmdb:latest
         docker push ${{github.ref}}
