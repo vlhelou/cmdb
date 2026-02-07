@@ -10,7 +10,7 @@ jobs:
 
     steps:
     - name: cria Imagem
-      run: echo alguma coisa
+      run: ${{github.ref_name}}
     
     
 
