@@ -1,10 +1,9 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  push: 
+    tags:
+      - 'v*'
 
 jobs:
 
@@ -21,4 +20,5 @@ jobs:
       run: |
         docker login -u vlhelou -p ${{secrets.DOCKER_HUB_TOKEN}}
         docker push vlhelou/cmdb:latest
+        docker push ${{github.ref}}
         
