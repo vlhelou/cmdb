@@ -18,7 +18,7 @@ jobs:
       run: |
         echo tag
         echo "${tag:1}"
-        docker build . --file Dockerfile  -t vlhelou/cmdb:latest  -t vlhelou/cmdb:"${tag:1}"
+        docker build . --file Dockerfile  -t vlhelou/cmdb:latest  -t "vlhelou/cmdb:${tag:1}"
       
     - name: publica no docker
       run: |
