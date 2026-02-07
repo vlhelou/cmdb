@@ -2,7 +2,7 @@ name: teset
 on:
   push:
     tags:
-      - v*
+      - '*'
 
 jobs:
   build:
