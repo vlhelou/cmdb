@@ -12,6 +12,7 @@ jobs:
     - name: cria Imagem
       run: | 
         echo inicia
+        echo maisUm
         echo ${{github.ref_name}}
     
     
