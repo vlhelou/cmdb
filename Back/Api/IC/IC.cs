@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.AI;
 using Microsoft.SemanticKernel.Embeddings;
 using OllamaSharp;
 using Pgvector.EntityFrameworkCore;
