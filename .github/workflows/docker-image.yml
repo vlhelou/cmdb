@@ -21,7 +21,11 @@ jobs:
         docker build . --file Dockerfile  -t vlhelou/cmdb:latest  -t "vlhelou/cmdb:${tag:1}"
       
     - name: publica no docker
+      env:
+        tag: ${{github.ref_name}} 
       run: |
+        echo tag
+        echo "${tag:1}"
         docker login -u vlhelou -p ${{secrets.DOCKER_HUB_TOKEN}}
         docker push vlhelou/cmdb:latest
         docker push vlhelou/cmdb:${tag:1} 
