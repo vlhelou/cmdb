@@ -10,7 +10,9 @@ jobs:
 
     steps:
     - name: cria Imagem
-      run: ${{github.ref_name}}
+      run: | 
+        echo inicia
+        echo ${{github.ref_name}}
     
     
 
