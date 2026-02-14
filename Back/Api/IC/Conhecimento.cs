@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OllamaSharp;
 
 namespace Cmdb.Api.IC;
 
@@ -8,9 +9,15 @@ namespace Cmdb.Api.IC;
 public class Conhecimento : ControllerBase
 {
     private readonly Model.Db _db;
-    public Conhecimento(Model.Db db)
+    private readonly bool embeddingHabilitado;
+    private readonly OllamaApiClient _service;
+
+
+    public Conhecimento(Model.Db db, OllamaApiClient service)
     {
         _db = db;
+        embeddingHabilitado = db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 28)?.ValorBoleano ?? false;
+        _service = service;
     }
 
 
@@ -29,6 +36,8 @@ public class Conhecimento : ControllerBase
         {
             _db.IcConhecimento.Add(item);
             _db.SaveChanges();
+            if (embeddingHabilitado)
+                Services.IcService.AtualizaEmbedding(_db, _service, item.Id);
             return Ok(item);
         }
         else
@@ -46,6 +55,9 @@ public class Conhecimento : ControllerBase
             localizado.Solucao = item.Solucao;
             _db.IcConhecimento.Update(localizado);
             _db.SaveChanges();
+            if (embeddingHabilitado)
+                Services.IcService.AtualizaEmbedding(_db, _service, item.Id);
+
             return Ok(localizado);
 
         }

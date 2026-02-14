@@ -31,5 +31,4 @@ public record Conhecimento
     [ForeignKey("IdAutor")]
     public Seg.Usuario? Autor { get; set; }
 
-
 }

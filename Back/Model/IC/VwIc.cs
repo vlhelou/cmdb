@@ -87,8 +87,8 @@ public record VwIc
 
 
 
-    //[InverseProperty("IC")]
-    //public virtual ICollection<Conhecimento> Conhecimentos { get; set; }
+    [InverseProperty("IC")]
+    public virtual List<Model.IC.Conhecimento>? Conhecimentos { get; set; }
 
 
     //[InverseProperty("IC")]

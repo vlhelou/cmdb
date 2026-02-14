@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using System.Text.Json.Serialization;
 
 namespace Cmdb.Model.IC;
@@ -54,38 +55,7 @@ public record IC
         this.IdTipo = item.IdTipo;
         this.Propriedades = item.Propriedades;
         this.Observacao = item.Observacao;
-
     }
 
-    //[NotMapped]
-    //public IList<ICPropriedade>? ListaPropriedades
-    //{
-    //    get
-    //    {
-    //        if (string.IsNullOrEmpty(this.Propriedades))
-    //            return null;
-    //        IList<ICPropriedade>? retorno = null;
-    //        try
-    //        {
-    //            retorno = JsonSerializer.Deserialize<IList<ICPropriedade>>(Propriedades);
-    //        }
-    //        catch (JsonException)
-    //        {
-    //            retorno = null;
-    //        }
-    //        return retorno;
-    //    }
-    //    set {
-    //        if (value == null || value.Count == 0)
-    //        {
-    //            this.Propriedades = null;
-    //        }
-    //        else
-    //        {
-    //            this.Propriedades = JsonSerializer.Serialize(value);
-    //        }
-    //    }
-
-    //}
 
 }

@@ -39,7 +39,7 @@ public class IC : ControllerBase
     [HttpGet("[action]/{id}")]
     public IActionResult BuscaComFamilia(int id)
     {
-        var Localizado = this.LocalizaComFamilia(id);
+        var Localizado = Services.IcService.LocalizaComFamilia(_db, id);
         return Ok(Localizado);
 
     }
@@ -168,8 +168,6 @@ public class IC : ControllerBase
             return BadRequest(new MensagemErro("Usuário não tem permissão para alterar ICs"));
 
 
-        //List<int> MinhasLocacoes = Logado.Locacoes.Select(p => p.IdOrganograma).ToList();
-        //caso seja novo
 
         item.Nome = item.Nome.Trim();
 
@@ -182,11 +180,7 @@ public class IC : ControllerBase
             _db.SaveChanges();
             if (embeddingHabilitado)
             {
-                var origem = this.LocalizaComFamilia(item.Id);
-                var embedding = _service.AsTextEmbeddingGenerationService();
-                var temp = embedding.GenerateEmbeddingAsync(JsonSerializer.Serialize(origem)).Result;
-                item.Embedding = new Pgvector.Vector(temp);
-                _db.SaveChanges();
+                Services.IcService.AtualizaEmbedding(_db, _service, item.Id);
             }
             return Ok(item);
         }
@@ -199,7 +193,7 @@ public class IC : ControllerBase
             _db.SaveChanges();
             if (embeddingHabilitado)
             {
-                var origem = this.LocalizaComFamilia(localizado.Id);
+                var origem = Services.IcService.LocalizaComFamilia(_db, localizado.Id);
                 var embedding = _service.AsTextEmbeddingGenerationService();
                 var temp = embedding.GenerateEmbeddingAsync(JsonSerializer.Serialize(origem)).Result;
                 localizado.Embedding = new Pgvector.Vector(temp);
@@ -253,6 +247,7 @@ public class IC : ControllerBase
             .Where(p => p.Id == id)
             .Include(p => p.Tipo)
             .Include(p => p.Responsavel)
+            .Include(p => p.Conhecimentos)
             .FirstOrDefault();
         if (localizado == null)
             throw new Exception("IC não localizado");
@@ -272,16 +267,6 @@ public class IC : ControllerBase
             localizado.Pai = localizado.Ancestrais.Last();
         }
 
-        //foreach (var filho in Localizado.Filhos)
-        //    filho.Pai = null;
-
-        //foreach (var pai in Localizado.Ancestrais)
-        //    pai.Filhos = null;
-
-
-        Console.Write(localizado.ToString());
-        var x = JsonSerializer.Serialize(localizado);
-
         return localizado;
 
     }
@@ -300,7 +285,7 @@ public class IC : ControllerBase
             //if (localizado == null)
             //    continue;
             var embedding = _service.AsTextEmbeddingGenerationService();
-            var temp = embedding.GenerateEmbeddingAsync(this.GeraTextoEmbedding(item.Id)).Result;
+            var temp = embedding.GenerateEmbeddingAsync(Services.IcService.GeraTextoEmbedding(_db, item.Id)).Result;
             item.Embedding = new Pgvector.Vector(temp);
             _db.SaveChanges();
         }
@@ -324,25 +309,6 @@ public class IC : ControllerBase
 
         return Ok();
     }
-
-    private string GeraTextoEmbedding(int id)
-    {
-        var ic = this.LocalizaComFamilia(id);
-        StringBuilder saida = new();
-        if (ic.Ancestrais is not null && ic.Ancestrais.Count() > 0)
-            saida.AppendLine($"Ancestrais: ({string.Join(", ", ic.Ancestrais.Select(a => $"nome: {a.Nome} tipo:{a.Tipo!.Nome}"))})");
-
-        if (ic.Filhos is not null && ic.Filhos.Count() > 0)
-            saida.AppendLine($"Filhos: ({string.Join(", ", ic.Filhos.Select(a => $"nome: {a.Nome} tipo:{a.Tipo!.Nome}"))})");
-
-        saida.AppendLine($"nome: {ic.Nome} tipo:{ic.Tipo!.Nome}");
-        saida.AppendLine($"nome completo: {ic.NomeCompleto} ");
-        if (!string.IsNullOrEmpty(ic.Observacao))
-            saida.AppendLine($"observacao: {ic.Observacao}");
-        return saida.ToString();
-        //return JsonSerializer.Serialize(ic);
-    }
-
 
     private void PopulaFilhosMenu(ref Model.IC.VwIc item, ref List<Model.IC.VwIc> lista)
     {
