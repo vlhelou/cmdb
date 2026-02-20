@@ -49,12 +49,15 @@ export class PrincipalComponent implements OnInit {
     quantidadeSegredos = signal<number>(0);
     quantidadeConhecimentos = signal<number>(0);
     recognition = new webkitSpeechRecognition();
+    showCreuza = signal<boolean>(false);
     constructor(private srv: IcService, private route: ActivatedRoute) {
         this.recognition.interimResults = true;
         this.recognition.lang = 'pt-BR';
     }
 
     ngOnInit(): void {
+        console.log(window.location.protocol);
+        this.showCreuza.set(window.location.protocol === 'https:' || window.location.hostname === 'localhost');
         const pid = this.route.snapshot.paramMap.get('id');
         const id = parseInt(pid || '');
         if (id) {
