@@ -46,12 +46,14 @@
                     <ng-template #body let-item>
                         <tr>
                             <td>{{item.problema}}</td>
-                            <td>{{item.solucao}}</td>
+                            <td>
+                                <textarea class="form-control" rows="3" readonly>{{item.solucao}}</textarea>
+                            </td>
                             <td>{{item.dataAlteracao | date:'dd/MM/yyyy HH:mm'}}</td>
                             <td>
                                 <a href="javascript:void(0)" (click)="edita(item)"><i class="pi pi-pencil"></i></a>
-                                <a href="javascript:void(0)" class="text-danger ms-2" (click)="exclui(item.id, $event)"><i
-                                        class="pi pi-trash"></i></a>
+                                <a href="javascript:void(0)" class="text-danger ms-2"
+                                    (click)="exclui(item.id, $event)"><i class="pi pi-trash"></i></a>
                             </td>
                         </tr>
                     </ng-template>
