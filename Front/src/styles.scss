@@ -111,6 +111,9 @@ body {
     margin: 2%;
   }
 }
+
+
+
 .p-inputtext,
 .p-select,
 .p-password,
@@ -121,4 +124,14 @@ body {
 
 .p-checkbox {
   margin-right: 0.5rem;
+}
+
+:host ::ng-deep .p-datatable-filter {
+  .p-fluid{
+      .p-inputtext {
+        width: 100%;
+      }
+
+  }
+  width: 100%;
 }
