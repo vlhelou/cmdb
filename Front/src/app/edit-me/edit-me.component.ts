@@ -96,6 +96,9 @@ export class EditMeComponent implements OnInit {
             next: (data) => {
                 this.mostraSegredo = true;
                 this.conteudo.set(data.conteudo || '');
+                setTimeout(() => {
+                    this.mostraSegredo = false;
+                }, 4000);
                 // Manipule os dados recebidos conforme necessário
             }
         });

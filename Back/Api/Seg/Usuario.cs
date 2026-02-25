@@ -346,7 +346,7 @@ public class Usuario : Controller
         var equipes = _db.SegEquipe
             .AsNoTracking()
             .Where(p => p.IdUsuario == idLogado)
-            .Include(p => p.Organograma)
+            .Include(p => p.VwOrganograma)
             .ToList();
 
         localizado.Locacoes = equipes;
