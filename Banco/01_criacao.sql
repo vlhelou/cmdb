@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict CCReAN4QflaEIuoZ7dB4LhcDq0CGEGG4V63aAgFykrqztlRYtwxA9cfo5uV1EUV
+\restrict zWYAQIuHviaFyJCotOfXvSMZr6hIlyVQ1bDvanxi0ADGsZqg6D9LU0w2vMiSf3r
 
 -- Dumped from database version 18.1 (Debian 18.1-1.pgdg13+2)
 -- Dumped by pg_dump version 18.1 (Debian 18.1-1.pgdg13+2)
@@ -440,7 +440,7 @@ CREATE TABLE corp.configuracao (
     valortexto character varying,
     valordata time without time zone,
     valorcomplexo json,
-    valorsensivel boolean,
+    valorsensivel boolean NOT NULL,
     ajuda character varying,
     valorboleano boolean
 );
@@ -1596,6 +1596,13 @@ CREATE INDEX ix_icconhecimento_idic ON ic.conhecimento USING btree (idic);
 
 
 --
+-- Name: ix_icconhecimento_nome; Type: INDEX; Schema: ic; Owner: postgres
+--
+
+CREATE UNIQUE INDEX ix_icconhecimento_nome ON ic.conhecimento USING btree (idic, problema);
+
+
+--
 -- Name: ix_icpainome; Type: INDEX; Schema: ic; Owner: postgres
 --
 
@@ -2436,5 +2443,5 @@ GRANT SELECT,USAGE ON SEQUENCE servico.sqchamado TO usrapp;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict CCReAN4QflaEIuoZ7dB4LhcDq0CGEGG4V63aAgFykrqztlRYtwxA9cfo5uV1EUV
+\unrestrict zWYAQIuHviaFyJCotOfXvSMZr6hIlyVQ1bDvanxi0ADGsZqg6D9LU0w2vMiSf3r
 

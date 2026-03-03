@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using OllamaSharp;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using System.Text;
 using System.Text.Json.Serialization;
-using static System.Net.WebRequestMethods;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -95,7 +97,39 @@ builder.Services.AddAuthentication(x =>
         };
     });
 
+bool otlpAtivo = db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 13)?.ValorBoleano ?? false;
+if (otlpAtivo)
+{
+    string otlpEndpoint = db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 29)?.ValorTexto ?? "";
+    string otlpServico = db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 30)?.ValorTexto ?? "otlp";
 
+    builder.Services.AddOpenTelemetry()
+        .ConfigureResource(resource => resource.AddService(otlpServico))
+        .WithMetrics(metrics =>
+        {
+            metrics
+            .AddAspNetCoreInstrumentation()
+            .AddNpgsqlInstrumentation()
+            //.AddEntityFrameworkCoreInstrumentation()
+            .AddHttpClientInstrumentation();
+            metrics.AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri(otlpEndpoint);
+            });
+        })
+        .WithTracing(tracing =>
+        {
+            tracing.AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation();
+
+            tracing.AddOtlpExporter();
+        });
+
+
+    //builder.Logging.AddOpenTelemetry(logging => logging.AddOtlpExporter());
+
+
+}
 
 var app = builder.Build();
 
