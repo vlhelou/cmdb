@@ -1,3 +1,4 @@
+using Grafana.OpenTelemetry;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -103,30 +104,88 @@ if (otlpAtivo)
     string otlpEndpoint = db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 29)?.ValorTexto ?? "";
     string otlpServico = db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 30)?.ValorTexto ?? "otlp";
 
+
+    var resourceBuilder = ResourceBuilder.CreateDefault()
+    .AddService(serviceName: "Cmdb",
+        serviceVersion: "1.1");
+
+
+
+
+    //builder.Services.AddOpenTelemetry()
+    //    .WithMetrics((metricBuilder) =>
+    //    {
+    //        metricBuilder.AddView(
+    //"http.server.request.duration",
+    //new ExplicitBucketHistogramConfiguration()
+    //            {
+    //                Boundaries = [0, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10]
+    //            }
+    //        );
+    //        metricBuilder.AddMeter(
+    //             "System.Diagnostics.Metrics",
+    //             "Microsoft.AspNetCore.Hosting",
+    //             "Microsoft.AspNetCore.Server.Kestrel",
+    //             "System.Net.Http");
+    //        metricBuilder
+    //            .SetResourceBuilder(resourceBuilder)
+    //            .AddAspNetCoreInstrumentation()
+    //            .AddRuntimeInstrumentation()
+    //            .AddProcessInstrumentation()
+    //            .AddHttpClientInstrumentation()
+    //            .AddConsoleExporter()
+    //            .AddPrometheusExporter(options =>
+    //            {
+    //                options.ScrapeResponseCacheDurationMilliseconds = 0;
+    //            })
+    //            .UseGrafana();
+
+    //            metricBuilder.AddOtlpExporter(options =>
+    //            {
+    //                options.Endpoint = new Uri(otlpEndpoint);
+    //            }).AddConsoleExporter();
+
+    //    });
+
+
+    builder.Logging.AddOpenTelemetry(options =>
+    {
+        options.IncludeFormattedMessage = true;
+        options.IncludeScopes = true;
+    });
+
+
     builder.Services.AddOpenTelemetry()
         .ConfigureResource(resource => resource.AddService(otlpServico))
         .WithMetrics(metrics =>
         {
             metrics
             .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddRuntimeInstrumentation()
             .AddNpgsqlInstrumentation()
-            //.AddEntityFrameworkCoreInstrumentation()
-            .AddHttpClientInstrumentation();
-            metrics.AddOtlpExporter(options =>
+            .AddConsoleExporter()
+            .AddOtlpExporter(options =>
             {
                 options.Endpoint = new Uri(otlpEndpoint);
             });
+
+
         })
         .WithTracing(tracing =>
         {
             tracing.AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation();
-
-            tracing.AddOtlpExporter();
-        });
-
-
-    //builder.Logging.AddOpenTelemetry(logging => logging.AddOtlpExporter());
+            .AddHttpClientInstrumentation()
+            .AddConsoleExporter()
+            .AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri(otlpEndpoint);
+            });
+        })
+        .ConfigureResource(resouce => { 
+            resouce.AddService(serviceName: "Cmdb", serviceVersion: "1.1");
+        })
+        ;
 
 
 }
