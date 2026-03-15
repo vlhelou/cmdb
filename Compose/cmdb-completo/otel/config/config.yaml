@@ -23,7 +23,7 @@ receivers:
       - job_name: 'otel-collector'
         scrape_interval: 10s
         static_configs:
-        - targets: ['prometheuslocal:8888']
+        - targets: ['prometheuslocal:9090']
 
   jaeger:
     protocols:
