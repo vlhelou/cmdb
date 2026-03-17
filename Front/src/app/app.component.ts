@@ -85,11 +85,6 @@ export class AppComponent implements OnInit {
                 routerLink: '/usuario/cadastro'
             },
             {
-                label: 'Configuração',
-                icon: 'pi pi-cog',
-                routerLink: '/configuracao'
-            },
-            {
                 label: 'Tipo',
                 icon: 'pi pi-list-check',
                 routerLink: '/tipo'
@@ -98,6 +93,11 @@ export class AppComponent implements OnInit {
                 label: 'Embedded',
                 icon: 'fa-solid fa-terminal',
                 routerLink: '/embedded'
+            },
+            {
+                label: 'Configuração',
+                icon: 'pi pi-cog',
+                routerLink: '/configuracao'
             }
         ]
     }

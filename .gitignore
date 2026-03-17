@@ -408,4 +408,5 @@ Front/package-lock.json
 /Back/Properties/launchSettings.json
 
 Banco/cmdb.bak
-
+Compose/cmdb-completo/postgres/**
+Compose/cmdb-completo/grafana/**
