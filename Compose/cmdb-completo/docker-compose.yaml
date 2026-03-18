@@ -2,7 +2,6 @@ services:
 
   cmdbapp:
     image: vlhelou/cmdb:latest
-    container_name: ct-cmdbapp
     restart: always
     ports:
       - "4500:8080"
@@ -16,7 +15,6 @@ services:
 
   db:
     image: pgvector/pgvector:0.8.1-pg18-trixie
-    container_name: ct-db
     restart: always
     volumes:
       - ./postgres:/var/lib/postgresql
@@ -30,7 +28,6 @@ services:
 
   otel:
     image: otel/opentelemetry-collector-contrib:latest
-    container_name: ct-otel
     restart: always
     volumes:
       - ./otel/config/config.yaml:/etc/otelcol-contrib/config.yaml:ro
@@ -43,7 +40,6 @@ services:
 
   prometheuslocal:
     image: prom/prometheus:latest
-    container_name: ct-prometheus
     restart: always
     depends_on:
       - otel
@@ -58,9 +54,16 @@ services:
       - '--web.enable-remote-write-receiver'
       - '--web.enable-otlp-receiver'
 
+  lokilocal:
+    image: grafana/loki:latest
+    restart: always
+    ports:
+      - "3100:3100"
+    networks:
+      - cmdbnet
+
   grafana:
     image: grafana/grafana:latest
-    container_name: ct-grafana
     restart: always
     depends_on:
       - prometheuslocal

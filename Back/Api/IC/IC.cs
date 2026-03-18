@@ -18,11 +18,14 @@ public class IC : ControllerBase
     private readonly Model.Db _db;
     private readonly OllamaApiClient _service;
     private readonly bool embeddingHabilitado;
-    public IC(Model.Db db, OllamaApiClient service)
+    private readonly ILogger<IC> _logger;
+    public IC(Model.Db db, OllamaApiClient service, ILogger<IC> logger)
     {
         _db = db;
         _service = service;
         embeddingHabilitado = db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 28)?.ValorBoleano ?? false;
+        _logger = logger;
+        _logger.LogInformation("IC Controller iniciado. Embedding habilitado: {EmbeddingHabilitado}", embeddingHabilitado);
     }
 
 
