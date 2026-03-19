@@ -10,12 +10,17 @@ public class Configuracao : ControllerBase
 {
     private readonly Model.Db _db;
     private readonly Guid _chave;
-    public Configuracao(Model.Db db)
+    private readonly ILogger<Configuracao> _logger;
+    public Configuracao(Model.Db db, ILogger<Configuracao> logger)
     {
         _db = db;
         var strChave = _db.CorpVwConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 2)?.ValorTexto;
+        _logger = logger;
         if (string.IsNullOrWhiteSpace(strChave) || !Guid.TryParse(strChave.Trim(), out _chave))
+        {
+            _logger.LogError("Chave de criptografia não configurada ou inválida.");
             throw new Exception("Chave de criptografia não configurada");
+        }
 
     }
 
@@ -53,8 +58,6 @@ public class Configuracao : ControllerBase
         if (item is null)
             return BadRequest(new { Mensagem = "Item não informado" });
 
-
-
         var localizado = _db.CorpConfiguracao.FirstOrDefault(x => x.Id == item.Id);
         if (localizado is null)
             return BadRequest(new { Mensagem = "Item não localizado" });
@@ -62,28 +65,41 @@ public class Configuracao : ControllerBase
         if (localizado.ValorSensivel && item.ValorTexto == "*****")
             return BadRequest(new { Mensagem = "valor sensível não alterado" });
 
+
+        string valorNovo = string.Empty;
         switch (localizado.TipoValor)
         {
             case "numerico":
                 localizado.ValorNumerico = item.ValorNumerico;
+                valorNovo = item.ValorNumerico?.ToString() ?? "null";
                 break;
             case "texto":
                 if (localizado.ValorSensivel)
+                {
                     localizado.ValorTexto = Util.Criptografa(item.ValorTexto ?? string.Empty, _chave);
+                    valorNovo = "*****";
+                }
                 else
+                {
                     localizado.ValorTexto = item.ValorTexto;
+                    valorNovo = item.ValorTexto ?? "null";
+                }
                 break;
             case "data":
                 localizado.ValorData = item.ValorData;
+                valorNovo = item.ValorData?.ToString("o") ?? "null";
                 break;
             case "complexo":
                 localizado.ValorComplexo = item.ValorComplexo;
+                valorNovo = item.ValorComplexo ?? "null";
                 break;
 
             case "boleano":
                 localizado.ValorBoleano = item.ValorBoleano;
+                valorNovo = item.ValorBoleano?.ToString() ?? "null";
                 break;
             default:
+                _logger.LogWarning($"Tipo de valor não suportado para configuração: {localizado.Id} - {localizado.Nome}, tipo informado: {localizado.TipoValor}");
                 return BadRequest(new { Mensagem = "Tipo de valor não suportado" });
         }
 
@@ -93,6 +109,7 @@ public class Configuracao : ControllerBase
             _db.Entry(localizado).State = EntityState.Detached;
             localizado.ValorTexto = "*****";
         }
+        _logger.LogInformation($"Valor da configuração ajustado: {localizado.Id} - {localizado.Nome}, com o valor de : {valorNovo}");
 
         return Ok(localizado);
     }

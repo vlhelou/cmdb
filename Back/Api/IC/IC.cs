@@ -18,14 +18,11 @@ public class IC : ControllerBase
     private readonly Model.Db _db;
     private readonly OllamaApiClient _service;
     private readonly bool embeddingHabilitado;
-    private readonly ILogger<IC> _logger;
-    public IC(Model.Db db, OllamaApiClient service, ILogger<IC> logger)
+    public IC(Model.Db db, OllamaApiClient service)
     {
         _db = db;
         _service = service;
         embeddingHabilitado = db.CorpConfiguracao.AsNoTracking().FirstOrDefault(p => p.Id == 28)?.ValorBoleano ?? false;
-        _logger = logger;
-        _logger.LogInformation("IC Controller iniciado. Embedding habilitado: {EmbeddingHabilitado}", embeddingHabilitado);
     }
 
 
@@ -241,37 +238,6 @@ public class IC : ControllerBase
         ic.IdPai = idNovoPai;
         _db.SaveChanges();
         return Ok();
-    }
-
-    private VwIc LocalizaComFamilia(int id)
-    {
-        var localizado = _db.IcVwIc
-            .AsNoTracking()
-            .Where(p => p.Id == id)
-            .Include(p => p.Tipo)
-            .Include(p => p.Responsavel)
-            .Include(p => p.Conhecimentos)
-            .FirstOrDefault();
-        if (localizado == null)
-            throw new Exception("IC não localizado");
-        localizado.Ancestrais = _db.IcVwIc.Where(p => localizado.LstAncestrais.AsEnumerable().Contains(p.Id))
-            .AsNoTracking()
-            .Include(p => p.Tipo)
-            .OrderBy(p => p.Nivel)
-            .ToList<Model.IC.VwIc>();
-        localizado.Filhos = _db.IcVwIc
-            .AsNoTracking()
-            .Where(p => p.IdPai == localizado.Id)
-            .Include(p => p.Tipo)
-            .OrderBy(p => p.Tipo!.Nome)
-            .ThenBy(p => p.Nome).ToList();
-        if (localizado.Ancestrais.Count > 0)
-        {
-            localizado.Pai = localizado.Ancestrais.Last();
-        }
-
-        return localizado;
-
     }
 
     [HttpGet("[action]")]

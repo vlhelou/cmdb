@@ -8,9 +8,11 @@ namespace Cmdb.Api.IC;
 public class Segredo : ControllerBase
 {
     private readonly Model.Db _db;
-    public Segredo(Model.Db db)
+    private readonly ILogger<Segredo> _logger;
+    public Segredo(Model.Db db, ILogger<Segredo> logger)
     {
         _db = db;
+        _logger = logger;
     }
 
     [HttpGet("[action]/{id}")]
@@ -107,6 +109,9 @@ public class Segredo : ControllerBase
             return BadRequest(new MensagemErro("Segredo não localizado"));
         _db.IcSegredo.Remove(segredo);
         _db.SaveChanges();
+
+        _logger.LogInformation($"Segredo excluído: {id}, pelo usuário: {idLogado}");
+
         return Ok();
     }
 
@@ -131,6 +136,7 @@ public class Segredo : ControllerBase
                 if (dono == null)
                     return BadRequest(new MensagemErro("Proprietário do segredo não localizado"));
                 conteudo = Util.Descriptografa(segredo.Conteudo, dono.Gd, segredo.Algoritmo);
+                _logger.LogInformation($"Segredo visualizado: {id}, pelo usuário: {idLogado}");
                 return Ok(new { conteudo });
             }
         }
@@ -144,8 +150,6 @@ public class Segredo : ControllerBase
             conteudo = Util.Descriptografa(segredo.Conteudo, organograma.Gd, segredo.Algoritmo);
             return Ok(new { conteudo });
         }
-
-
     }
 
     [HttpGet("[action]")]
