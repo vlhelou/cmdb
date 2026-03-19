@@ -25,15 +25,8 @@ var strcn = Environment.GetEnvironmentVariable("CMDB_DB")?.Replace(":", "=") ?? 
 var verificaVetor = (Environment.GetEnvironmentVariable("vector") ?? string.Empty) == "true";
 
 NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
-
-
-//var dataSourceBuilder = new NpgsqlDataSourceBuilder(strcn);
-//dataSourceBuilder.EnableDynamicJson();
-//dataSourceBuilder.UseVector();
-//var dataSource = dataSourceBuilder.Build();
 builder.Services.AddDbContext<Cmdb.Model.Db>(opt =>
 {
-
     opt.UseNpgsql(strcn.Replace(":", "="), options =>
     {
         options.EnableRetryOnFailure();
@@ -77,7 +70,6 @@ builder!.Services.AddCors(options =>
         });
 });
 
-//var key = Convert.FromBase64String(builder.Configuration.GetValue<string>("jwt") ?? string.Empty);
 var key = Encoding.UTF8.GetBytes(chaveJWT);
 builder.Services.AddAuthentication(x =>
 {
@@ -109,50 +101,17 @@ if (otlpAtivo)
     .AddService(serviceName: "Cmdb",
         serviceVersion: "1.1");
 
+    builder.Logging.ClearProviders();
 
-
-
-    //builder.Services.AddOpenTelemetry()
-    //    .WithMetrics((metricBuilder) =>
+    //builder.Logging.AddOpenTelemetry(options =>
+    //{
+    //    options.IncludeFormattedMessage = true;
+    //    options.IncludeScopes = true;
+    //    options.AddOtlpExporter(otlpOptions =>
     //    {
-    //        metricBuilder.AddView(
-    //"http.server.request.duration",
-    //new ExplicitBucketHistogramConfiguration()
-    //            {
-    //                Boundaries = [0, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10]
-    //            }
-    //        );
-    //        metricBuilder.AddMeter(
-    //             "System.Diagnostics.Metrics",
-    //             "Microsoft.AspNetCore.Hosting",
-    //             "Microsoft.AspNetCore.Server.Kestrel",
-    //             "System.Net.Http");
-    //        metricBuilder
-    //            .SetResourceBuilder(resourceBuilder)
-    //            .AddAspNetCoreInstrumentation()
-    //            .AddRuntimeInstrumentation()
-    //            .AddProcessInstrumentation()
-    //            .AddHttpClientInstrumentation()
-    //            .AddConsoleExporter()
-    //            .AddPrometheusExporter(options =>
-    //            {
-    //                options.ScrapeResponseCacheDurationMilliseconds = 0;
-    //            })
-    //            .UseGrafana();
-
-    //            metricBuilder.AddOtlpExporter(options =>
-    //            {
-    //                options.Endpoint = new Uri(otlpEndpoint);
-    //            }).AddConsoleExporter();
-
-    //    });
-
-
-    builder.Logging.AddOpenTelemetry(options =>
-    {
-        options.IncludeFormattedMessage = true;
-        options.IncludeScopes = true;
-    });
+    //        otlpOptions.Endpoint = new Uri(otlpEndpoint);
+    //    }).SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Logging.Cmdb"));
+    //});
 
 
     builder.Services.AddOpenTelemetry()
@@ -181,6 +140,14 @@ if (otlpAtivo)
             {
                 options.Endpoint = new Uri(otlpEndpoint);
             });
+        })
+        .WithLogging(logging =>
+        {
+            logging.AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri(otlpEndpoint);
+            }).SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Logging.Cmdb"));
+            logging.AddConsoleExporter();
         })
         .ConfigureResource(resouce => { 
             resouce.AddService(serviceName: "Cmdb", serviceVersion: "1.1");

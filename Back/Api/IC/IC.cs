@@ -240,37 +240,6 @@ public class IC : ControllerBase
         return Ok();
     }
 
-    private VwIc LocalizaComFamilia(int id)
-    {
-        var localizado = _db.IcVwIc
-            .AsNoTracking()
-            .Where(p => p.Id == id)
-            .Include(p => p.Tipo)
-            .Include(p => p.Responsavel)
-            .Include(p => p.Conhecimentos)
-            .FirstOrDefault();
-        if (localizado == null)
-            throw new Exception("IC não localizado");
-        localizado.Ancestrais = _db.IcVwIc.Where(p => localizado.LstAncestrais.AsEnumerable().Contains(p.Id))
-            .AsNoTracking()
-            .Include(p => p.Tipo)
-            .OrderBy(p => p.Nivel)
-            .ToList<Model.IC.VwIc>();
-        localizado.Filhos = _db.IcVwIc
-            .AsNoTracking()
-            .Where(p => p.IdPai == localizado.Id)
-            .Include(p => p.Tipo)
-            .OrderBy(p => p.Tipo!.Nome)
-            .ThenBy(p => p.Nome).ToList();
-        if (localizado.Ancestrais.Count > 0)
-        {
-            localizado.Pai = localizado.Ancestrais.Last();
-        }
-
-        return localizado;
-
-    }
-
     [HttpGet("[action]")]
     [Authorize(Roles = "admin")]
     public IActionResult EmbeddingRestante()
