@@ -8,10 +8,15 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Scalar.AspNetCore;
 using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddOpenApi(options => {
+    options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
+});
 
 // Add services to the container.
 
@@ -164,14 +169,18 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseCors("Geral");
+    app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 app.MapControllers().RequireAuthorization();
 
 app.MapFallbackToFile("/index.html");
+
 
 app.Run();
