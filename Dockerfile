@@ -17,10 +17,11 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Cmdb.csproj" -c $BUILD_CONFIGURATION -r linux-x64 --self-contained true -o /app/publish 
 
-FROM node:latest AS buildng
+FROM node:24-alpine3.23 AS buildng
 WORKDIR /usr/local/app
-COPY Front/ .
-RUN npm install
+COPY Front/package*.json ./
+RUN npm ci 
+COPY Front/ ./
 RUN npm run build
 
 FROM base AS final
