@@ -1,6 +1,6 @@
 CREATE database cmdb;
 
-create user usrapp with password 'usrapp';
+create user usrapp with password '8CzuK4lPN0xl';
 
 \connect cmdb;
 --
@@ -2486,7 +2486,7 @@ SELECT setval('seg.squsuario', 1 );
 
 /*			Configuracao 			*/
 INSERT INTO corp.configuracao (id,idpai,nome,ativo,tipovalor,valornumerico,valortexto,valordata,valorcomplexo,valorsensivel,ajuda,valorboleano) VALUES
-	 (1,NULL,'CMDB',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
+	 (1,NULL,'CMDB',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,true),
 	 (4,3,'AD',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
 	 (3,1,'Conexão',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
 	 (10,4,'Propriedades',true,'complexo',NULL,NULL,NULL,'{

@@ -34,7 +34,7 @@ SELECT setval('seg.squsuario', 1 );
 
 /*			Configuracao 			*/
 INSERT INTO corp.configuracao (id,idpai,nome,ativo,tipovalor,valornumerico,valortexto,valordata,valorcomplexo,valorsensivel,ajuda,valorboleano) VALUES
-	 (1,NULL,'CMDB',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
+	 (1,NULL,'CMDB',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,true),
 	 (4,3,'AD',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
 	 (3,1,'Conexão',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
 	 (10,4,'Propriedades',true,'complexo',NULL,NULL,NULL,'{
@@ -65,7 +65,7 @@ INSERT INTO corp.configuracao (id,idpai,nome,ativo,tipovalor,valornumerico,valor
 	 (9,4,'Searchbase',true,'texto',NULL,'dc=hsm,dc=com,dc=br',NULL,NULL,false,NULL,NULL),
 	 (25,1,'Embedding',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
 	 (27,25,'Modelo',true,'texto',NULL,'mxbai-embed-large',NULL,NULL,false,NULL,NULL),
-	 (28,25,'Ativo',true,'boleano',NULL,NULL,NULL,NULL,false,NULL,true),
+	 (28,25,'Ativo',true,'boleano',NULL,NULL,NULL,NULL,false,NULL,false),
 	 (26,25,'URL',true,'texto',NULL,'http://localhost:11434',NULL,NULL,false,NULL,NULL),
 	 (5,1,'Observabilidade',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
 	 (13,5,'Ativo',true,'boleano',NULL,NULL,NULL,NULL,false,NULL,true),

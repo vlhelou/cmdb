@@ -2,7 +2,7 @@ services:
 
   cmdbapp:
     image: vlhelou/cmdb:latest
-    restart: always
+    # restart: always
     ports:
       - "4500:8080"
     depends_on:
@@ -10,7 +10,7 @@ services:
     networks:
       - cmdbnet
     environment:
-      - CMDB_DB=Host:db;Database:cmdb;Username:usrapp;Password:6nO5870pExuj
+      - CMDB_DB=Host:db;Database:cmdb;Username:usrapp;Password:${senhaCmdbDb}
 
 
   db:
