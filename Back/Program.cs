@@ -8,7 +8,6 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using Scalar.AspNetCore;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -108,17 +107,6 @@ if (otlpAtivo)
 
     builder.Logging.ClearProviders();
 
-    //builder.Logging.AddOpenTelemetry(options =>
-    //{
-    //    options.IncludeFormattedMessage = true;
-    //    options.IncludeScopes = true;
-    //    options.AddOtlpExporter(otlpOptions =>
-    //    {
-    //        otlpOptions.Endpoint = new Uri(otlpEndpoint);
-    //    }).SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Logging.Cmdb"));
-    //});
-
-
     builder.Services.AddOpenTelemetry()
         .ConfigureResource(resource => resource.AddService(otlpServico))
         .WithMetrics(metrics =>
@@ -169,9 +157,13 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseCors("Geral");
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+    //app.MapScalarApiReference();
 }
+
+app.MapOpenApi();
+app.UseSwaggerUI(options => {
+    options.SwaggerEndpoint("/openapi/v1.json", "API V1");
+});
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseAuthentication();

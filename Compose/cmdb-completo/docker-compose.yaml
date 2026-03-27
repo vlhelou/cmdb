@@ -11,6 +11,7 @@ services:
       - cmdbnet
     environment:
       - CMDB_DB=Host:db;Database:cmdb;Username:usrapp;Password:${senhaCmdbDb}
+      - TZ=America/Sao_Paulo
 
 
   db:
@@ -31,6 +32,8 @@ services:
     restart: always
     volumes:
       - ./otel/config/config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    environment:
+      - TZ=America/Sao_Paulo
     ports:
       - "4318:4318"
       - "4317:4317"
@@ -49,6 +52,8 @@ services:
       - "9090:9090"
     networks:
       - cmdbnet
+    environment:
+      - TZ=America/Sao_Paulo
     command: 
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--web.enable-remote-write-receiver'
@@ -61,6 +66,8 @@ services:
       - "3100:3100"
     networks:
       - cmdbnet
+    environment:
+      - TZ=America/Sao_Paulo
 
   grafana:
     image: grafana/grafana:latest
@@ -73,6 +80,8 @@ services:
       - ./grafana:/var/lib/grafana
     networks:
       - cmdbnet
+    environment:
+      - TZ=America/Sao_Paulo
 
 
 

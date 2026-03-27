@@ -2517,10 +2517,10 @@ INSERT INTO corp.configuracao (id,idpai,nome,ativo,tipovalor,valornumerico,valor
 	 (9,4,'Searchbase',true,'texto',NULL,'dc=hsm,dc=com,dc=br',NULL,NULL,false,NULL,NULL),
 	 (25,1,'Embedding',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
 	 (27,25,'Modelo',true,'texto',NULL,'mxbai-embed-large',NULL,NULL,false,NULL,NULL),
-	 (28,25,'Ativo',true,'boleano',NULL,NULL,NULL,NULL,false,NULL,true),
+	 (28,25,'Ativo',true,'boleano',NULL,NULL,NULL,NULL,false,NULL,false),
 	 (26,25,'URL',true,'texto',NULL,'http://localhost:11434',NULL,NULL,false,NULL,NULL),
 	 (5,1,'Observabilidade',true,'grupo',NULL,NULL,NULL,NULL,false,NULL,NULL),
-	 (13,5,'Ativo',true,'boleano',NULL,NULL,NULL,NULL,false,NULL,true),
-	 (29,5,'OTLP Url',true,'texto',NULL,'http://localhost:4317',NULL,NULL,false,NULL,NULL);
+	 (13,5,'Ativo',true,'boleano',NULL,NULL,NULL,NULL,false,NULL,false),
+	 (29,5,'OTLP Url',true,'texto',NULL,'http://otel:4317',NULL,NULL,false,NULL,NULL);
 
 SELECT setval('corp.configuracao_id_seq', 29 );
