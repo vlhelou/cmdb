@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Novell.Directory.Ldap;
-
+using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mail;
 using System.Security.Claims;
@@ -14,6 +14,7 @@ using System.Text.Json;
 namespace Cmdb.Api.Seg;
 
 [Route("api/seg/[controller]")]
+[ApiController]
 public class Usuario : Controller
 {
     private readonly Model.Db _db;
@@ -404,15 +405,29 @@ public class Usuario : Controller
         {
             return BadRequest("Parâmetro senha não informado");
         }
+
+
         var configCMDB = _db.CorpConfiguracao.FirstOrDefault(p => p.Id == 1);
+
         if (configCMDB is null || configCMDB.ValorBoleano is null)
-            return BadRequest("Configuração não localizado");
+            return BadRequest("Configuração inicial não configurada");
 
         if (!(bool)configCMDB.ValorBoleano)
-            return BadRequest("Configuração não localizado");
+            return BadRequest("Configuração inicial já realizada");
+
+        var chave = _db.CorpConfiguracao.FirstOrDefault(p => p.Id == 2);
+        if (chave is null)
+            return BadRequest("chave não localizada");
+
+        var chaveJWT = _db.CorpConfiguracao.FirstOrDefault(p => p.Id == 16);
+        if (chaveJWT is null)
+            return BadRequest("chave jwt não localizada");
+
 
         primeiroUsuario.Senha = (primeiroUsuario.Id.ToString() + senha).ToSha512();
-
+        _db.Database.ExecuteSql($"delete from ic.segredo");
+        chave.ValorTexto= Guid.NewGuid().ToString();
+        chaveJWT.ValorTexto = Guid.NewGuid().ToString()+ Guid.NewGuid().ToString();
         configCMDB.ValorBoleano = false;
         _db.SaveChanges();
 

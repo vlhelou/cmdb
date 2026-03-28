@@ -8,12 +8,13 @@ import { DialogModule } from 'primeng/dialog';
 import { passwordsMatchValidator } from '../util';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
 
 @Component({
     selector: 'app-publico',
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, PopoverModule, CheckboxModule, DialogModule, PasswordModule, ButtonModule],
+    imports: [FormsModule, ReactiveFormsModule, PopoverModule, CheckboxModule, DialogModule, PasswordModule, ButtonModule, RadioButtonModule],
     templateUrl: './publico.component.html',
     styleUrl: './publico.component.scss'
 })

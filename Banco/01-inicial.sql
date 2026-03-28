@@ -1,6 +1,6 @@
 CREATE database cmdb;
 
-create user usrapp with password 'usrapp';
+create user usrapp with password '8CzuK4lPN0xl';
 
 \connect cmdb;
 --

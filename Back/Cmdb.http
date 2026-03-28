@@ -1,6 +1,8 @@
-@Cmdb_HostAddress = http://localhost:5000
+@Cmdb_HostAddress = http://localhost:5001
 
 GET {{Cmdb_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+POST {{Cmdb_HostAddress}}/api/se
