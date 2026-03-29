@@ -2,7 +2,7 @@ services:
 
   cmdbapp:
     image: vlhelou/cmdb:latest
-    # restart: always
+    restart: always
     ports:
       - "4500:8080"
     depends_on:
