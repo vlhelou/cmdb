@@ -60,7 +60,9 @@ no diretório `Compose\cmdb` executar:
     git clone https://github.com/vlhelou/cmdb 
     cd .\cmdb\Compose\cmdb\
     docker compose up -d
-
+# Docker compose completo
+Tutorial: (https://github.com/vlhelou/cmdb/wiki/Docker-compose-Completo)
+Video passo a passo: (https://www.youtube.com/watch?v=Qd5shUxoPM0)
 
 
 
