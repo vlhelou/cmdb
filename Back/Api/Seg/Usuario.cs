@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.SemanticKernel;
 using Novell.Directory.Ldap;
 using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
@@ -388,48 +389,80 @@ public class Usuario : Controller
 
     [HttpPost("[action]")]
     [AllowAnonymous]
-    public IActionResult GravaPrimeiraSenha([FromBody] JsonElement prm)
+    public IActionResult GravaPrimeiraSenha([FromBody] TrocaSenhaPrimaria prm)
     {
-        Model.Seg.Usuario? primeiroUsuario;
-        string senha;
-        if (prm.TryGetProperty("senha", out JsonElement jsenha))
-        {
-            senha = jsenha.GetString()?.Trim() ?? string.Empty;
-            if (string.IsNullOrEmpty(senha))
-                return BadRequest("Senha não informada");
-            primeiroUsuario = _db.SegUsuario.FirstOrDefault(p=>p.Id==1);
-            if (primeiroUsuario is null)
-                return BadRequest("Usuário não localizado");
-        }
-        else
-        {
-            return BadRequest("Parâmetro senha não informado");
-        }
+        if (string.IsNullOrEmpty(prm.senha))
+            return BadRequest(new MensagemErro("Senha não informada"));
+
+        Model.Seg.Usuario?  primeiroUsuario = _db.SegUsuario.FirstOrDefault(p => p.Id == 1);
+        if (primeiroUsuario is null)
+            return BadRequest(new MensagemErro("Usuário não localizado"));
+
 
 
         var configCMDB = _db.CorpConfiguracao.FirstOrDefault(p => p.Id == 1);
 
         if (configCMDB is null || configCMDB.ValorBoleano is null)
-            return BadRequest("Configuração inicial não configurada");
+            return BadRequest(new MensagemErro("Configuração inicial não configurada"));
 
         if (!(bool)configCMDB.ValorBoleano)
-            return BadRequest("Configuração inicial já realizada");
+            return BadRequest(new MensagemErro("Configuração inicial já realizada"));
 
         var chave = _db.CorpConfiguracao.FirstOrDefault(p => p.Id == 2);
         if (chave is null)
-            return BadRequest("chave não localizada");
+            return BadRequest(new MensagemErro("chave não localizada"));
 
         var chaveJWT = _db.CorpConfiguracao.FirstOrDefault(p => p.Id == 16);
         if (chaveJWT is null)
-            return BadRequest("chave jwt não localizada");
+            return BadRequest(new MensagemErro("chave jwt não localizada"));
+
+        var strategy = _db.Database.CreateExecutionStrategy();
 
 
-        primeiroUsuario.Senha = (primeiroUsuario.Id.ToString() + senha).ToSha512();
-        _db.Database.ExecuteSql($"delete from ic.segredo");
-        chave.ValorTexto= Guid.NewGuid().ToString();
-        chaveJWT.ValorTexto = Guid.NewGuid().ToString()+ Guid.NewGuid().ToString();
-        configCMDB.ValorBoleano = false;
-        _db.SaveChanges();
+        Exception exErro = null;
+        strategy.Execute(() =>
+        {
+            // 3. Start the transaction inside the delegate
+            using var transaction = _db.Database.BeginTransaction();
+
+            try
+            {
+                primeiroUsuario.Senha = (primeiroUsuario.Id.ToString() + prm.senha).ToSha512();
+                _db.Database.ExecuteSql($"delete from ic.segredo");
+                chave.ValorTexto = Guid.NewGuid().ToString();
+                chaveJWT.ValorTexto = Guid.NewGuid().ToString() + Guid.NewGuid().ToString();
+                configCMDB.ValorBoleano = false;
+                _db.SaveChanges();
+
+                // 4. Commit the transaction
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                exErro = ex;
+                // 5. Rollback on failure
+                transaction.Rollback();
+                //return BadRequest(new MensagemErro($"falha ao configurar senha: {ex.Message}"));
+            }
+        });
+        if (exErro is not null)
+            return BadRequest(new MensagemErro($"falha ao configurar senha: {exErro.Message}"));
+        //var transacao = _db.Database.BeginTransaction();
+        //try
+        //{
+        //    primeiroUsuario.Senha = (primeiroUsuario.Id.ToString() + prm.senha).ToSha512();
+        //    _db.Database.ExecuteSql($"delete from ic.segredo");
+        //    chave.ValorTexto = Guid.NewGuid().ToString();
+        //    chaveJWT.ValorTexto = Guid.NewGuid().ToString() + Guid.NewGuid().ToString();
+        //    configCMDB.ValorBoleano = false;
+        //    _db.SaveChanges();
+        //    transacao.Commit();
+        //}
+        //catch (Exception ex) {
+        //    transacao.Rollback();
+        //    return BadRequest(new MensagemErro($"falha ao configurar senha: {ex.Message}"));
+        //}
+
 
         return Ok();
     }
@@ -522,6 +555,7 @@ public class Usuario : Controller
         return true;
     }
 
+    public record TrocaSenhaPrimaria(string senha);
 
     private record PropriedadeLdap
     {
