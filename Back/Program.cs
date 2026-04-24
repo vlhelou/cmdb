@@ -10,6 +10,8 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Text;
 using System.Text.Json.Serialization;
+using Pgvector;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,13 +30,17 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 var strcn = Environment.GetEnvironmentVariable("CMDB_DB")?.Replace(":", "=") ?? "";
 var verificaVetor = (Environment.GetEnvironmentVariable("vector") ?? string.Empty) == "true";
 
-NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
+//NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
 builder.Services.AddDbContext<Cmdb.Model.Db>(opt =>
 {
-    opt.UseNpgsql(strcn.Replace(":", "="), options =>
+    var dataSourceBuilder = new NpgsqlDataSourceBuilder(strcn.Replace(":", "="));
+    dataSourceBuilder.EnableDynamicJson();
+    dataSourceBuilder.UseVector();
+    var dataSource = dataSourceBuilder.Build();
+
+    opt.UseNpgsql(dataSource, options =>
     {
         options.EnableRetryOnFailure();
-
         options.UseVector();
     });
     opt.LogTo(Console.WriteLine);
