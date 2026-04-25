@@ -1,7 +1,7 @@
-using Grafana.OpenTelemetry;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Npgsql;
 using OllamaSharp;
 using OpenTelemetry.Logs;
@@ -10,13 +10,59 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Text;
 using System.Text.Json.Serialization;
-using Pgvector;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi(options => {
+builder.Services.AddOpenApi(options =>
+{
     options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
+
+    
+
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        // Define the Security Scheme (e.g., Bearer Token)
+        var scheme = new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Scheme = "bearer",
+            BearerFormat = "JWT"
+        };
+        document.Components ??= new OpenApiComponents();
+
+        document.AddComponent("Bearer", scheme);
+
+        var securityRequirement = new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+        };
+
+        foreach (var path in document.Paths.Values)
+        {
+            foreach (var operation in path.Operations.Values)
+            {
+                operation.Security ??= new List<OpenApiSecurityRequirement>();
+                operation.Security.Add(securityRequirement);
+            }
+        }
+
+        //document.Components.SecuritySchemes = new Dictionary<string, IOpenApiSecurityScheme>();
+        //document.Components.SecuritySchemes.Add("Bearer", scheme);
+
+
+
+
+        // Apply globally to all operations
+        //document.SecurityRequirements.Add(new OpenApiSecurityRequirement
+        //{
+        //    [new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } }] = Array.Empty<string>()
+        //});
+
+        return Task.CompletedTask;
+    });
 });
 
 // Add services to the container.
@@ -150,7 +196,8 @@ if (otlpAtivo)
             }).SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Logging.Cmdb"));
             logging.AddConsoleExporter();
         })
-        .ConfigureResource(resouce => { 
+        .ConfigureResource(resouce =>
+        {
             resouce.AddService(serviceName: "Cmdb", serviceVersion: "1.1");
         })
         ;
@@ -169,8 +216,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapOpenApi();
-app.UseSwaggerUI(options => {
+app.UseSwaggerUI(options =>
+{
     options.SwaggerEndpoint("/openapi/v1.json", "API V1");
+    
 });
 app.UseDefaultFiles();
 app.UseStaticFiles();
