@@ -419,7 +419,7 @@ public class Usuario : Controller
         var strategy = _db.Database.CreateExecutionStrategy();
 
 
-        Exception exErro = null;
+        string? exErro = null;
         strategy.Execute(() =>
         {
             // 3. Start the transaction inside the delegate
@@ -439,14 +439,14 @@ public class Usuario : Controller
             }
             catch (Exception ex)
             {
-                exErro = ex;
+                exErro = ex.Message;
                 // 5. Rollback on failure
                 transaction.Rollback();
                 //return BadRequest(new MensagemErro($"falha ao configurar senha: {ex.Message}"));
             }
         });
         if (exErro is not null)
-            return BadRequest(new MensagemErro($"falha ao configurar senha: {exErro.Message}"));
+            return BadRequest(new MensagemErro($"falha ao configurar senha: {exErro}"));
         //var transacao = _db.Database.BeginTransaction();
         //try
         //{

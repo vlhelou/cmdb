@@ -30,6 +30,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 var strcn = Environment.GetEnvironmentVariable("CMDB_DB")?.Replace(":", "=") ?? "";
 var verificaVetor = (Environment.GetEnvironmentVariable("vector") ?? string.Empty) == "true";
 
+AppContext.SetSwitch("Microsoft.AspNetCore.Server.Kestrel.EnableWindows81Http2", true);
+
 //NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
 builder.Services.AddDbContext<Cmdb.Model.Db>(opt =>
 {
