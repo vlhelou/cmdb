@@ -1,7 +1,10 @@
 import { Component, OnInit, effect, input, output, signal } from '@angular/core';
 import { FormGroup, Validators, FormArray, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-// import { JsonPipe } from '@angular/common';
 import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+
+
+
 import { MessageService } from 'primeng/api';
 import { TipoService } from 'src/model/corp/tipo.service'
 import { corpTipo } from 'src/model/corp/tipo';
@@ -22,7 +25,8 @@ import { TextareaModule } from 'primeng/textarea';
         , InputTextModule
         , CheckboxModule
         , ToastModule
-        , TextareaModule],
+        , TextareaModule
+        , ConfirmDialogModule],
     templateUrl: './cadastro.component.html',
     styleUrl: './cadastro.component.scss',
     providers: [ConfirmationService, MessageService]
@@ -52,7 +56,11 @@ export class CadastroComponent implements OnInit {
         ]),
     });
 
-    constructor(private srv: IcService, private tipo: TipoService, private messageService: MessageService) {
+    constructor(
+        private srv: IcService
+        , private tipo: TipoService
+        , private messageService: MessageService
+        , private confirmationService: ConfirmationService) {
         effect(() => {
             if (this.ic()) {
                 this.frmIC.patchValue({
@@ -101,13 +109,12 @@ export class CadastroComponent implements OnInit {
                 this.tipos.set(data);
             },
         });
-
-
     }
 
     get icPropriedades(): FormArray {
         return this.frmIC.get('propriedades') as FormArray;
     }
+
     propriedadeNova() {
         const propriedade = new FormGroup({
             nome: new FormControl<string>('', [Validators.required]),
@@ -153,6 +160,36 @@ export class CadastroComponent implements OnInit {
 
 
         }
+    }
+
+    exclui(event: any) {
+
+        this.confirmationService.confirm({
+            target: event.currentTarget as EventTarget,
+            message: 'Confirma a mudança de paternidade?',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Sim',
+            rejectLabel: 'Não',
+            acceptButtonStyleClass: 'p-button-danger',
+            rejectButtonStyleClass: 'p-button-secondary',
+
+            accept: () => {
+                this.srv.Exclui(this.ic()?.id!).subscribe(() => {
+                    this.srv.BuscaComFamilia(this.ic()?.idPai!).subscribe({
+                        next: (ret) => {
+                            this.gravado.emit(ret);
+                        }
+                    });
+                });
+
+
+            },
+            reject: () => {
+                // this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+            }
+        });
+
+
     }
 
 }

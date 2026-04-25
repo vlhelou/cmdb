@@ -101,9 +101,14 @@ export class PrincipalComponent implements OnInit {
 
     icCadastroGravado(event: any, treeComponent: FamiliaCompletaComponent | null) {
         this.icAtualiza.set(event);
-        if (treeComponent) {
-            treeComponent.atualiza();
-        }
+        this.srv.BuscaComFamilia(event.id).subscribe({
+            next: (ret) => {
+                this.icSelecionado.set(ret);
+                if (treeComponent) {
+                    treeComponent.atualiza();
+                }
+            }
+        });
     }
 
     mudaPaternidade(event: any) {
