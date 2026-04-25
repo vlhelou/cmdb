@@ -79,16 +79,17 @@
                             }
 
                         </p-tab>
-                        <p-tab value="5">Dependências
+                        <p-tab value="5">Dependente
+                            @if (quantidadeDependentes() > 0) {
+                            <p-badge [value]="quantidadeDependentes()" badgeSize="small" />
+                            }
+
+                        </p-tab>
+                        <p-tab value="6">Dependencias
                             @if (quantidadeDependencias() > 0) {
                             <p-badge [value]="quantidadeDependencias()" badgeSize="small" />
                             }
 
-                        </p-tab>
-                        <p-tab value="6">Dependentes
-                            @if (quantidadeDependentes() > 0) {
-                            <p-badge [value]="quantidadeDependentes()" badgeSize="small" />
-                            }
                         </p-tab>
                     </p-tablist>
                     <p-tabpanels>
@@ -123,10 +124,12 @@
                                 (quantidade)="retornoQuantidadeConhecimentos($event)"></app-conhecimento>
                         </p-tabpanel>
                         <p-tabpanel value="5">
-                            <app-dependencia [ic]="icSelecionado()" [dependente]="true" (quantidade)="retornoQuantidadeDependencias($event)"></app-dependencia>
+                            <app-dependencia [ic]="icSelecionado()" [dependente]="true"
+                                (quantidade)="retornoQuantidadeDependentes($event)"></app-dependencia>
                         </p-tabpanel>
                         <p-tabpanel value="6">
-                            <app-dependencia [ic]="icSelecionado()" [dependente]="false" (quantidade)="retornoQuantidadeDependentes($event)"></app-dependencia>
+                            <app-dependencia [ic]="icSelecionado()" [dependente]="false"
+                                (quantidade)="retornoQuantidadeDependencias($event)"></app-dependencia>
                         </p-tabpanel>
                     </p-tabpanels>
                 </p-tabs>
