@@ -1,3 +1,4 @@
+<p-confirmdialog />
 @if(usaEmbedding()){
 <div class="mb-3">
 
@@ -115,7 +116,7 @@
                                 <div class="col">
 
                                     <button class="btn btn-primary" [disabled]="!icNovoPai"
-                                        (click)="mudaPaternidade()">Novo pai</button>
+                                        (click)="mudaPaternidade($event)">Novo pai</button>
                                 </div>
                             </div>
                         </p-tabpanel>

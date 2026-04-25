@@ -76,7 +76,8 @@ export class ConhecimentoComponent {
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Sim',
             rejectLabel: 'Não',
-            rejectButtonStyleClass: 'p-button-danger',
+            acceptButtonStyleClass: 'p-button-danger',
+            rejectButtonStyleClass: 'p-button-secondary',
             accept: () => {
                 this.srv.Exclui(id).subscribe({
                     next: r => {
