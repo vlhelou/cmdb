@@ -12,7 +12,8 @@
         <div class="row">
             <div class="col-6">
                 @if(showCreuza()){
-                    <a href="javascript:void(0)" [style]="estiloMicrofone()" (click)="iniciaAudio()"><i class="fa-solid fa-microphone"></i></a>
+                <a href="javascript:void(0)" [style]="estiloMicrofone()" (click)="iniciaAudio()"><i
+                        class="fa-solid fa-microphone"></i></a>
                 }
             </div>
             <div class="col-6 text-end">
@@ -78,8 +79,17 @@
                             }
 
                         </p-tab>
-                        <p-tab value="5">Dependências</p-tab>
-                        <p-tab value="6">Dependentes</p-tab>
+                        <p-tab value="5">Dependências
+                            @if (quantidadeDependencias() > 0) {
+                            <p-badge [value]="quantidadeDependencias()" badgeSize="small" />
+                            }
+
+                        </p-tab>
+                        <p-tab value="6">Dependentes
+                            @if (quantidadeDependentes() > 0) {
+                            <p-badge [value]="quantidadeDependentes()" badgeSize="small" />
+                            }
+                        </p-tab>
                     </p-tablist>
                     <p-tabpanels>
                         <p-tabpanel value="0">
@@ -113,10 +123,10 @@
                                 (quantidade)="retornoQuantidadeConhecimentos($event)"></app-conhecimento>
                         </p-tabpanel>
                         <p-tabpanel value="5">
-                            <app-dependencia [ic]="icSelecionado()" [dependente]="true"></app-dependencia>
+                            <app-dependencia [ic]="icSelecionado()" [dependente]="true" (quantidade)="retornoQuantidadeDependencias($event)"></app-dependencia>
                         </p-tabpanel>
                         <p-tabpanel value="6">
-                            <app-dependencia [ic]="icSelecionado()" [dependente]="false"></app-dependencia>
+                            <app-dependencia [ic]="icSelecionado()" [dependente]="false" (quantidade)="retornoQuantidadeDependentes($event)"></app-dependencia>
                         </p-tabpanel>
                     </p-tabpanels>
                 </p-tabs>

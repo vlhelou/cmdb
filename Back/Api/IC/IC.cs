@@ -279,6 +279,21 @@ public class IC : ControllerBase
         return Ok();
     }
 
+    [HttpGet("[action]/{id}")]
+    [Authorize(Roles = "admin")]
+    public IActionResult Exclui(int id)
+    {
+        var localizado = _db.IcIc
+            .Where(p => p.Id == id)
+            .FirstOrDefault();
+        if (localizado is null)
+            return BadRequest(new MensagemErro("IC não localizado"));
+
+        _db.IcIc.Remove(localizado);
+        _db.SaveChanges();
+        return Ok();
+    }
+
     private void PopulaFilhosMenu(ref Model.IC.VwIc item, ref List<Model.IC.VwIc> lista)
     {
         int idPai = item.Id;

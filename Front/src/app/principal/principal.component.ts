@@ -48,6 +48,8 @@ export class PrincipalComponent implements OnInit {
     icsPromptResultado = signal<icIc[]>([]);
     quantidadeSegredos = signal<number>(0);
     quantidadeConhecimentos = signal<number>(0);
+    quantidadeDependencias = signal<number>(0);
+    quantidadeDependentes = signal<number>(0);
     recognition = new webkitSpeechRecognition();
     showCreuza = signal<boolean>(false);
     constructor(private srv: IcService, private route: ActivatedRoute) {
@@ -113,6 +115,12 @@ export class PrincipalComponent implements OnInit {
 
     retornoQuantidadeConhecimentos(event: any) {
         this.quantidadeConhecimentos.set(event);
+    }
+    retornoQuantidadeDependencias(event: any) {
+        this.quantidadeDependencias.set(event);
+    }
+    retornoQuantidadeDependentes(event: any) {
+        this.quantidadeDependentes.set(event);
     }
 
     iniciaAudio() {

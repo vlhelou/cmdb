@@ -1,4 +1,4 @@
-import { Component, effect, input, signal } from '@angular/core';
+import { Component, effect, input, output, signal } from '@angular/core';
 import { icIc } from 'src/model/ic/ic';
 import { TableModule } from 'primeng/table';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -6,7 +6,7 @@ import { IcAutocompleteComponent } from 'src/app/ic/ic-autocomplete/ic-autocompl
 import { DependenciaService } from 'src/model/ic/dependencia.service';
 import { IcDependencia } from 'src/model/ic/dependencia';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { ConfirmationService  } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
     selector: 'app-dependencia',
@@ -19,7 +19,7 @@ export class DependenciaComponent {
     ic = input<icIc | undefined>();
     dependente = input<boolean>(false);
     lista = signal<IcDependencia[]>([]);
-
+    quantidade = output<number>();
 
     form = new FormGroup({
         id: new FormControl<number>(0),
@@ -47,6 +47,7 @@ export class DependenciaComponent {
         this.srv.DependenciasPorIC(idic, this.dependente()).subscribe({
             next: (dados) => {
                 this.lista.set(dados);
+                this.quantidade.emit(dados.length);
             }
         });
 
