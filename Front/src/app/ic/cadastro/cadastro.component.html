@@ -1,3 +1,4 @@
+<p-confirmdialog />
 <form [formGroup]="frmIC" (ngSubmit)="grava()" novalidate>
 
     <div class="row">
@@ -69,7 +70,12 @@
         </div>
     </div>
     <div class="row mt-2">
-        <div class="col-12 text-end">
+        <div class="col-6">
+            @if(ic() != undefined && ic()!.id!=1){
+                <button type="button" class="btn btn-danger" (click)="exclui($event)"><i class="pi pi-trash"></i></button>
+            }
+        </div>
+        <div class="col-6 text-end">
             <button type="submit" class="btn btn-primary" [disabled]="frmIC.invalid"><i class="pi pi-save"></i></button>
         </div>
     </div>

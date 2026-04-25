@@ -279,6 +279,39 @@ public class IC : ControllerBase
         return Ok();
     }
 
+    [HttpGet("[action]/{id}")]
+    [Authorize(Roles = "admin")]
+    public IActionResult Exclui(int id)
+    {
+        var localizado = _db.IcIc
+            .Where(p => p.Id == id)
+            .FirstOrDefault();
+        if (localizado is null)
+            return BadRequest(new MensagemErro("IC não localizado"));
+
+        if (_db.IcIc.Any(q => q.IdPai == id))
+            return BadRequest(new MensagemErro("Existem ICs filhos relacionados a este ic"));
+
+        if (_db.IcSegredo.Any(q=>q.IdIc==id))
+            return BadRequest(new MensagemErro("Existe segredo relacionado a este ic"));
+
+        if (_db.IcConhecimento.Any(q => q.IdIc == id))
+            return BadRequest(new MensagemErro("Existe conhecimento relacionado a este ic"));
+
+        if (_db.IcDependencia.Any(q => q.IdIcDependente== id))
+            return BadRequest(new MensagemErro("Existe dependencia relacionado a este ic"));
+
+        if (_db.IcDependencia.Any(q => q.IdIcPrincipal== id))
+            return BadRequest(new MensagemErro("Existe dependentes relacionado a este ic"));
+
+
+
+
+        _db.IcIc.Remove(localizado);
+        _db.SaveChanges();
+        return Ok();
+    }
+
     private void PopulaFilhosMenu(ref Model.IC.VwIc item, ref List<Model.IC.VwIc> lista)
     {
         int idPai = item.Id;

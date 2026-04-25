@@ -2,6 +2,8 @@ import { Component, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TabsModule } from 'primeng/tabs';
 import { ActivatedRoute } from '@angular/router';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { IcAutocompleteComponent } from 'src/app/ic/ic-autocomplete/ic-autocomplete.component';
 import { FamiliaCompletaComponent } from 'src/app/ic/familia-completa/familia-completa.component'
@@ -28,11 +30,15 @@ declare var webkitSpeechRecognition: any;
         SegredoComponent,
         ConhecimentoComponent,
         DependenciaComponent,
-        BadgeModule
+        BadgeModule,
+        ConfirmDialogModule
     ],
     templateUrl: './principal.component.html',
-    styleUrl: './principal.component.scss'
+    styleUrl: './principal.component.scss',
+    providers: [ConfirmationService]
+
 })
+
 export class PrincipalComponent implements OnInit {
     icAutocomplete: icIc | undefined = undefined;
     icTreeView: icIc | undefined = undefined;
@@ -48,9 +54,15 @@ export class PrincipalComponent implements OnInit {
     icsPromptResultado = signal<icIc[]>([]);
     quantidadeSegredos = signal<number>(0);
     quantidadeConhecimentos = signal<number>(0);
+    quantidadeDependencias = signal<number>(0);
+    quantidadeDependentes = signal<number>(0);
     recognition = new webkitSpeechRecognition();
     showCreuza = signal<boolean>(false);
-    constructor(private srv: IcService, private route: ActivatedRoute) {
+    constructor(
+        private srv: IcService
+        , private route: ActivatedRoute
+        , private confirmationService: ConfirmationService
+    ) {
         this.recognition.interimResults = true;
         this.recognition.lang = 'pt-BR';
     }
@@ -89,13 +101,41 @@ export class PrincipalComponent implements OnInit {
 
     icCadastroGravado(event: any, treeComponent: FamiliaCompletaComponent | null) {
         this.icAtualiza.set(event);
-        if (treeComponent) {
-            treeComponent.atualiza();
-        }
+        this.srv.BuscaComFamilia(event.id).subscribe({
+            next: (ret) => {
+                this.icSelecionado.set(ret);
+                if (treeComponent) {
+                    treeComponent.atualiza();
+                }
+            }
+        });
     }
 
-    mudaPaternidade() {
-        this.srv.MudaPaternidade(this.icSelecionado()?.id!, this.icNovoPai?.id!).subscribe({
+    mudaPaternidade(event: any) {
+        this.confirmationService.confirm({
+            target: event.currentTarget as EventTarget,
+            message: 'Confirma a mudança de paternidade?',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Sim',
+            rejectLabel: 'Não',
+            acceptButtonStyleClass: 'p-button-danger',
+            rejectButtonStyleClass: 'p-button-secondary',
+
+            accept: () => {
+                this.srv.MudaPaternidade(this.icSelecionado()?.id!, this.icNovoPai?.id!).subscribe(() => {
+                    this.srv.BuscaComFamilia(this.icNovoPai?.id!).subscribe({
+                        next: (ret) => {
+                            this.icSelecionado.set(ret);
+                            this.icNovoPai = undefined;
+                        }
+                    });
+                });
+
+
+            },
+            reject: () => {
+                // this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+            }
         });
     }
 
@@ -113,6 +153,12 @@ export class PrincipalComponent implements OnInit {
 
     retornoQuantidadeConhecimentos(event: any) {
         this.quantidadeConhecimentos.set(event);
+    }
+    retornoQuantidadeDependencias(event: any) {
+        this.quantidadeDependencias.set(event);
+    }
+    retornoQuantidadeDependentes(event: any) {
+        this.quantidadeDependentes.set(event);
     }
 
     iniciaAudio() {
