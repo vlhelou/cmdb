@@ -20,14 +20,6 @@ public class Db(DbContextOptions<Db> options) : DbContext(options)
 
     }
 
-    //protected  override void OnModelCreating(ModelBuilder modelBuilder)
-    //{
-    //    modelBuilder.HasPostgresExtension("vector");
-    //    modelBuilder.Entity<IC.IC>()
-    //        .Property(b => b.Embedding)
-    //        .HasColumnName("embedding")
-    //        .HasColumnType("vector(1024)");
-    //}
 
     //seg
     public DbSet<Model.Seg.Usuario> SegUsuario { get; set; }
@@ -39,6 +31,10 @@ public class Db(DbContextOptions<Db> options) : DbContext(options)
     public DbSet<Model.Corp.Tipo> CorpTipo { get; set; }
     public DbSet<Model.Corp.Configuracao> CorpConfiguracao { get; set; }
     public DbSet<Model.Corp.VwConfiguracao> CorpVwConfiguracao { get; set; }
+    public DbSet<Model.Corp.Tarefa> CorpTarefa { get; set; }
+    public DbSet<Model.Corp.TarefaComplemento> CorpTarefaComplemento { get; set; }
+
+
 
     //ic
     public DbSet<Model.IC.IC> IcIc { get; set; }
